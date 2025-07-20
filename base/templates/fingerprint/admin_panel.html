@@ -204,12 +204,16 @@
                     <div class="col-md-2 text-end">
                         {% if student.tiene_huella %}
                             <button class="btn btn-sm btn-outline-warning me-2" 
-                                    onclick="updateFingerprint({{ student.id_alumno }})">
+                                    data-student-id="{{ student.id_alumno }}"
+                                    data-student-name="{{ student.nombre }} {{ student.apellido_paterno }}"
+                                    onclick="updateFingerprint(this.dataset.studentId, this.dataset.studentName)">
                                 <i class="fas fa-sync"></i> Actualizar
                             </button>
                         {% else %}
                             <button class="btn btn-fingerprint btn-sm" 
-                                    onclick="registerFingerprint({{ student.id_alumno }}, '{{ student.nombre }} {{ student.apellido_paterno }}')">
+                                    data-student-id="{{ student.id_alumno }}"
+                                    data-student-name="{{ student.nombre }} {{ student.apellido_paterno }}"
+                                    onclick="registerFingerprint(this.dataset.studentId, this.dataset.studentName)">
                                 <i class="fas fa-fingerprint"></i> Registrar
                             </button>
                         {% endif %}
@@ -290,10 +294,10 @@ function registerFingerprint(studentId, studentName) {
 }
 
 // Función para actualizar huella
-function updateFingerprint(studentId) {
+function updateFingerprint(studentId, studentName) {
     if (confirm('¿Está seguro de que desea actualizar la huella de este alumno?')) {
         // Similar a registerFingerprint pero con diferente endpoint
-        registerFingerprint(studentId, 'Actualización de huella');
+        registerFingerprint(studentId, studentName);
     }
 }
 

@@ -505,7 +505,6 @@ a {
     border: 1px solid var(--border-color);
     box-shadow: var(--box-shadow);
 }
-}
 
 .alert i {
     margin-right: 0.5rem;

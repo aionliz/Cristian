@@ -5,16 +5,63 @@ Driver específico para HID 4500 FINGERPRINT
 Soporte para captura de huellas dactilares con dispositivo HID 4500
 """
 
-import cv2
-import numpy as np
+# Importaciones básicas
 import time
 import base64
 import hashlib
 import json
 import os
 import subprocess
-from typing import Optional, Dict, Any, Tuple, List
 import logging
+from typing import Dict, List, Optional, Tuple, Any
+
+# Importaciones opcionales con manejo de errores
+try:
+    import cv2
+    CV2_AVAILABLE = True
+except ImportError:
+    CV2_AVAILABLE = False
+    print("⚠️ OpenCV no disponible. Funcionalidad de procesamiento de imágenes limitada.")
+
+try:
+    import numpy as np
+    NUMPY_AVAILABLE = True
+except ImportError:
+    NUMPY_AVAILABLE = False
+    print("⚠️ NumPy no disponible. Funcionalidad matemática limitada.")
+
+try:
+    import serial
+    SERIAL_AVAILABLE = True
+except ImportError:
+    SERIAL_AVAILABLE = False
+    print("⚠️ PySerial no disponible. Comunicación serie limitada.")
+
+# Importación opcional de hidapi para comunicación HID nativa
+try:
+    import importlib
+    hid = importlib.import_module('hid')
+    HID_AVAILABLE = True
+except ImportError:
+    # Crear mock básico para evitar errores de linting
+    class MockHID:
+        @staticmethod
+        def enumerate():
+            return []
+        
+        @staticmethod
+        def device():
+            class MockDevice:
+                def open(self, *args): pass
+                def write(self, *args): return 0
+                def read(self, *args): return []
+                def close(self): pass
+                def set_nonblocking(self, *args): pass
+            return MockDevice()
+    
+    hid = MockHID()
+    HID_AVAILABLE = False
+    print("⚠️ hidapi no disponible. Comunicación HID nativa limitada.")
 
 # Configurar logging
 logger = logging.getLogger(__name__)
@@ -553,10 +600,15 @@ class HID4500Driver:
             logger.error(f"Error parseando respuesta HID: {e}")
             return None
     
-    def _generate_simulated_fingerprint(self, size: Tuple[int, int]) -> np.ndarray:
+    def _generate_simulated_fingerprint(self, size: Tuple[int, int]):
         """
         Generar imagen simulada de huella dactilar de alta calidad
         """
+        if not NUMPY_AVAILABLE or not CV2_AVAILABLE:
+            logger.warning("NumPy o OpenCV no disponibles. Usando datos de simulación básicos.")
+            # Retornar datos de simulación básicos
+            return self._generate_basic_fingerprint_data(size)
+        
         width, height = size
         
         # Crear base de la imagen
@@ -601,7 +653,7 @@ class HID4500Driver:
         
         return img
     
-    def _process_fingerprint_image(self, img: np.ndarray) -> Optional[FingerprintTemplate]:
+    def _process_fingerprint_image(self, img) -> Optional[FingerprintTemplate]:
         """
         Procesar imagen de huella y crear template
         """
@@ -617,12 +669,12 @@ class HID4500Driver:
             template_data = self._create_template(img)
             hash_value = self._generate_hash(template_data)
             
-            # Metadatos
+            # Metadatos básicos
             metadata = {
                 'device': self.device_name,
                 'timestamp': time.time(),
                 'quality': quality,
-                'resolution': img.shape,
+                'resolution': img.shape if hasattr(img, 'shape') else (256, 256),
                 'dpi': self.settings['dpi'],
                 'capture_mode': 'simulation' if self.connection == "SIMULATION" else 'real'
             }
@@ -638,11 +690,56 @@ class HID4500Driver:
             logger.error(f"Error procesando imagen: {e}")
             return None
     
-    def _calculate_image_quality(self, img: np.ndarray) -> float:
+    def _generate_basic_fingerprint_data(self, size):
+        """
+        Generar datos básicos de huella cuando las librerías no están disponibles
+        """
+        try:
+            width, height = size
+            
+            # Crear template básico sin dependencias
+            basic_template = {
+                'width': width,
+                'height': height,
+                'simulated': True,
+                'timestamp': time.time(),
+                'pattern': f"fingerprint_{int(time.time() * 1000) % 10000}"
+            }
+            
+            # Convertir a bytes
+            template_bytes = json.dumps(basic_template).encode('utf-8')
+            hash_value = hashlib.md5(template_bytes).hexdigest()[:32]
+            
+            # Crear metadata básica
+            metadata = {
+                'device': self.device_name,
+                'timestamp': time.time(),
+                'quality': 85.0,  # Calidad fija para simulación básica
+                'resolution': size,
+                'dpi': self.settings['dpi'],
+                'capture_mode': 'basic_simulation',
+                'libraries_available': False
+            }
+            
+            return FingerprintTemplate(
+                template_data=template_bytes,
+                hash_value=hash_value,
+                quality_score=85.0,
+                metadata=metadata
+            )
+            
+        except Exception as e:
+            logger.error(f"Error generando datos básicos: {e}")
+            return None
+    
+    def _calculate_image_quality(self, img) -> float:
         """
         Calcular calidad de imagen de huella mejorada
         """
         try:
+            # Si no hay librerías disponibles, retornar calidad fija
+            if not NUMPY_AVAILABLE or not CV2_AVAILABLE:
+                return 85.0  # Calidad fija para simulación básica
             # Calcular múltiples métricas de calidad
             
             # 1. Varianza (contraste)
@@ -681,12 +778,22 @@ class HID4500Driver:
             logger.error(f"Error calculando calidad: {e}")
             return 85.0  # Valor por defecto bueno para simulaciones
     
-    def _create_template(self, img: np.ndarray) -> bytes:
+    def _create_template(self, img) -> bytes:
         """
         Crear template binario de la huella
         """
         try:
-            # Preprocesar imagen
+            # Si no hay librerías disponibles, crear template básico
+            if not CV2_AVAILABLE:
+                # Template básico sin OpenCV
+                template_data = {
+                    'type': 'basic_template',
+                    'timestamp': time.time(),
+                    'simulated': True
+                }
+                return json.dumps(template_data).encode('utf-8')
+            
+            # Preprocesar imagen con OpenCV
             processed = cv2.resize(img, (256, 256))
             processed = cv2.equalizeHist(processed)
             
@@ -774,41 +881,40 @@ class HID4500Driver:
         # Prioridad 1: Intentar comunicación via puerto serie del DigitalPersona
         if hasattr(self, 'device_path') and self.device_path and self.device_path.startswith('/dev/cu.QR380A'):
             try:
-                import serial
-                import time
+                if not SERIAL_AVAILABLE:
+                    logger.debug("📦 Módulo 'serial' no disponible")
+                else:
+                    ser = serial.Serial(self.device_path, 9600, timeout=2)
+                    logger.info(f"📡 Conectado al DigitalPersona en {self.device_path}")
+                    
+                    # Enviar comando
+                    bytes_written = ser.write(command)
+                    logger.info(f"📤 Comando LED enviado via puerto serie: {command.hex()}, bytes: {bytes_written}")
+                    
+                    # Leer respuesta si está disponible
+                    time.sleep(0.1)
+                    if ser.in_waiting > 0:
+                        response = ser.read(ser.in_waiting)
+                        logger.debug(f"📥 Respuesta del dispositivo: {response.hex()}")
+                    
+                    # Si hay duración, programar apagado
+                    if duration > 0:
+                        time.sleep(duration)
+                        ser.write(b'\x02\x00\x00\x00')  # Apagar luces
+                        logger.debug("💡 Luces apagadas automáticamente")
+                    
+                    ser.close()
+                    logger.info("✅ Comando enviado exitosamente al DigitalPersona")
+                    return True
                 
-                ser = serial.Serial(self.device_path, 9600, timeout=2)
-                logger.info(f"📡 Conectado al DigitalPersona en {self.device_path}")
-                
-                # Enviar comando
-                bytes_written = ser.write(command)
-                logger.info(f"📤 Comando LED enviado via puerto serie: {command.hex()}, bytes: {bytes_written}")
-                
-                # Leer respuesta si está disponible
-                time.sleep(0.1)
-                if ser.in_waiting > 0:
-                    response = ser.read(ser.in_waiting)
-                    logger.debug(f"📥 Respuesta del dispositivo: {response.hex()}")
-                
-                # Si hay duración, programar apagado
-                if duration > 0:
-                    time.sleep(duration)
-                    ser.write(b'\x02\x00\x00\x00')  # Apagar luces
-                    logger.debug("💡 Luces apagadas automáticamente")
-                
-                ser.close()
-                logger.info("✅ Comando enviado exitosamente al DigitalPersona")
-                return True
-                
-            except ImportError:
-                logger.debug("📦 Módulo 'serial' no disponible")
             except Exception as e:
                 logger.debug(f"🔧 Error en comunicación serie: {e}")
         
         # Prioridad 2: Intentar comunicación via HID
         try:
-            import hid
-            import time
+            if not HID_AVAILABLE:
+                logger.debug("📦 Módulo 'hid' no disponible - saltando comunicación HID")
+                return False
             
             # Intentar abrir dispositivo HID
             for device_dict in hid.enumerate():
@@ -833,8 +939,6 @@ class HID4500Driver:
                     logger.info("✅ Comando enviado exitosamente via HID")
                     return True
                     
-        except ImportError:
-            logger.debug("📦 Librería 'hid' no disponible, usando simulación")
         except Exception as e:
             logger.debug(f"🔧 Error en comando HID real: {e}")
             
@@ -843,9 +947,7 @@ class HID4500Driver:
     def _simulate_light_effects(self, action: str, duration: float):
         """
         Simular efectos de luces en la consola
-        """
-        import time
-        
+        """        
         effects = {
             "on": "💡🔆 LUCES ENCENDIDAS 🔆💡",
             "off": "🌑 LUCES APAGADAS 🌑",
