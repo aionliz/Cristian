@@ -1,487 +1,479 @@
-# 🏫 Sistema de Gestión Escolar AML
-## 📚 Sistema Integral de Asistencia Biométrica y Gestión de Estudiantes
+# 🏫 Sistema de Asistencia Biométrica - Colegio AML
 
-[![Python](https://img.shields.io/badge/Python-3.8+-blue.svg)](https://python.org)
-[![Flask](https://img.shields.io/badge/Flask-3.1.1-green.svg)](https://flask.palletsprojects.com/)
-[![MySQL](https://img.shields.io/badge/MySQL-8.0+-orange.svg)](https://mysql.com)
-[![Bootstrap](https://img.shields.io/badge/Bootstrap-5.3.0-purple.svg)](https://getbootstrap.com)
+Sistema integral de control de asistencia escolar con tecnología biométrica (huellas dactilares), desarrollado en Flask y MySQL. Incluye gestión de usuarios, registro de asistencia en tiempo real, y panel administrativo completo con modo día/noche.
 
-Un sistema moderno y completo para la gestión escolar que incluye registro de estudiantes, sistema de asistencia biométrica mediante huellas dactilares, y panel administrativo con tema oscuro/claro.
+## 🚀 Características Principales
 
----
+- **🔐 Autenticación biométrica** con lector DigitalPersona U.are.U 4500
+- **👥 Gestión completa de usuarios** (administradores, profesores, alumnos, apoderados)
+- **📊 Control de asistencia** en tiempo real con verificación biométrica
+- **🎨 Interfaz moderna** con tema claro/oscuro y diseño responsive
+- **📈 Dashboard administrativo** con estadísticas y reportes
+- **🔧 Terminal biométrico** para profesores y administradores
+- **🛡️ Sistema de permisos** por roles de usuario
 
-## 🎯 **Características Principales**
+## 🛠️ Tecnologías y Dependencias
 
-### 🔐 **Sistema de Autenticación**
-- Login y registro de usuarios
-- Gestión de sesiones seguras
-- Roles de administrador y profesor
+### Backend
+- **Flask 3.1.1** - Framework web principal
+- **PyMySQL 1.1.1** - Conector MySQL para Python
+- **Flask-Bcrypt 1.0.1** - Encriptación segura de contraseñas
+- **PySerial 3.5** - Comunicación con dispositivos biométricos
 
-### 👥 **Gestión de Estudiantes**
-- Registro completo de estudiantes
-- Búsqueda y filtrado avanzado
-- Perfiles detallados con información académica
+### Hardware Biométrico
+- **OpenCV 4.10.0** - Procesamiento de imágenes de huellas
+- **NumPy 2.1.3** - Operaciones matemáticas para patrones biométricos
+- **Pillow 11.0.0** - Manipulación y procesamiento de imágenes
 
-### 🔒 **Sistema Biométrico**
-- **Panel de Administración**: Registro de huellas dactilares de estudiantes
-- **Terminal de Asistencia**: Verificación biométrica para marcar asistencia
-- Soporte para lectores DigitalPersona U.are.U 4500
-- Estados de registro (Registrado/Pendiente)
+### Frontend
+- **Bootstrap 5.3.0** - Framework CSS responsive
+- **Font Awesome 6.0.0** - Iconografía moderna
+- **jQuery 3.6.0** - Interacciones dinámicas
 
-### 🎨 **Interfaz Moderna**
-- Tema claro/oscuro automático
-- Diseño responsivo con Bootstrap 5.3
-- Colores personalizados: gris pastel (modo claro) y blanco celeste (modo oscuro)
-- Navegación intuitiva y accesible
+### Base de Datos
+- **MySQL 8.0+** - Sistema de gestión de base de datos
 
----
+## 📋 Requisitos del Sistema
 
-## 🛠️ **Requisitos del Sistema**
+### Requisitos Mínimos
+- **Python 3.8 o superior**
+- **MySQL 8.0 o superior**
+- **4 GB RAM mínimo** (8 GB recomendado)
+- **2 GB espacio libre** en disco
+- **Conexión a internet** para descargar dependencias
 
-### **Software Requerido**
-- **Python**: 3.8 o superior
-- **MySQL**: 8.0 o superior
-- **Sistema Operativo**: Windows 10/11, macOS 10.15+, o Linux Ubuntu 18.04+
+### Hardware Biométrico Soportado
+- **DigitalPersona U.are.U 4500** - Lector óptico de huellas dactilares
+- **Conexión USB 2.0 o superior**
 
-### **Hardware Opcional**
-- **Lector de Huellas**: DigitalPersona U.are.U 4500 (para funcionalidad biométrica completa)
+### Sistemas Operativos Soportados
+- **Windows 10/11** (x64)
+- **macOS 12.0+** (Intel y Apple Silicon)
+- **Ubuntu 20.04+** (opcional)
 
----
+## 🔧 Instalación Paso a Paso
 
-## 🚀 **Instalación Paso a Paso**
+### 📥 PASO 1: Preparación del Sistema
 
-### **1. Preparación del Entorno**
+#### En Windows:
 
-#### **En Windows**
+1. **Instalar Python 3.8+**
+   - Descargar desde: https://www.python.org/downloads/
+   - ✅ **IMPORTANTE**: Marcar "Add Python to PATH" durante la instalación
+   - Verificar instalación:
+   ```cmd
+   python --version
+   pip --version
+   ```
+
+2. **Instalar MySQL 8.0+**
+   - Descargar desde: https://dev.mysql.com/downloads/mysql/
+   - Durante la instalación, recordar la **contraseña de root**
+   - Verificar instalación:
+   ```cmd
+   mysql --version
+   ```
+
+3. **Instalar Git** (opcional pero recomendado)
+   - Descargar desde: https://git-scm.com/download/win
+
+#### En macOS:
+
+1. **Instalar Python 3.8+**
+   ```bash
+   # Opción 1: Usando Homebrew (recomendado)
+   /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
+   brew install python
+   
+   # Opción 2: Descargar desde python.org
+   # https://www.python.org/downloads/macos/
+   ```
+
+2. **Instalar MySQL**
+   ```bash
+   # Opción 1: Usando Homebrew
+   brew install mysql
+   brew services start mysql
+   
+   # Opción 2: Descargar instalador desde
+   # https://dev.mysql.com/downloads/mysql/
+   ```
+
+3. **Configurar MySQL** (primera vez)
+   ```bash
+   mysql_secure_installation
+   ```
+
+### 📂 PASO 2: Obtener el Código
+
+#### Opción A: Clonar repositorio (si tienes Git)
 ```bash
-# Abrir PowerShell como administrador
-# Verificar Python
-python --version
-
-# Si no tienes Python, descarga desde: https://python.org
-# Asegúrate de marcar "Add Python to PATH" durante la instalación
-```
-
-#### **En macOS**
-```bash
-# Abrir Terminal
-# Instalar Homebrew si no lo tienes
-/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
-
-# Instalar Python
-brew install python
-
-# Verificar instalación
-python3 --version
-```
-
-#### **En Linux (Ubuntu/Debian)**
-```bash
-# Actualizar sistema
-sudo apt update
-sudo apt upgrade -y
-
-# Instalar Python y dependencias
-sudo apt install python3 python3-pip python3-venv python3-dev -y
-
-# Verificar instalación
-python3 --version
-```
-
-### **2. Descargar el Proyecto**
-
-```bash
-# Opción 1: Clonar con Git
-git clone https://github.com/tu-usuario/Colegio-AML.git
+git clone <URL_DEL_REPOSITORIO>
 cd Colegio-AML
-
-# Opción 2: Descargar ZIP
-# Descargar desde GitHub y extraer
-# Navegar a la carpeta extraída
 ```
 
-### **3. Configurar Entorno Virtual**
+#### Opción B: Descargar ZIP
+1. Descargar el archivo ZIP del proyecto
+2. Extraer en una carpeta (ej: `C:\Colegio-AML` o `~/Colegio-AML`)
+3. Abrir terminal/command prompt en esa carpeta
 
-#### **Windows**
-```bash
+### 🐍 PASO 3: Configurar Entorno Python
+
+#### En Windows:
+```cmd
+# Navegar a la carpeta del proyecto
+cd C:\ruta\a\Colegio-AML
+
 # Crear entorno virtual
 python -m venv venv
 
 # Activar entorno virtual
 venv\Scripts\activate
 
-# Verificar activación (debe aparecer (venv) al inicio de la línea)
-```
-
-#### **macOS/Linux**
-```bash
-# Crear entorno virtual
-python3 -m venv venv
-
-# Activar entorno virtual
-source venv/bin/activate
-
-# Verificar activación (debe aparecer (venv) al inicio de la línea)
-```
-
-### **4. Instalar Dependencias**
-
-```bash
-# Actualizar pip
-pip install --upgrade pip
-
-# Instalar dependencias del proyecto
+# Instalar dependencias
 pip install -r requirements.txt
-
-# Si requirements.txt no existe, instalar manualmente:
-pip install Flask==3.1.1 Flask-Session pymysql bcrypt python-dotenv
 ```
 
-### **5. Configurar Base de Datos MySQL**
-
-#### **Instalar MySQL**
-
-**Windows:**
-1. Descargar MySQL Installer desde: https://dev.mysql.com/downloads/installer/
-2. Ejecutar e instalar MySQL Server 8.0+
-3. Configurar contraseña root durante la instalación
-
-**macOS:**
+#### En macOS/Linux:
 ```bash
-# Con Homebrew
-brew install mysql
+# Navegar a la carpeta del proyecto
+cd ~/ruta/a/Colegio-AML
 
-# Iniciar MySQL
-brew services start mysql
-
-# Configurar seguridad
-mysql_secure_installation
-```
-
-**Linux:**
-```bash
-# Ubuntu/Debian
-sudo apt install mysql-server -y
-
-# Iniciar servicio
-sudo systemctl start mysql
-sudo systemctl enable mysql
-
-# Configurar seguridad
-sudo mysql_secure_installation
-```
-
-#### **Crear Base de Datos**
-
-```sql
-# Conectar a MySQL
-mysql -u root -p
-
-# Crear base de datos
-CREATE DATABASE colegio_aml;
-
-# Crear usuario (opcional pero recomendado)
-CREATE USER 'aml_user'@'localhost' IDENTIFIED BY 'tu_contraseña_segura';
-GRANT ALL PRIVILEGES ON colegio_aml.* TO 'aml_user'@'localhost';
-FLUSH PRIVILEGES;
-
-# Salir
-EXIT;
-```
-
-### **6. Configurar Variables de Entorno**
-
-Crear archivo `.env` en la raíz del proyecto:
-
-```bash
-# Windows
-echo. > .env
-
-# macOS/Linux
-touch .env
-```
-
-Editar `.env` con tu editor favorito y agregar:
-
-```env
-# Configuración de Base de Datos
-DB_HOST=localhost
-DB_USER=aml_user
-DB_PASSWORD=tu_contraseña_segura
-DB_NAME=colegio_aml
-
-# Configuración de Flask
-SECRET_KEY=tu_clave_secreta_muy_segura_aqui
-FLASK_ENV=development
-FLASK_DEBUG=True
-
-# Puerto de la aplicación
-PORT=5003
-
-# Configuración Biométrica (opcional)
-BIOMETRIC_DEVICE=/dev/cu.QR380A-241-4F6D
-```
-
-### **7. Inicializar Base de Datos**
-
-Las tablas se crean automáticamente cuando ejecutas la aplicación por primera vez. Si necesitas crearlas manualmente:
-
-```sql
--- Conectar a MySQL y usar la base de datos
-mysql -u aml_user -p
-USE colegio_aml;
-
--- Crear tabla de usuarios
-CREATE TABLE usuarios (
-    id INT AUTO_INCREMENT PRIMARY KEY,
-    nombre VARCHAR(100) NOT NULL,
-    email VARCHAR(100) UNIQUE NOT NULL,
-    password VARCHAR(255) NOT NULL,
-    rol ENUM('admin', 'profesor') DEFAULT 'profesor',
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-);
-
--- Crear tabla de alumnos
-CREATE TABLE alumnos (
-    id INT AUTO_INCREMENT PRIMARY KEY,
-    nombre VARCHAR(100) NOT NULL,
-    apellido VARCHAR(100) NOT NULL,
-    rut VARCHAR(20) UNIQUE NOT NULL,
-    curso VARCHAR(50) NOT NULL,
-    email VARCHAR(100),
-    telefono VARCHAR(20),
-    direccion TEXT,
-    fecha_nacimiento DATE,
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-);
-
--- Crear tabla de huellas dactilares
-CREATE TABLE huellas_dactilares (
-    id INT AUTO_INCREMENT PRIMARY KEY,
-    alumno_id INT NOT NULL,
-    template_data TEXT NOT NULL,
-    hash_data VARCHAR(255),
-    quality_score INT DEFAULT 0,
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-    FOREIGN KEY (alumno_id) REFERENCES alumnos(id) ON DELETE CASCADE
-);
-
--- Crear tabla de asistencias
-CREATE TABLE asistencias (
-    id INT AUTO_INCREMENT PRIMARY KEY,
-    alumno_id INT NOT NULL,
-    fecha DATE NOT NULL,
-    hora_entrada TIME,
-    hora_salida TIME,
-    presente BOOLEAN DEFAULT FALSE,
-    metodo_verificacion ENUM('manual', 'biometrico') DEFAULT 'manual',
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    FOREIGN KEY (alumno_id) REFERENCES alumnos(id) ON DELETE CASCADE,
-    UNIQUE KEY unique_alumno_fecha (alumno_id, fecha)
-);
-```
-
-### 1. Clonar el Repositorio
-```bash
-git clone <url-del-repositorio>
-cd Colegio-AML
-```
-
-### 2. Configuración Automática
-```bash
-# Ejecutar script de configuración inicial
-./setup.sh
-```
-
-### 3. Configuración Manual (Alternativa)
-```bash
 # Crear entorno virtual
 python3 -m venv venv
 
 # Activar entorno virtual
 source venv/bin/activate
-.\venv\Scripts\activate
 
 # Instalar dependencias
 pip install -r requirements.txt
 ```
 
-### 4. Configurar Base de Datos
-```bash
-# Crear base de datos
-mysql -u root -p -e "CREATE DATABASE colegio_aml;"
+### 🗄️ PASO 4: Configurar Base de Datos
 
-# Importar estructura y datos
-mysql -u root -p colegio_aml < database_setup_sip.sql
+#### 1. Acceder a MySQL
+```bash
+# En Windows y macOS
+mysql -u root -p
+# Introducir la contraseña de root que configuraste
 ```
 
-### 5. Ejecutar Aplicación
-```bash
-# Activar entorno virtual
-source activate.sh
+#### 2. Crear base de datos
+```sql
+CREATE DATABASE colegio_aml CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+EXIT;
+```
 
-# Ejecutar servidor
+#### 3. Importar estructura (si existe archivo SQL)
+```bash
+# Si tienes un archivo database_setup.sql
+mysql -u root -p colegio_aml < database_setup.sql
+
+# Si no, la aplicación creará las tablas automáticamente
+```
+
+### ⚙️ PASO 5: Configurar la Aplicación
+
+1. **Verificar configuración MySQL** en `base/config/mysqlconnection.py`:
+   ```python
+   # Asegúrate de que estos datos coincidan con tu instalación
+   host = 'localhost'
+   user = 'root'
+   password = 'TU_CONTRASEÑA_DE_MYSQL'
+   database = 'colegio_aml'
+   ```
+
+2. **Configurar puerto de la aplicación** en `app.py` (si es necesario):
+   ```python
+   # Al final del archivo, cambiar puerto si 5003 está ocupado
+   app.run(debug=True, host='0.0.0.0', port=5003)
+   ```
+
+### 🚀 PASO 6: Ejecutar la Aplicación
+
+#### En Windows:
+```cmd
+# Activar entorno virtual (si no está activo)
+venv\Scripts\activate
+
+# Ejecutar aplicación
 python app.py
 ```
+
+#### En macOS/Linux:
+```bash
+# Activar entorno virtual (si no está activo)
+source venv/bin/activate
+
+# Ejecutar aplicación
+python app.py
+```
+
+#### ✅ Verificar que funciona:
+- Abrir navegador web
+- Ir a: **http://127.0.0.1:5003**
+- Deberías ver la página de login
 
 ## 🌐 Acceso al Sistema
 
 ### URLs Principales
-- **Aplicación principal**: http://127.0.0.1:5001
-- **Login**: http://127.0.0.1:5001/auth/login
-- **Sistema de huellas**: http://127.0.0.1:5001/huellas
-- **Terminal biométrico**: http://127.0.0.1:5001/huellas/terminal
+- **Página principal**: http://127.0.0.1:5003
+- **Login**: http://127.0.0.1:5003/auth/login
+- **Registro**: http://127.0.0.1:5003/auth/register
+- **Panel biométrico**: http://127.0.0.1:5003/biometric/admin
+- **Terminal profesor**: http://127.0.0.1:5003/biometric/terminal
 
-### Usuarios de Prueba
-| Rol | Email | Contraseña | Permisos |
-|-----|-------|------------|----------|
-| Administrador | admin@colegio.cl | admin123 | Completos |
-| Profesor | profesor@colegio.cl | profesor123 | Gestión alumnos |
+### 👤 Usuarios por Defecto
+| Rol | Email | Contraseña | Descripción |
+|-----|-------|------------|-------------|
+| Administrador | admin@colegio.cl | admin123 | Acceso completo al sistema |
+| Profesor | profesor@colegio.cl | profesor123 | Gestión de asistencia |
 
 ## 📁 Estructura del Proyecto
 
 ```
 Colegio-AML/
-├── app.py                      # Aplicación principal Flask
-├── requirements.txt            # Dependencias Python
-├── setup.sh                   # Script de configuración
-├── activate.sh                # Script de activación
-├── database_setup_sip.sql     # Estructura de base de datos
-├── test_hardware.py           # Pruebas de hardware biométrico
-├── base/                      # Módulos principales
-│   ├── config/               # Configuración
-│   │   ├── mysqlconnection.py
-│   │   └── hardware_config.py
-│   ├── models/               # Modelos de datos
-│   │   ├── user_model.py
-│   │   ├── alumno_model.py
-│   │   └── huella_model.py
-│   ├── controllers/          # Controladores
-│   │   ├── auth_controller.py
-│   │   ├── student_controller.py
-│   │   └── huella_controller.py
-│   ├── hardware/             # Integración hardware
-│   │   └── fingerprint_reader.py
-│   ├── static/               # Archivos estáticos
-│   │   ├── css/
-│   │   │   └── style.css
-│   │   ├── js/
-│   │   │   └── main.js
-│   │   └── img/
-│   └── templates/            # Plantillas HTML
-│       ├── base.html
-│       ├── auth/
-│       ├── huellas/
-│       └── includes/
-└── venv/                     # Entorno virtual (generado)
+├── app.py                      # 🚀 Aplicación principal Flask
+├── requirements.txt            # 📦 Dependencias Python
+├── README.md                   # 📖 Este archivo
+├── base/                       # 📂 Módulos principales
+│   ├── config/                 # ⚙️ Configuración
+│   │   └── mysqlconnection.py  # 🔗 Conexión a base de datos
+│   ├── models/                 # 🗃️ Modelos de datos
+│   │   ├── user_model.py       # 👤 Modelo de usuarios
+│   │   ├── alumno_model.py     # 🎓 Modelo de alumnos
+│   │   ├── huella_model.py     # 👆 Modelo de huellas
+│   │   └── asistencia_model.py # 📊 Modelo de asistencia
+│   ├── controllers/            # 🎮 Controladores
+│   │   ├── auth_controller.py  # 🔐 Autenticación
+│   │   ├── main_controller.py  # 🏠 Página principal
+│   │   ├── student_controller.py # 🎓 Gestión estudiantes
+│   │   └── huella_controller.py # 👆 Sistema biométrico
+│   ├── static/                 # 🎨 Archivos estáticos
+│   │   ├── css/               # 🎨 Estilos CSS
+│   │   │   ├── style.css      # 🎨 Estilos principales
+│   │   │   ├── dark-theme-enhanced.css # 🌙 Tema oscuro
+│   │   │   └── text-contrast-fix.css # 🔧 Correcciones de color
+│   │   ├── js/                # ⚡ JavaScript
+│   │   │   └── script.js      # ⚡ Scripts principales
+│   │   └── img/               # 🖼️ Imágenes
+│   │       └── logo.png       # 🏫 Logo del colegio
+│   └── templates/             # 📄 Plantillas HTML
+│       ├── base.html          # 📄 Plantilla base
+│       ├── auth/              # 🔐 Templates de autenticación
+│       │   ├── login.html     # 🔑 Página de login
+│       │   └── register.html  # 📝 Página de registro
+│       ├── fingerprint/       # 👆 Templates biométricos
+│       │   ├── admin_panel.html # 🔧 Panel administración
+│       │   └── terminal.html  # 💻 Terminal biométrico
+│       ├── students/          # 🎓 Templates de estudiantes
+│       │   ├── student_list.html # 📋 Lista estudiantes
+│       │   └── student_detail.html # 👤 Detalle estudiante
+│       └── includes/          # 📎 Componentes reutilizables
+│           ├── header.html    # 📋 Encabezado
+│           └── footer.html    # 📋 Pie de página
+└── venv/                      # 🐍 Entorno virtual (generado automáticamente)
 ```
 
-## 🔧 Configuración de Hardware
+## 🔧 Configuración de Hardware Biométrico
 
-### Lectores ZKTeco
-1. **Conectar** el dispositivo por USB
-2. **Instalar drivers** del fabricante
-3. **Verificar conexión**: `python test_hardware.py`
-4. **Seleccionar** opción 1 (ZKTeco) en el sistema
+### Para DigitalPersona U.are.U 4500:
 
-### Cámaras OpenCV
-1. **Conectar** cámara web USB
-2. **Permitir acceso** a la cámara en configuración del sistema
-3. **Probar conexión**: `python test_hardware.py`
-4. **Seleccionar** opción 2 (OpenCV) en el sistema
+#### En Windows:
+1. **Conectar el dispositivo** por USB
+2. **Instalar drivers oficiales** desde el sitio de DigitalPersona
+3. **Verificar en Administrador de dispositivos** que aparece correctamente
+4. **Ejecutar prueba**:
+   ```cmd
+   python test_hardware.py
+   ```
 
-## 📊 Funcionalidades del Sistema
+#### En macOS:
+1. **Conectar el dispositivo** por USB
+2. **Permitir acceso** en Configuración del Sistema > Seguridad y Privacidad
+3. **Verificar puerto serie**:
+   ```bash
+   ls /dev/cu.*
+   # Buscar algo como: /dev/cu.QR380A-241-4F6D
+   ```
+4. **Ejecutar prueba**:
+   ```bash
+   python test_hardware.py
+   ```
 
-### 👤 Gestión de Usuarios
-- Registro y autenticación
-- Roles diferenciados (admin, profesor, alumno, apoderado)
-- Perfiles personalizados
+## 🔧 Solución de Problemas Comunes
 
-### 🔒 Sistema Biométrico
-- Registro de huellas dactilares
-- Verificación biométrica
-- Control de calidad automático
-- Soporte multi-dedo
-
-### 📈 Estadísticas y Reportes
-- Cobertura biométrica en tiempo real
-- Estadísticas de calidad de huellas
-- Reportes de asistencia
-- Dashboards interactivos
-
-### 🎯 Terminal Biométrico
-- Interfaz tipo terminal para administradores
-- Registro masivo de huellas
-- Monitoreo en tiempo real
-- Logs detallados
-
-## 🧪 Pruebas
-
-### Probar Hardware Biométrico
+### ❌ Error: "ModuleNotFoundError"
 ```bash
-# Activar entorno virtual
+# Asegúrate de que el entorno virtual está activado
+# Windows:
+venv\Scripts\activate
+# macOS/Linux:
 source venv/bin/activate
 
-# Ejecutar pruebas de hardware
+# Reinstalar dependencias
+pip install -r requirements.txt
+```
+
+### ❌ Error: "Access denied for user 'root'@'localhost'"
+```bash
+# Verificar contraseña de MySQL
+mysql -u root -p
+
+# Si olvidaste la contraseña, resetearla:
+# Windows: mysqld --skip-grant-tables
+# macOS: brew services stop mysql && mysqld_safe --skip-grant-tables
+```
+
+### ❌ Error: "Port 5003 already in use"
+1. **Cambiar puerto** en `app.py`:
+   ```python
+   app.run(debug=True, host='0.0.0.0', port=5004)  # Cambiar a otro puerto
+   ```
+2. **O liberar el puerto**:
+   ```bash
+   # Windows:
+   netstat -ano | findstr :5003
+   taskkill /PID <numero_proceso> /F
+   
+   # macOS:
+   lsof -ti:5003 | xargs kill -9
+   ```
+
+### ❌ Error: Lector biométrico no detectado
+1. **Verificar conexión USB**
+2. **Reinstalar drivers** del dispositivo
+3. **Verificar permisos** del sistema
+4. **Probar en otro puerto USB**
+
+### ❌ Error: Texto no visible (colores)
+- El sistema tiene corrección automática de contraste
+- Cambiar entre modo claro/oscuro con el botón en la navegación
+- Los colores se ajustan automáticamente
+
+## 🎯 Funcionalidades del Sistema
+
+### 👥 Gestión de Usuarios
+- ✅ **Registro y login** con validación de email
+- ✅ **Roles diferenciados**: Admin, Profesor, Alumno, Apoderado
+- ✅ **Perfiles personalizados** con información completa
+- ✅ **Seguridad con BCrypt** para contraseñas
+
+### 🔒 Sistema Biométrico
+- ✅ **Registro de huellas** con validación de calidad
+- ✅ **Verificación biométrica** en tiempo real
+- ✅ **Panel administrativo** para gestión masiva
+- ✅ **Terminal para profesores** con interfaz simplificada
+- ✅ **Soporte multi-dedo** por alumno
+
+### 📊 Control de Asistencia
+- ✅ **Marca de presente** con huella dactilar
+- ✅ **Registro automático** de fecha y hora
+- ✅ **Estadísticas en tiempo real**
+- ✅ **Historial completo** por alumno y fecha
+
+### 🎨 Interfaz de Usuario
+- ✅ **Diseño responsive** para móvil y desktop
+- ✅ **Modo claro/oscuro** automático
+- ✅ **Navegación intuitiva** con breadcrumbs
+- ✅ **Colores personalizados**: Gris pastel (claro) y Celeste (oscuro)
+
+## 🧪 Comandos de Prueba
+
+### Verificar instalación completa:
+```bash
+# Activar entorno
+source venv/bin/activate  # macOS/Linux
+venv\Scripts\activate     # Windows
+
+# Probar conexión a base de datos
+python -c "from base.config.mysqlconnection import connectToMySQL; print('DB OK' if connectToMySQL('colegio_aml') else 'DB Error')"
+
+# Probar hardware biométrico (si está conectado)
 python test_hardware.py
+
+# Ejecutar aplicación
+python app.py
 ```
 
-### Probar Base de Datos
-```bash
-# Verificar conexión a MySQL
-mysql -u root -p colegio_aml -e "SHOW TABLES;"
-```
+### Verificar funcionalidades web:
+1. **Login**: http://127.0.0.1:5003/auth/login
+2. **Registro**: http://127.0.0.1:5003/auth/register
+3. **Lista estudiantes**: http://127.0.0.1:5003/students
+4. **Panel biométrico**: http://127.0.0.1:5003/biometric/admin
+5. **Terminal profesor**: http://127.0.0.1:5003/biometric/terminal
 
-## 🔧 Solución de Problemas
+## 🚀 Puesta en Producción
 
-### Error: Puerto en uso
-```bash
-# Cambiar puerto en app.py línea final
-app.run(debug=True, host='0.0.0.0', port=5002)
-```
+### Para uso en red local:
 
-### Error: Lector biométrico no detectado
-- Verificar conexión USB
-- Instalar drivers del fabricante
-- Revisar permisos de dispositivo
-- Probar con `python test_hardware.py`
+1. **Cambiar host en app.py**:
+   ```python
+   app.run(debug=False, host='0.0.0.0', port=5003)
+   ```
 
-### Error: Permisos de cámara en macOS
-- Ir a Configuración → Seguridad → Cámara
-- Permitir acceso a la aplicación Terminal/Python
+2. **Configurar firewall**:
+   - **Windows**: Permitir puerto 5003 en Windows Defender
+   - **macOS**: Ir a Sistema > Seguridad > Firewall
 
-## 📞 Soporte
+3. **Acceder desde otros dispositivos**:
+   - Usar la IP del servidor: `http://192.168.1.XXX:5003`
 
-### Contacto
-- **Desarrollador**: Sistema Colegio AML
+### Para uso permanente:
+
+1. **Usar supervisor o systemd** para mantener la aplicación corriendo
+2. **Configurar nginx** como proxy reverso
+3. **Usar HTTPS** con certificados SSL
+4. **Backup automático** de la base de datos
+
+## 📞 Soporte y Contacto
+
+### 📧 Información de Contacto
+- **Desarrollador**: Sistema Biométrico Colegio AML
 - **Email**: soporte@colegioaml.cl
-- **Documentación**: Ver archivos en `/docs/`
+- **Versión**: 1.0.0
+- **Última actualización**: Julio 2025
 
-### Reportar Problemas
-1. Describir el problema detalladamente
-2. Incluir logs de error
-3. Especificar hardware utilizado
-4. Mencionar versión del sistema operativo
+### 🐛 Reportar Problemas
+1. **Describe el problema** detalladamente
+2. **Incluye capturas de pantalla** si es posible
+3. **Menciona tu sistema operativo** y versión
+4. **Incluye logs de error** de la consola
 
-## 📄 Licencia
+### 📚 Documentación Adicional
+- **Manual de usuario**: Ver carpeta `/docs/` (si existe)
+- **API Documentation**: Disponible en `/api/docs` cuando la app esté corriendo
 
-Este proyecto está desarrollado específicamente para el Colegio AML.
+## 📄 Información del Proyecto
 
-## 🔄 Actualizaciones
+### 🏷️ Versión Actual: v1.0.0
 
-### Versión Actual: v1.0.0
-- ✅ Sistema biométrico completo
-- ✅ Integración hardware real
-- ✅ Interface web responsive
-- ✅ Base de datos optimizada
+#### ✅ Funcionalidades Implementadas:
+- Sistema de autenticación completo
+- Panel administrativo biométrico
+- Terminal para profesores
+- Gestión de estudiantes
+- Control de asistencia con huellas
+- Interfaz responsive con temas
+- Base de datos MySQL optimizada
 
-### Próximas Funcionalidades
-- 🔄 API REST para integración externa
-- 🔄 Aplicación móvil nativa
-- 🔄 Reportes PDF automáticos
-- 🔄 Sincronización en la nube
+#### 🔄 Próximas Funcionalidades:
+- API REST para integración externa
+- Aplicación móvil nativa
+- Reportes PDF automáticos
+- Integración con sistemas existentes del colegio
+- Backup automático en la nube
+
+### 📋 Tecnologías y Estándares:
+- **Patrón MVC** con Flask Blueprints
+- **Seguridad**: BCrypt, validación de inputs, CSRF protection
+- **Performance**: Consultas optimizadas, caching de sesiones
+- **Usabilidad**: Responsive design, accesibilidad web
+- **Escalabilidad**: Arquitectura modular, base de datos normalizada
 
 ---
 
-**© 2025 Colegio AML - Sistema de Asistencia Biométrica**
+**© 2025 Colegio AML - Sistema de Asistencia Biométrica**  
+*Desarrollado con ❤️ para la educación moderna*
+
+
