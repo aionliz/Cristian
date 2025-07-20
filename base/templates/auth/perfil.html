@@ -1,0 +1,357 @@
+{% extends 'base.html' %}
+
+{% block title %}Mi Perfil - Sistema de Asistencia{% endblock %}
+
+{% block content %}
+<div class="main-content">
+    <div class="container-fluid">
+        <!-- Header -->
+        <div class="row mb-4">
+            <div class="col-12">
+                <div class="d-flex justify-content-between align-items-center">
+                    <div>
+                        <h2 class="mb-0">👤 Mi Perfil</h2>
+                        <p class="text-muted">Gestiona tu información personal y configuración</p>
+                    </div>
+                    <button class="btn btn-primary" onclick="editarPerfil()">
+                        <i class="fas fa-edit"></i> Editar Perfil
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <div class="row">
+            <!-- Información Personal -->
+            <div class="col-md-4">
+                <div class="card">
+                    <div class="card-header">
+                        <h5 class="card-title mb-0">
+                            <i class="fas fa-user"></i> Información Personal
+                        </h5>
+                    </div>
+                    <div class="card-body text-center">
+                        <div class="profile-avatar mb-3">
+                            <img src="https://via.placeholder.com/120/007bff/ffffff?text=Admin" 
+                                 class="rounded-circle" width="120" height="120" alt="Avatar">
+                        </div>
+                        <h4 class="mb-1">{{ session.user_email.split('@')[0]|title }}</h4>
+                        <p class="text-muted mb-2">{{ session.user_role|title }}</p>
+                        <span class="badge bg-success">
+                            <i class="fas fa-circle"></i> Activo
+                        </span>
+                    </div>
+                </div>
+
+                <!-- Estadísticas -->
+                <div class="card mt-4">
+                    <div class="card-header">
+                        <h5 class="card-title mb-0">
+                            <i class="fas fa-chart-bar"></i> Estadísticas
+                        </h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="stat-item mb-3">
+                            <div class="d-flex justify-content-between">
+                                <span>Sesiones Iniciadas</span>
+                                <strong>45</strong>
+                            </div>
+                        </div>
+                        <div class="stat-item mb-3">
+                            <div class="d-flex justify-content-between">
+                                <span>Asistencias Marcadas</span>
+                                <strong>120</strong>
+                            </div>
+                        </div>
+                        <div class="stat-item mb-3">
+                            <div class="d-flex justify-content-between">
+                                <span>Último Acceso</span>
+                                <strong>Hoy</strong>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Detalles del Perfil -->
+            <div class="col-md-8">
+                <div class="card">
+                    <div class="card-header">
+                        <h5 class="card-title mb-0">
+                            <i class="fas fa-info-circle"></i> Detalles del Perfil
+                        </h5>
+                    </div>
+                    <div class="card-body">
+                        <form id="perfil-form">
+                            <div class="row">
+                                <div class="col-md-6 mb-3">
+                                    <label for="nombre" class="form-label">Nombre</label>
+                                    <input type="text" class="form-control" id="nombre" 
+                                           value="{{ session.user_email.split('@')[0]|title }}" readonly>
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    <label for="apellido" class="form-label">Apellido</label>
+                                    <input type="text" class="form-control" id="apellido" 
+                                           value="Usuario" readonly>
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    <label for="email" class="form-label">Email</label>
+                                    <input type="email" class="form-control" id="email" 
+                                           value="{{ session.user_email }}" readonly>
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    <label for="telefono" class="form-label">Teléfono</label>
+                                    <input type="tel" class="form-control" id="telefono" 
+                                           value="+56 9 1234 5678" readonly>
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    <label for="rut" class="form-label">RUT</label>
+                                    <input type="text" class="form-control" id="rut" 
+                                           value="12.345.678-9" readonly>
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    <label for="cargo" class="form-label">Cargo</label>
+                                    <input type="text" class="form-control" id="cargo" 
+                                           value="{{ session.user_role|title }}" readonly>
+                                </div>
+                                <div class="col-12 mb-3">
+                                    <label for="fecha-ingreso" class="form-label">Fecha de Ingreso</label>
+                                    <input type="date" class="form-control" id="fecha-ingreso" 
+                                           value="2024-01-15" readonly>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+
+                <!-- Configuración de Seguridad -->
+                <div class="card mt-4">
+                    <div class="card-header">
+                        <h5 class="card-title mb-0">
+                            <i class="fas fa-shield-alt"></i> Configuración de Seguridad
+                        </h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label">Cambiar Contraseña</label>
+                                <button class="btn btn-outline-warning w-100" onclick="cambiarPassword()">
+                                    <i class="fas fa-key"></i> Cambiar Contraseña
+                                </button>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label">Autenticación de Dos Factores</label>
+                                <button class="btn btn-outline-info w-100" onclick="configurar2FA()">
+                                    <i class="fas fa-mobile-alt"></i> Configurar 2FA
+                                </button>
+                            </div>
+                        </div>
+                        
+                        <div class="alert alert-info">
+                            <i class="fas fa-info-circle"></i>
+                            <strong>Último cambio de contraseña:</strong> Hace 30 días
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Preferencias -->
+                <div class="card mt-4">
+                    <div class="card-header">
+                        <h5 class="card-title mb-0">
+                            <i class="fas fa-cog"></i> Preferencias
+                        </h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <div class="form-check form-switch">
+                                    <input class="form-check-input" type="checkbox" id="notificaciones" checked>
+                                    <label class="form-check-label" for="notificaciones">
+                                        <i class="fas fa-bell"></i> Recibir notificaciones por email
+                                    </label>
+                                </div>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <div class="form-check form-switch">
+                                    <input class="form-check-input" type="checkbox" id="tema-oscuro">
+                                    <label class="form-check-label" for="tema-oscuro">
+                                        <i class="fas fa-moon"></i> Tema oscuro
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="mt-3">
+                            <button class="btn btn-success" onclick="guardarPreferencias()">
+                                <i class="fas fa-save"></i> Guardar Preferencias
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal para cambiar contraseña -->
+<div class="modal fade" id="modal-password" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Cambiar Contraseña</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <form id="form-password">
+                    <div class="mb-3">
+                        <label for="password-actual" class="form-label">Contraseña Actual</label>
+                        <input type="password" class="form-control" id="password-actual" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="password-nueva" class="form-label">Nueva Contraseña</label>
+                        <input type="password" class="form-control" id="password-nueva" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="password-confirmar" class="form-label">Confirmar Nueva Contraseña</label>
+                        <input type="password" class="form-control" id="password-confirmar" required>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                <button type="button" class="btn btn-primary" onclick="confirmarCambioPassword()">
+                    Cambiar Contraseña
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+function editarPerfil() {
+    const inputs = document.querySelectorAll('#perfil-form input');
+    const isReadonly = inputs[0].hasAttribute('readonly');
+    
+    if (isReadonly) {
+        // Activar modo edición
+        inputs.forEach(input => {
+            if (input.id !== 'email' && input.id !== 'cargo') {
+                input.removeAttribute('readonly');
+                input.classList.add('form-control-editable');
+            }
+        });
+        
+        // Cambiar botón
+        const btn = document.querySelector('.btn-primary');
+        btn.innerHTML = '<i class="fas fa-save"></i> Guardar Cambios';
+        btn.setAttribute('onclick', 'guardarPerfil()');
+        btn.classList.remove('btn-primary');
+        btn.classList.add('btn-success');
+    }
+}
+
+function guardarPerfil() {
+    // Simular guardado
+    Utils.showToast('Perfil actualizado exitosamente', 'success');
+    
+    const inputs = document.querySelectorAll('#perfil-form input');
+    inputs.forEach(input => {
+        input.setAttribute('readonly', 'true');
+        input.classList.remove('form-control-editable');
+    });
+    
+    // Restaurar botón
+    const btn = document.querySelector('.btn-success');
+    btn.innerHTML = '<i class="fas fa-edit"></i> Editar Perfil';
+    btn.setAttribute('onclick', 'editarPerfil()');
+    btn.classList.remove('btn-success');
+    btn.classList.add('btn-primary');
+}
+
+function cambiarPassword() {
+    const modal = new bootstrap.Modal(document.getElementById('modal-password'));
+    modal.show();
+}
+
+function confirmarCambioPassword() {
+    const actual = document.getElementById('password-actual').value;
+    const nueva = document.getElementById('password-nueva').value;
+    const confirmar = document.getElementById('password-confirmar').value;
+    
+    if (!actual || !nueva || !confirmar) {
+        Utils.showToast('Todos los campos son obligatorios', 'error');
+        return;
+    }
+    
+    if (nueva !== confirmar) {
+        Utils.showToast('Las contraseñas no coinciden', 'error');
+        return;
+    }
+    
+    if (nueva.length < 6) {
+        Utils.showToast('La contraseña debe tener al menos 6 caracteres', 'error');
+        return;
+    }
+    
+    // Simular cambio de contraseña
+    Utils.showToast('Contraseña cambiada exitosamente', 'success');
+    
+    // Cerrar modal y limpiar form
+    const modal = bootstrap.Modal.getInstance(document.getElementById('modal-password'));
+    modal.hide();
+    document.getElementById('form-password').reset();
+}
+
+function configurar2FA() {
+    Utils.showToast('Funcionalidad de 2FA en desarrollo', 'info');
+}
+
+function guardarPreferencias() {
+    const notificaciones = document.getElementById('notificaciones').checked;
+    const temaOscuro = document.getElementById('tema-oscuro').checked;
+    
+    // Guardar notificaciones en localStorage
+    localStorage.setItem('notificaciones', notificaciones);
+    
+    // El tema ya se maneja automáticamente por el ThemeManager
+    Utils.showToast('Preferencias guardadas exitosamente', 'success');
+}
+
+// Cargar preferencias al inicializar
+document.addEventListener('DOMContentLoaded', function() {
+    // Cargar estado de notificaciones
+    const notificaciones = localStorage.getItem('notificaciones');
+    if (notificaciones !== null) {
+        document.getElementById('notificaciones').checked = notificaciones === 'true';
+    }
+    
+    // El tema oscuro se carga automáticamente por ThemeManager
+});
+</script>
+
+<style>
+.profile-avatar img {
+    border: 4px solid #007bff;
+}
+
+.stat-item {
+    padding: 10px;
+    border-radius: 5px;
+    background-color: #f8f9fa;
+}
+
+.form-control-editable {
+    border-color: #007bff !important;
+    box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25) !important;
+}
+
+.card {
+    box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075);
+    border: 1px solid rgba(0, 0, 0, 0.125);
+}
+
+.card-header {
+    background-color: #f8f9fa;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.125);
+}
+</style>
+{% endblock %}

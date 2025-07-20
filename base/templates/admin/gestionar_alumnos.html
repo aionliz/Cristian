@@ -1,0 +1,431 @@
+{% extends 'base.html' %}
+
+{% block title %}Gestionar Alumnos - Sistema de Asistencia{% endblock %}
+
+{% block content %}
+<div class="main-content">
+    <div class="container-fluid">
+        <!-- Header -->
+        <div class="row mb-4">
+            <div class="col-12">
+                <div class="d-flex justify-content-between align-items-center">
+                    <div>
+                        <h2 class="mb-0">👥 Gestionar Alumnos</h2>
+                        <p class="text-muted">Administra la información de los estudiantes</p>
+                    </div>
+                    <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#modal-alumno">
+                        <i class="fas fa-plus"></i> Nuevo Alumno
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Filtros y búsqueda -->
+        <div class="row mb-4">
+            <div class="col-md-6">
+                <div class="input-group">
+                    <span class="input-group-text"><i class="fas fa-search"></i></span>
+                    <input type="text" class="form-control" id="buscar-alumno" placeholder="Buscar por nombre, apellido o RUT...">
+                </div>
+            </div>
+            <div class="col-md-3">
+                <select class="form-select" id="filtro-curso">
+                    <option value="">Todos los cursos</option>
+                    <option value="1">1° Básico A</option>
+                    <option value="2">1° Básico B</option>
+                    <option value="3">2° Básico A</option>
+                    <option value="4">2° Básico B</option>
+                    <option value="5">3° Básico A</option>
+                </select>
+            </div>
+            <div class="col-md-3">
+                <select class="form-select" id="filtro-estado">
+                    <option value="">Todos los estados</option>
+                    <option value="activo">Activos</option>
+                    <option value="inactivo">Inactivos</option>
+                </select>
+            </div>
+        </div>
+
+        <!-- Estadísticas -->
+        <div class="row mb-4">
+            <div class="col-md-3">
+                <div class="card stat-card">
+                    <div class="card-body text-center">
+                        <div class="stat-icon bg-primary">
+                            <i class="fas fa-users"></i>
+                        </div>
+                        <h3 class="stat-number text-primary" id="total-alumnos">{{ alumnos|length }}</h3>
+                        <p class="stat-label">Total Alumnos</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="card stat-card">
+                    <div class="card-body text-center">
+                        <div class="stat-icon bg-success">
+                            <i class="fas fa-user-check"></i>
+                        </div>
+                        <h3 class="stat-number text-success" id="alumnos-activos">{{ alumnos|length }}</h3>
+                        <p class="stat-label">Activos</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="card stat-card">
+                    <div class="card-body text-center">
+                        <div class="stat-icon bg-warning">
+                            <i class="fas fa-user-times"></i>
+                        </div>
+                        <h3 class="stat-number text-warning" id="alumnos-inactivos">0</h3>
+                        <p class="stat-label">Inactivos</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="card stat-card">
+                    <div class="card-body text-center">
+                        <div class="stat-icon bg-info">
+                            <i class="fas fa-user-plus"></i>
+                        </div>
+                        <h3 class="stat-number text-info" id="nuevos-mes">0</h3>
+                        <p class="stat-label">Nuevos este mes</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Tabla de alumnos -->
+        <div class="row">
+            <div class="col-12">
+                <div class="card">
+                    <div class="card-header">
+                        <h5 class="card-title mb-0">
+                            <i class="fas fa-table"></i> Lista de Alumnos
+                        </h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="table-responsive">
+                            <table class="table table-hover" id="tabla-alumnos">
+                                <thead class="table-dark">
+                                    <tr>
+                                        <th>RUT</th>
+                                        <th>Nombre</th>
+                                        <th>Email</th>
+                                        <th>Teléfono</th>
+                                        <th>Curso</th>
+                                        <th>Fecha Ingreso</th>
+                                        <th>Estado</th>
+                                        <th>Acciones</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="tbody-alumnos">
+                                    {% for alumno in alumnos %}
+                                    <tr data-id="{{ alumno.id_alumno }}">
+                                        <td>{{ alumno.rut }}</td>
+                                        <td>{{ alumno.nombre }} {{ alumno.apellido }}</td>
+                                        <td>{{ alumno.email or '-' }}</td>
+                                        <td>{{ alumno.telefono or '-' }}</td>
+                                        <td>{{ alumno.curso_nombre or 'Sin curso' }}</td>
+                                        <td>{{ alumno.fecha_ingreso.strftime('%d/%m/%Y') if alumno.fecha_ingreso else '-' }}</td>
+                                        <td>
+                                            <span class="badge bg-success">Activo</span>
+                                        </td>
+                                        <td>
+                                            <div class="btn-group" role="group">
+                                                <button class="btn btn-sm btn-outline-primary" onclick="editarAlumno({{ alumno.id_alumno }})" title="Editar">
+                                                    <i class="fas fa-edit"></i>
+                                                </button>
+                                                <button class="btn btn-sm btn-outline-info" onclick="verDetalles({{ alumno.id_alumno }})" title="Ver detalles">
+                                                    <i class="fas fa-eye"></i>
+                                                </button>
+                                                <button class="btn btn-sm btn-outline-danger" onclick="eliminarAlumno({{ alumno.id_alumno }})" title="Eliminar">
+                                                    <i class="fas fa-trash"></i>
+                                                </button>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal para crear/editar alumno -->
+<div class="modal fade" id="modal-alumno" tabindex="-1">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="modal-title">Nuevo Alumno</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <form id="form-alumno">
+                    <input type="hidden" id="alumno-id" name="id_alumno">
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label for="rut" class="form-label">RUT <span class="text-danger">*</span></label>
+                            <input type="text" class="form-control" id="rut" name="rut" required maxlength="12" placeholder="12.345.678-9">
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label for="id_curso" class="form-label">Curso <span class="text-danger">*</span></label>
+                            <select class="form-select" id="id_curso" name="id_curso" required>
+                                <option value="">Seleccionar curso</option>
+                                <option value="1">1° Básico A</option>
+                                <option value="2">1° Básico B</option>
+                                <option value="3">2° Básico A</option>
+                                <option value="4">2° Básico B</option>
+                                <option value="5">3° Básico A</option>
+                            </select>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label for="nombre" class="form-label">Nombre <span class="text-danger">*</span></label>
+                            <input type="text" class="form-control" id="nombre" name="nombre" required maxlength="100">
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label for="apellido" class="form-label">Apellido <span class="text-danger">*</span></label>
+                            <input type="text" class="form-control" id="apellido" name="apellido" required maxlength="100">
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label for="email" class="form-label">Email</label>
+                            <input type="email" class="form-control" id="email" name="email" maxlength="150">
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label for="telefono" class="form-label">Teléfono</label>
+                            <input type="tel" class="form-control" id="telefono" name="telefono" maxlength="15" placeholder="+56 9 1234 5678">
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label for="fecha_nacimiento" class="form-label">Fecha de Nacimiento</label>
+                            <input type="date" class="form-control" id="fecha_nacimiento" name="fecha_nacimiento">
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label for="fecha_ingreso" class="form-label">Fecha de Ingreso</label>
+                            <input type="date" class="form-control" id="fecha_ingreso" name="fecha_ingreso">
+                        </div>
+                        <div class="col-12 mb-3">
+                            <label for="direccion" class="form-label">Dirección</label>
+                            <textarea class="form-control" id="direccion" name="direccion" rows="2" maxlength="255"></textarea>
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                <button type="button" class="btn btn-primary" onclick="guardarAlumno()">Guardar</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal para ver detalles -->
+<div class="modal fade" id="modal-detalles" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Detalles del Alumno</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body" id="detalles-contenido">
+                <!-- Contenido dinámico -->
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+let editandoAlumno = false;
+
+function limpiarFormulario() {
+    document.getElementById('form-alumno').reset();
+    document.getElementById('alumno-id').value = '';
+    editandoAlumno = false;
+    document.getElementById('modal-title').textContent = 'Nuevo Alumno';
+}
+
+function editarAlumno(id) {
+    editandoAlumno = true;
+    document.getElementById('modal-title').textContent = 'Editar Alumno';
+    
+    // Obtener datos del alumno
+    fetch(`/admin/alumnos/${id}/editar`)
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                const alumno = data.alumno;
+                document.getElementById('alumno-id').value = alumno.id_alumno;
+                document.getElementById('rut').value = alumno.rut;
+                document.getElementById('nombre').value = alumno.nombre;
+                document.getElementById('apellido').value = alumno.apellido;
+                document.getElementById('email').value = alumno.email || '';
+                document.getElementById('telefono').value = alumno.telefono || '';
+                document.getElementById('fecha_nacimiento').value = alumno.fecha_nacimiento || '';
+                document.getElementById('direccion').value = alumno.direccion || '';
+                document.getElementById('id_curso').value = alumno.id_curso;
+                document.getElementById('fecha_ingreso').value = alumno.fecha_ingreso || '';
+                
+                // Mostrar modal
+                const modal = new bootstrap.Modal(document.getElementById('modal-alumno'));
+                modal.show();
+            } else {
+                Utils.showToast(data.message, 'error');
+            }
+        })
+        .catch(error => {
+            Utils.showToast('Error al cargar los datos del alumno', 'error');
+        });
+}
+
+function guardarAlumno() {
+    const form = document.getElementById('form-alumno');
+    const formData = new FormData(form);
+    
+    // Validaciones
+    if (!formData.get('rut') || !formData.get('nombre') || !formData.get('apellido') || !formData.get('id_curso')) {
+        Utils.showToast('Por favor complete todos los campos obligatorios', 'error');
+        return;
+    }
+    
+    const url = editandoAlumno ? 
+        `/admin/alumnos/${formData.get('id_alumno')}/editar` : 
+        '/admin/alumnos/crear';
+    
+    fetch(url, {
+        method: 'POST',
+        body: formData
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            Utils.showToast(data.message, 'success');
+            
+            // Cerrar modal y recargar tabla
+            const modal = bootstrap.Modal.getInstance(document.getElementById('modal-alumno'));
+            modal.hide();
+            location.reload(); // Por simplicidad, recargar la página
+        } else {
+            Utils.showToast(data.message, 'error');
+        }
+    })
+    .catch(error => {
+        Utils.showToast('Error al guardar el alumno', 'error');
+    });
+}
+
+function eliminarAlumno(id) {
+    if (!confirm('¿Está seguro de que desea eliminar este alumno?')) {
+        return;
+    }
+    
+    fetch(`/admin/alumnos/${id}/eliminar`, {
+        method: 'DELETE'
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            Utils.showToast(data.message, 'success');
+            location.reload(); // Por simplicidad, recargar la página
+        } else {
+            Utils.showToast(data.message, 'error');
+        }
+    })
+    .catch(error => {
+        Utils.showToast('Error al eliminar el alumno', 'error');
+    });
+}
+
+function verDetalles(id) {
+    fetch(`/admin/alumnos/${id}/editar`)
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                const alumno = data.alumno;
+                const contenido = `
+                    <div class="row">
+                        <div class="col-12">
+                            <h6>Información Personal</h6>
+                            <p><strong>RUT:</strong> ${alumno.rut}</p>
+                            <p><strong>Nombre:</strong> ${alumno.nombre} ${alumno.apellido}</p>
+                            <p><strong>Email:</strong> ${alumno.email || 'No registrado'}</p>
+                            <p><strong>Teléfono:</strong> ${alumno.telefono || 'No registrado'}</p>
+                            <p><strong>Fecha de Nacimiento:</strong> ${alumno.fecha_nacimiento || 'No registrada'}</p>
+                            <p><strong>Dirección:</strong> ${alumno.direccion || 'No registrada'}</p>
+                            <p><strong>Fecha de Ingreso:</strong> ${alumno.fecha_ingreso || 'No registrada'}</p>
+                        </div>
+                    </div>
+                `;
+                
+                document.getElementById('detalles-contenido').innerHTML = contenido;
+                const modal = new bootstrap.Modal(document.getElementById('modal-detalles'));
+                modal.show();
+            } else {
+                Utils.showToast(data.message, 'error');
+            }
+        })
+        .catch(error => {
+            Utils.showToast('Error al cargar los detalles del alumno', 'error');
+        });
+}
+
+// Event listeners
+document.addEventListener('DOMContentLoaded', function() {
+    // Limpiar formulario al abrir modal para nuevo alumno
+    document.getElementById('modal-alumno').addEventListener('show.bs.modal', function(event) {
+        if (!editandoAlumno) {
+            limpiarFormulario();
+        }
+    });
+    
+    // Búsqueda en tiempo real
+    const buscarInput = document.getElementById('buscar-alumno');
+    if (buscarInput) {
+        buscarInput.addEventListener('input', function() {
+            // Implementar búsqueda en tiempo real
+            // Por ahora, solo filtrar la tabla actual
+            filtrarTabla();
+        });
+    }
+    
+    // Filtros
+    document.getElementById('filtro-curso').addEventListener('change', filtrarTabla);
+    document.getElementById('filtro-estado').addEventListener('change', filtrarTabla);
+});
+
+function filtrarTabla() {
+    const busqueda = document.getElementById('buscar-alumno').value.toLowerCase();
+    const filtroCurso = document.getElementById('filtro-curso').value;
+    const filtroEstado = document.getElementById('filtro-estado').value;
+    
+    const filas = document.querySelectorAll('#tbody-alumnos tr');
+    
+    filas.forEach(fila => {
+        const textoFila = fila.textContent.toLowerCase();
+        const cumpleBusqueda = textoFila.includes(busqueda);
+        const cumpleCurso = !filtroCurso || fila.cells[4].textContent.includes(filtroCurso);
+        const cumpleEstado = !filtroEstado; // Por ahora, todos son activos
+        
+        if (cumpleBusqueda && cumpleCurso && cumpleEstado) {
+            fila.style.display = '';
+        } else {
+            fila.style.display = 'none';
+        }
+    });
+}
+
+// Formatear RUT mientras se escribe
+document.getElementById('rut').addEventListener('input', function(e) {
+    let rut = e.target.value.replace(/[^0-9kK]/g, '');
+    if (rut.length > 1) {
+        rut = rut.slice(0, -1).replace(/\B(?=(\d{3})+(?!\d))/g, '.') + '-' + rut.slice(-1);
+    }
+    e.target.value = rut;
+});
+</script>
+{% endblock %}

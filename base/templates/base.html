@@ -1,0 +1,439 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Sistema de Asistencia - Colegio AML{% endblock %}</title>
+    
+    <!-- Bootstrap 5 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Font Awesome -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <!-- jQuery UI CSS (para autocomplete) -->
+    <link href="https://code.jquery.com/ui/1.13.2/themes/ui-lightness/jquery-ui.css" rel="stylesheet">
+    <!-- CSS personalizado -->
+    <link href="{{ url_for('static', filename='css/style.css') }}" rel="stylesheet">
+    <!-- Tema nocturno mejorado -->
+    <link href="{{ url_for('static', filename='css/dark-theme-enhanced.css') }}" rel="stylesheet">
+    <!-- Corrección de contraste de texto -->
+    <link href="{{ url_for('static', filename='css/text-contrast-fix.css') }}" rel="stylesheet">
+    
+    {% block head %}{% endblock %}
+</head>
+<body>
+    <!-- Fondo de partículas para tema oscuro -->
+    <div class="particles-bg"></div>
+    <!-- Navbar -->
+    <nav class="navbar navbar-expand-lg navbar-dark bg-primary navbar-elegant">
+        <div class="container">
+            <a class="navbar-brand" href="{{ url_for('asistencia.index') }}">
+                <img src="{{ url_for('static', filename='img/logo.png') }}" alt="Logo" width="30" height="30" class="d-inline-block align-top me-2">
+                Colegio AML
+            </a>
+            
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav me-auto">
+                    {% if session.user_id %}
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ url_for('asistencia.index') }}">
+                            <i class="fas fa-home"></i> Inicio
+                        </a>
+                    </li>
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" id="asistenciaDropdown" role="button" data-bs-toggle="dropdown">
+                            <i class="fas fa-check-circle"></i> Asistencia
+                        </a>
+                        <ul class="dropdown-menu">
+                            <li><a class="dropdown-item" href="{{ url_for('asistencia.marcar_asistencia') }}">
+                                <i class="fas fa-user-check"></i> Marcar Asistencia
+                            </a></li>
+                            <li><a class="dropdown-item" href="{{ url_for('asistencia.listar_por_curso') }}">
+                                <i class="fas fa-users"></i> Por Curso
+                            </a></li>
+                            <li><hr class="dropdown-divider"></li>
+                            <li><a class="dropdown-item" href="{{ url_for('asistencia.reporte_mensual') }}">
+                                <i class="fas fa-chart-bar"></i> Reportes
+                            </a></li>
+                        </ul>
+                    </li>
+                    {% if session.user_role == 'admin' or session.user_role == 'profesor' %}
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" id="administracionDropdown" role="button" data-bs-toggle="dropdown">
+                            <i class="fas fa-cog"></i> Herramientas
+                        </a>
+                        <ul class="dropdown-menu">
+                            {% if session.user_role == 'admin' %}
+                            <li><a class="dropdown-item" href="{{ url_for('admin.gestionar_alumnos') }}">
+                                <i class="fas fa-users"></i> Gestionar Alumnos
+                            </a></li>
+                            <li><a class="dropdown-item" href="#">
+                                <i class="fas fa-chalkboard-teacher"></i> Gestionar Profesores
+                            </a></li>
+                            <li><a class="dropdown-item" href="#">
+                                <i class="fas fa-school"></i> Gestionar Cursos
+                            </a></li>
+                            <li><hr class="dropdown-divider"></li>
+                            {% endif %}
+                            <li><a class="dropdown-item" href="#" onclick="detectarDispositivos()">
+                                <i class="fas fa-fingerprint"></i> Detectar Dispositivos
+                            </a></li>
+                            <li><a class="dropdown-item" href="#" onclick="mostrarInfoSesion()">
+                                <i class="fas fa-info-circle"></i> Info de Sesión
+                            </a></li>
+                        </ul>
+                    </li>
+                    {% endif %}
+                    {% endif %}
+                </ul>
+                
+                {% if session.user_id %}
+                <ul class="navbar-nav">
+                    <li class="nav-item">
+                        <button class="btn btn-link nav-link" id="theme-toggle-btn" title="Alternar tema">
+                            <i class="fas fa-moon"></i>
+                        </button>
+                    </li>
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" id="userDropdown" role="button" data-bs-toggle="dropdown">
+                            <i class="fas fa-user"></i> {{ session.user_email or 'Usuario' }}
+                        </a>
+                        <ul class="dropdown-menu dropdown-menu-end">
+                            <li><a class="dropdown-item" href="{{ url_for('auth.perfil') }}">
+                                <i class="fas fa-user-edit"></i> Mi Perfil
+                            </a></li>
+                            <li><hr class="dropdown-divider"></li>
+                            <li><a class="dropdown-item" href="{{ url_for('auth.logout') }}">
+                                <i class="fas fa-sign-out-alt"></i> Cerrar Sesión
+                            </a></li>
+                        </ul>
+                    </li>
+                </ul>
+                {% else %}
+                <ul class="navbar-nav">
+                    <li class="nav-item">
+                        <a class="nav-link" href="#">
+                            <i class="fas fa-sign-in-alt"></i> Iniciar Sesión
+                        </a>
+                    </li>
+                </ul>
+                {% endif %}
+            </div>
+        </div>
+    </nav>
+
+    <!-- Contenido principal -->
+    <main class="container-fluid">
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                <div class="container mt-3 animate-fadeInUp">
+                    {% for category, message in messages %}
+                        {% set alert_class = {
+                            'error': 'alert-danger',
+                            'success': 'alert-success',
+                            'warning': 'alert-warning',
+                            'info': 'alert-info'
+                        } %}
+                        <div class="alert {{ alert_class.get(category, 'alert-info') }} alert-dismissible fade show" role="alert">
+                            {% if category == 'error' %}
+                                <i class="fas fa-exclamation-triangle"></i>
+                            {% elif category == 'success' %}
+                                <i class="fas fa-check-circle"></i>
+                            {% elif category == 'warning' %}
+                                <i class="fas fa-exclamation-circle"></i>
+                            {% else %}
+                                <i class="fas fa-info-circle"></i>
+                            {% endif %}
+                            {{ message }}
+                            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                        </div>
+                    {% endfor %}
+                </div>
+            {% endif %}
+        {% endwith %}
+
+        {% block content %}{% endblock %}
+    </main>
+
+    <!-- Footer -->
+    {% include 'includes/footer.html' %}
+
+    <!-- Scripts -->
+    <!-- jQuery -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <!-- jQuery UI (para autocomplete) -->
+    <script src="https://code.jquery.com/ui/1.13.2/jquery-ui.min.js"></script>
+    <!-- Bootstrap 5 JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <!-- Script personalizado -->
+    <script src="{{ url_for('static', filename='js/main.js') }}"></script>
+    
+    <script>
+        // Actualizar la hora actual en el footer
+        function updateCurrentTime() {
+            const now = new Date();
+            const timeString = now.toLocaleString('es-CL');
+            document.getElementById('current-time').textContent = timeString;
+        }
+        
+        // Actualizar cada minuto
+        updateCurrentTime();
+        setInterval(updateCurrentTime, 60000);
+        
+        // Configuración global para AJAX
+        $.ajaxSetup({
+            beforeSend: function(xhr, settings) {
+                if (!/^(GET|HEAD|OPTIONS|TRACE)$/i.test(settings.type) && !this.crossDomain) {
+                    xhr.setRequestHeader("X-CSRFToken", $('meta[name=csrf-token]').attr('content'));
+                }
+            }
+        });
+        
+        // Función para detectar dispositivos
+        function detectarDispositivos() {
+            // Crear y mostrar modal
+            const modalHtml = `
+                <div class="modal fade" id="dispositivosModal" tabindex="-1">
+                    <div class="modal-dialog modal-lg">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h5 class="modal-title">
+                                    <i class="fas fa-fingerprint"></i> Detección de Dispositivos Biométricos
+                                </h5>
+                                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                            </div>
+                            <div class="modal-body">
+                                <div id="dispositivos-loading" class="text-center">
+                                    <div class="spinner-border text-primary" role="status">
+                                        <span class="visually-hidden">Detectando dispositivos...</span>
+                                    </div>
+                                    <p class="mt-2">Detectando dispositivos conectados...</p>
+                                </div>
+                                <div id="dispositivos-content" style="display: none;"></div>
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-primary" onclick="detectarDispositivos()">
+                                    <i class="fas fa-refresh"></i> Actualizar
+                                </button>
+                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `;
+            
+            // Remover modal anterior si existe
+            $('#dispositivosModal').remove();
+            
+            // Agregar modal al DOM
+            $('body').append(modalHtml);
+            
+            // Mostrar modal
+            const modal = new bootstrap.Modal(document.getElementById('dispositivosModal'));
+            modal.show();
+            
+            // Realizar petición AJAX
+            $.ajax({
+                url: '{{ url_for("asistencia.detectar_dispositivos") }}',
+                type: 'GET',
+                success: function(response) {
+                    $('#dispositivos-loading').hide();
+                    $('#dispositivos-content').show();
+                    
+                    let html = '';
+                    
+                    // Información del sistema
+                    html += '<div class="card mb-3">';
+                    html += '<div class="card-header"><h6><i class="fas fa-desktop"></i> Información del Sistema</h6></div>';
+                    html += '<div class="card-body">';
+                    html += '<div class="row">';
+                    html += '<div class="col-md-6"><strong>SO:</strong> ' + response.sistema.sistema_operativo + '</div>';
+                    html += '<div class="col-md-6"><strong>Arquitectura:</strong> ' + response.sistema.arquitectura + '</div>';
+                    html += '<div class="col-md-6"><strong>Python:</strong> ' + response.sistema.python_version + '</div>';
+                    html += '<div class="col-md-6"><strong>Fecha:</strong> ' + new Date(response.timestamp).toLocaleString() + '</div>';
+                    html += '</div>';
+                    html += '</div>';
+                    html += '</div>';
+                    
+                    // Dispositivos de huellas
+                    html += '<div class="card mb-3">';
+                    html += '<div class="card-header d-flex justify-content-between align-items-center">';
+                    html += '<h6><i class="fas fa-fingerprint"></i> Lectores de Huellas Detectados</h6>';
+                    html += '<div class="btn-group" role="group">';
+                    html += '<button type="button" class="btn btn-sm btn-success" onclick="controlarLuces(\'on\')"><i class="fas fa-lightbulb"></i> Encender</button>';
+                    html += '<button type="button" class="btn btn-sm btn-warning" onclick="controlarLuces(\'blink\')"><i class="fas fa-stroopwafel"></i> Parpadear</button>';
+                    html += '<button type="button" class="btn btn-sm btn-info" onclick="controlarLuces(\'pulse\')"><i class="fas fa-circle-notch"></i> Pulso</button>';
+                    html += '<button type="button" class="btn btn-sm btn-secondary" onclick="controlarLuces(\'off\')"><i class="fas fa-power-off"></i> Apagar</button>';
+                    html += '</div>';
+                    html += '</div>';
+                    html += '<div class="card-body">';
+                    
+                    if (response.dispositivos_huellas && response.dispositivos_huellas.length > 0) {
+                        response.dispositivos_huellas.forEach(function(dispositivo) {
+                            const statusClass = dispositivo.estado === 'Conectado' ? 'text-success' : 'text-danger';
+                            html += '<div class="row mb-2 p-2 border rounded">';
+                            html += '<div class="col-md-3"><strong>Modelo:</strong> ' + dispositivo.modelo + '</div>';
+                            html += '<div class="col-md-3"><strong>Estado:</strong> <span class="' + statusClass + '">' + dispositivo.estado + '</span></div>';
+                            html += '<div class="col-md-3"><strong>Dispositivo:</strong> ' + dispositivo.dispositivo + '</div>';
+                            html += '<div class="col-md-3"><strong>Tipo:</strong> ' + dispositivo.tipo + '</div>';
+                            if (dispositivo.detalles && Object.keys(dispositivo.detalles).length > 0) {
+                                html += '<div class="col-12 mt-2"><details><summary>Detalles técnicos</summary>';
+                                html += '<pre class="mt-2">' + JSON.stringify(dispositivo.detalles, null, 2) + '</pre>';
+                                html += '</details></div>';
+                            }
+                            html += '</div>';
+                        });
+                    } else {
+                        html += '<p class="text-muted">No se detectaron lectores de huellas.</p>';
+                    }
+                    
+                    html += '</div>';
+                    html += '</div>';
+                    
+                    // Dispositivos USB
+                    html += '<div class="card">';
+                    html += '<div class="card-header"><h6><i class="fas fa-usb"></i> Dispositivos USB Conectados</h6></div>';
+                    html += '<div class="card-body">';
+                    
+                    if (response.dispositivos_usb && response.dispositivos_usb.length > 0) {
+                        html += '<div class="table-responsive">';
+                        html += '<table class="table table-sm">';
+                        html += '<thead><tr><th>Dispositivo</th><th>Detalles</th></tr></thead>';
+                        html += '<tbody>';
+                        
+                        response.dispositivos_usb.slice(0, 10).forEach(function(dispositivo) {
+                            html += '<tr>';
+                            if (dispositivo.error) {
+                                html += '<td colspan="2" class="text-danger">' + dispositivo.error + '</td>';
+                            } else if (dispositivo.descripcion) {
+                                html += '<td>' + dispositivo.descripcion + '</td>';
+                                html += '<td>-</td>';
+                            } else {
+                                html += '<td>' + (dispositivo.nombre || dispositivo.id || 'Dispositivo USB') + '</td>';
+                                html += '<td>' + (dispositivo.manufacturer || dispositivo.vendor_id || '-') + '</td>';
+                            }
+                            html += '</tr>';
+                        });
+                        
+                        if (response.dispositivos_usb.length > 10) {
+                            html += '<tr><td colspan="2" class="text-muted">... y ' + (response.dispositivos_usb.length - 10) + ' dispositivos más</td></tr>';
+                        }
+                        
+                        html += '</tbody>';
+                        html += '</table>';
+                        html += '</div>';
+                    } else {
+                        html += '<p class="text-muted">No se pudieron obtener dispositivos USB.</p>';
+                    }
+                    
+                    html += '</div>';
+                    html += '</div>';
+                    
+                    $('#dispositivos-content').html(html);
+                },
+                error: function(xhr, status, error) {
+                    $('#dispositivos-loading').hide();
+                    $('#dispositivos-content').show();
+                    $('#dispositivos-content').html(
+                        '<div class="alert alert-danger">' +
+                        '<i class="fas fa-exclamation-triangle"></i> ' +
+                        'Error al detectar dispositivos: ' + error +
+                        '</div>'
+                    );
+                }
+            });
+        }
+        
+        // Función para mostrar información de sesión (debug)
+        function mostrarInfoSesion() {
+            const info = {
+                user_id: '{{ session.user_id or "No definido" }}',
+                user_email: '{{ session.user_email or "No definido" }}',
+                user_role: '{{ session.user_role or "No definido" }}'
+            };
+            
+            alert('Información de Sesión:\n' + 
+                  'ID: ' + info.user_id + '\n' + 
+                  'Email: ' + info.user_email + '\n' + 
+                  'Rol: ' + info.user_role);
+        }
+        
+        // Función para controlar las luces del lector
+        function controlarLuces(action, duration = 0) {
+            // Mostrar indicador de carga
+            const originalContent = $('#dispositivos-content').html();
+            $('#dispositivos-content').prepend(
+                '<div id="luces-loading" class="alert alert-info">' +
+                '<div class="spinner-border spinner-border-sm me-2" role="status"></div>' +
+                'Enviando comando de luces: <strong>' + action.toUpperCase() + '</strong>...' +
+                '</div>'
+            );
+            
+            // Realizar petición AJAX
+            $.ajax({
+                url: '{{ url_for("asistencia.controlar_luces_lector") }}',
+                type: 'GET',
+                data: {
+                    action: action,
+                    duration: duration
+                },
+                success: function(response) {
+                    $('#luces-loading').remove();
+                    
+                    if (response.success) {
+                        $('#dispositivos-content').prepend(
+                            '<div class="alert alert-success alert-dismissible fade show">' +
+                            '<i class="fas fa-check-circle"></i> ' +
+                            '<strong>¡Éxito!</strong> ' + response.message + 
+                            (response.duration > 0 ? ' (duración: ' + response.duration + 's)' : '') +
+                            '<button type="button" class="btn-close" data-bs-dismiss="alert"></button>' +
+                            '</div>'
+                        );
+                        
+                        // Auto-remover alerta después de 3 segundos
+                        setTimeout(function() {
+                            $('.alert-success').fadeOut();
+                        }, 3000);
+                        
+                    } else {
+                        $('#dispositivos-content').prepend(
+                            '<div class="alert alert-warning alert-dismissible fade show">' +
+                            '<i class="fas fa-exclamation-triangle"></i> ' +
+                            '<strong>Advertencia:</strong> ' + response.error +
+                            '<button type="button" class="btn-close" data-bs-dismiss="alert"></button>' +
+                            '</div>'
+                        );
+                    }
+                },
+                error: function(xhr, status, error) {
+                    $('#luces-loading').remove();
+                    
+                    let errorMsg = 'Error de conexión';
+                    try {
+                        const response = JSON.parse(xhr.responseText);
+                        errorMsg = response.error || errorMsg;
+                    } catch(e) {
+                        errorMsg = error;
+                    }
+                    
+                    $('#dispositivos-content').prepend(
+                        '<div class="alert alert-danger alert-dismissible fade show">' +
+                        '<i class="fas fa-exclamation-circle"></i> ' +
+                        '<strong>Error:</strong> ' + errorMsg +
+                        '<button type="button" class="btn-close" data-bs-dismiss="alert"></button>' +
+                        '</div>'
+                    );
+                }
+            });
+        }
+    </script>
+    
+    <!-- JavaScript personalizado -->
+    <script src="{{ url_for('static', filename='js/main.js') }}"></script>
+    
+    {% block scripts %}{% endblock %}
+</body>
+</html>

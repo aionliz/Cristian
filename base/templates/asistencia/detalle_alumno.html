@@ -1,0 +1,232 @@
+{% extends "base.html" %}
+
+{% block title %}Detalle de Asistencia - {{ alumno.nombre_completo() }} - Colegio AML{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="row">
+        <div class="col-12">
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <h1 class="h3">
+                    <i class="fas fa-user text-primary"></i>
+                    Detalle de Asistencia
+                </h1>
+                <a href="{{ url_for('asistencia.index') }}" class="btn btn-outline-secondary">
+                    <i class="fas fa-arrow-left"></i> Volver
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Información del alumno -->
+    <div class="row mb-4">
+        <div class="col-md-8">
+            <div class="card border-0 shadow-sm">
+                <div class="card-header bg-primary text-white">
+                    <h5 class="mb-0">
+                        <i class="fas fa-user"></i> Información del Alumno
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <p><strong>Nombre:</strong> {{ alumno.nombre_completo() }}</p>
+                            <p><strong>RUT:</strong> {{ alumno.rut }}</p>
+                            {% if alumno.email %}
+                            <p><strong>Email:</strong> {{ alumno.email }}</p>
+                            {% endif %}
+                        </div>
+                        <div class="col-md-6">
+                            {% if hasattr(alumno, 'nombre_curso') %}
+                            <p><strong>Curso:</strong> {{ alumno.nombre_curso }}</p>
+                            {% endif %}
+                            {% if alumno.telefono %}
+                            <p><strong>Teléfono:</strong> {{ alumno.telefono }}</p>
+                            {% endif %}
+                            {% if hasattr(alumno, 'nombre_apoderado') %}
+                            <p><strong>Apoderado:</strong> {{ alumno.nombre_apoderado }} {{ alumno.apellido_apoderado }}</p>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Estadísticas -->
+        <div class="col-md-4">
+            <div class="card border-0 shadow-sm">
+                <div class="card-header bg-info text-white">
+                    <h6 class="mb-0">
+                        <i class="fas fa-chart-pie"></i> Resumen de Asistencia
+                    </h6>
+                </div>
+                <div class="card-body">
+                    {% if resumen %}
+                    <div class="text-center mb-3">
+                        <h2 class="text-primary">{{ porcentaje }}%</h2>
+                        <p class="text-muted mb-0">Porcentaje de Asistencia</p>
+                    </div>
+                    <hr>
+                    <div class="row text-center">
+                        <div class="col-6">
+                            <div class="mb-2">
+                                <strong class="text-success">{{ resumen.dias_presente }}</strong>
+                            </div>
+                            <small class="text-muted">Presente</small>
+                        </div>
+                        <div class="col-6">
+                            <div class="mb-2">
+                                <strong class="text-danger">{{ resumen.dias_ausente }}</strong>
+                            </div>
+                            <small class="text-muted">Ausente</small>
+                        </div>
+                        <div class="col-6 mt-2">
+                            <div class="mb-2">
+                                <strong class="text-warning">{{ resumen.dias_tardanza }}</strong>
+                            </div>
+                            <small class="text-muted">Tardanza</small>
+                        </div>
+                        <div class="col-6 mt-2">
+                            <div class="mb-2">
+                                <strong class="text-info">{{ resumen.dias_justificado }}</strong>
+                            </div>
+                            <small class="text-muted">Justificado</small>
+                        </div>
+                    </div>
+                    {% else %}
+                    <p class="text-muted text-center">Sin datos de asistencia</p>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Filtros de fecha -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="card border-0 shadow-sm">
+                <div class="card-body">
+                    <form method="GET" class="row g-3">
+                        <div class="col-md-4">
+                            <label for="fecha_inicio" class="form-label">Fecha Inicio</label>
+                            <input type="date" class="form-control" id="fecha_inicio" name="fecha_inicio" 
+                                   value="{{ fecha_inicio }}">
+                        </div>
+                        <div class="col-md-4">
+                            <label for="fecha_fin" class="form-label">Fecha Fin</label>
+                            <input type="date" class="form-control" id="fecha_fin" name="fecha_fin" 
+                                   value="{{ fecha_fin }}">
+                        </div>
+                        <div class="col-md-4 d-flex align-items-end">
+                            <button type="submit" class="btn btn-primary">
+                                <i class="fas fa-search"></i> Filtrar
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Historial de asistencia -->
+    <div class="row">
+        <div class="col-12">
+            <div class="card border-0 shadow-sm">
+                <div class="card-header bg-light">
+                    <h5 class="mb-0">
+                        <i class="fas fa-history"></i>
+                        Historial de Asistencia
+                    </h5>
+                </div>
+                <div class="card-body p-0">
+                    {% if historial %}
+                    <div class="table-responsive">
+                        <table class="table table-hover mb-0">
+                            <thead class="table-light">
+                                <tr>
+                                    <th>Fecha</th>
+                                    <th>Estado</th>
+                                    <th>Hora Llegada</th>
+                                    <th>Observaciones</th>
+                                    <th>Profesor</th>
+                                    <th>Acciones</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for registro in historial %}
+                                <tr>
+                                    <td>
+                                        {{ registro.fecha.strftime('%d/%m/%Y') }}
+                                        <small class="text-muted d-block">
+                                            {{ registro.fecha.strftime('%A') }}
+                                        </small>
+                                    </td>
+                                    <td>
+                                        {% if registro.estado == 'presente' %}
+                                            <span class="badge bg-success">
+                                                <i class="fas fa-check"></i> Presente
+                                            </span>
+                                        {% elif registro.estado == 'ausente' %}
+                                            <span class="badge bg-danger">
+                                                <i class="fas fa-times"></i> Ausente
+                                            </span>
+                                        {% elif registro.estado == 'tardanza' %}
+                                            <span class="badge bg-warning">
+                                                <i class="fas fa-clock"></i> Tardanza
+                                            </span>
+                                        {% elif registro.estado == 'justificado' %}
+                                            <span class="badge bg-info">
+                                                <i class="fas fa-file-alt"></i> Justificado
+                                            </span>
+                                        {% endif %}
+                                    </td>
+                                    <td>
+                                        {% if registro.hora_llegada %}
+                                            {{ registro.hora_llegada.strftime('%H:%M') }}
+                                        {% else %}
+                                            <span class="text-muted">-</span>
+                                        {% endif %}
+                                    </td>
+                                    <td>
+                                        {% if registro.observaciones %}
+                                            <span title="{{ registro.observaciones }}">
+                                                {{ registro.observaciones[:50] }}{% if registro.observaciones|length > 50 %}...{% endif %}
+                                            </span>
+                                        {% else %}
+                                            <span class="text-muted">-</span>
+                                        {% endif %}
+                                    </td>
+                                    <td>
+                                        {% if registro.id_profesor %}
+                                            <span class="text-muted">Profesor</span>
+                                        {% else %}
+                                            <span class="text-muted">-</span>
+                                        {% endif %}
+                                    </td>
+                                    <td>
+                                        <a href="{{ url_for('asistencia.editar_asistencia', id_asistencia=registro.id_asistencia) }}" 
+                                           class="btn btn-sm btn-outline-primary" title="Editar">
+                                            <i class="fas fa-edit"></i>
+                                        </a>
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                    {% else %}
+                    <div class="text-center py-5">
+                        <i class="fas fa-calendar-times fa-3x text-muted mb-3"></i>
+                        <h5 class="text-muted">Sin registros de asistencia</h5>
+                        <p class="text-muted">No hay registros para el período seleccionado</p>
+                        <a href="{{ url_for('asistencia.marcar_asistencia') }}" class="btn btn-primary">
+                            <i class="fas fa-plus"></i> Marcar Asistencia
+                        </a>
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

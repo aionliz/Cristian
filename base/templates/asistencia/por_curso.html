@@ -1,0 +1,360 @@
+{% extends "base.html" %}
+
+{% block title %}Asistencia por Curso - Colegio AML{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="row">
+        <div class="col-12">
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <h1 class="h3">
+                    <i class="fas fa-users text-primary"></i>
+                    Asistencia por Curso
+                </h1>
+                <a href="{{ url_for('asistencia.index') }}" class="btn btn-outline-secondary">
+                    <i class="fas fa-arrow-left"></i> Volver
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Filtros -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="card border-0 shadow-sm">
+                <div class="card-body">
+                    <form method="GET" class="row g-3">
+                        <div class="col-md-4">
+                            <label for="curso" class="form-label">
+                                <i class="fas fa-school"></i> Curso
+                            </label>
+                            <select class="form-select" id="curso" name="curso" onchange="this.form.submit()">
+                                <option value="">Seleccione un curso...</option>
+                                {% for curso in cursos %}
+                                <option value="{{ curso.id_curso }}" 
+                                        {% if curso.id_curso|string == id_curso %}selected{% endif %}>
+                                    {{ curso.nombre }} - {{ curso.nivel }}
+                                </option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        <div class="col-md-4">
+                            <label for="fecha" class="form-label">
+                                <i class="fas fa-calendar"></i> Fecha
+                            </label>
+                            <input type="date" class="form-control" id="fecha" name="fecha" 
+                                   value="{{ fecha }}" onchange="this.form.submit()">
+                        </div>
+                        <div class="col-md-4 d-flex align-items-end">
+                            <button type="submit" class="btn btn-primary me-2">
+                                <i class="fas fa-search"></i> Buscar
+                            </button>
+                            {% if id_curso %}
+                            <button type="button" class="btn btn-success" onclick="mostrarModalMarcarTodos()">
+                                <i class="fas fa-check-double"></i> Marcar Todos
+                            </button>
+                            {% endif %}
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    {% if id_curso %}
+    <!-- Resumen -->
+    <div class="row mb-4">
+        <div class="col-md-3">
+            <div class="card text-center border-0 shadow-sm">
+                <div class="card-body">
+                    <h3 class="text-success">{{ asistencias|selectattr("estado", "equalto", "presente")|list|length }}</h3>
+                    <p class="mb-0 text-muted">Presentes</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card text-center border-0 shadow-sm">
+                <div class="card-body">
+                    <h3 class="text-danger">{{ asistencias|selectattr("estado", "equalto", "ausente")|list|length }}</h3>
+                    <p class="mb-0 text-muted">Ausentes</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card text-center border-0 shadow-sm">
+                <div class="card-body">
+                    <h3 class="text-warning">{{ asistencias|selectattr("estado", "equalto", "tardanza")|list|length }}</h3>
+                    <p class="mb-0 text-muted">Tardanzas</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card text-center border-0 shadow-sm">
+                <div class="card-body">
+                    <h3 class="text-info">{{ alumnos_sin_asistencia|length }}</h3>
+                    <p class="mb-0 text-muted">Sin Registro</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Lista de asistencias -->
+    {% if asistencias %}
+    <div class="row">
+        <div class="col-12">
+            <div class="card border-0 shadow-sm">
+                <div class="card-header bg-light">
+                    <h5 class="mb-0">
+                        <i class="fas fa-list"></i>
+                        Alumnos con Asistencia Registrada
+                    </h5>
+                </div>
+                <div class="card-body p-0">
+                    <div class="table-responsive">
+                        <table class="table table-hover mb-0">
+                            <thead class="table-light">
+                                <tr>
+                                    <th>RUT</th>
+                                    <th>Nombre Completo</th>
+                                    <th>Estado</th>
+                                    <th>Hora Llegada</th>
+                                    <th>Observaciones</th>
+                                    <th>Acciones</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for asistencia in asistencias %}
+                                <tr>
+                                    <td>{{ asistencia.rut }}</td>
+                                    <td>
+                                        <strong>{{ asistencia.nombre }} {{ asistencia.apellido }}</strong>
+                                    </td>
+                                    <td>
+                                        {% if asistencia.estado == 'presente' %}
+                                            <span class="badge bg-success">
+                                                <i class="fas fa-check"></i> Presente
+                                            </span>
+                                        {% elif asistencia.estado == 'ausente' %}
+                                            <span class="badge bg-danger">
+                                                <i class="fas fa-times"></i> Ausente
+                                            </span>
+                                        {% elif asistencia.estado == 'tardanza' %}
+                                            <span class="badge bg-warning">
+                                                <i class="fas fa-clock"></i> Tardanza
+                                            </span>
+                                        {% elif asistencia.estado == 'justificado' %}
+                                            <span class="badge bg-info">
+                                                <i class="fas fa-file-alt"></i> Justificado
+                                            </span>
+                                        {% endif %}
+                                    </td>
+                                    <td>
+                                        {% if asistencia.hora_llegada %}
+                                            {{ asistencia.hora_llegada.strftime('%H:%M') }}
+                                        {% else %}
+                                            <span class="text-muted">-</span>
+                                        {% endif %}
+                                    </td>
+                                    <td>
+                                        {% if asistencia.observaciones %}
+                                            <span title="{{ asistencia.observaciones }}">
+                                                {{ asistencia.observaciones[:30] }}{% if asistencia.observaciones|length > 30 %}...{% endif %}
+                                            </span>
+                                        {% else %}
+                                            <span class="text-muted">-</span>
+                                        {% endif %}
+                                    </td>
+                                    <td>
+                                        <div class="btn-group btn-group-sm" role="group">
+                                            <a href="{{ url_for('asistencia.editar_asistencia', id_asistencia=asistencia.id_asistencia) }}" 
+                                               class="btn btn-outline-primary" title="Editar">
+                                                <i class="fas fa-edit"></i>
+                                            </a>
+                                            <a href="{{ url_for('asistencia.detalle_alumno', id_alumno=asistencia.id_alumno) }}" 
+                                               class="btn btn-outline-info" title="Ver historial">
+                                                <i class="fas fa-history"></i>
+                                            </a>
+                                        </div>
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    {% endif %}
+
+    <!-- Alumnos sin asistencia -->
+    {% if alumnos_sin_asistencia %}
+    <div class="row mt-4">
+        <div class="col-12">
+            <div class="card border-0 shadow-sm">
+                <div class="card-header bg-warning">
+                    <h5 class="mb-0">
+                        <i class="fas fa-exclamation-triangle"></i>
+                        Alumnos Sin Registro de Asistencia
+                    </h5>
+                </div>
+                <div class="card-body p-0">
+                    <div class="table-responsive">
+                        <table class="table table-hover mb-0">
+                            <thead class="table-light">
+                                <tr>
+                                    <th>RUT</th>
+                                    <th>Nombre Completo</th>
+                                    <th>Acciones</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for alumno in alumnos_sin_asistencia %}
+                                <tr>
+                                    <td>{{ alumno.rut }}</td>
+                                    <td>
+                                        <strong>{{ alumno.nombre }} {{ alumno.apellido }}</strong>
+                                    </td>
+                                    <td>
+                                        <button class="btn btn-sm btn-outline-primary" 
+                                                onclick="marcarAsistenciaRapida({{ alumno.id_alumno }}, '{{ alumno.nombre|escape }} {{ alumno.apellido|escape }}')">
+                                            <i class="fas fa-plus"></i> Marcar
+                                        </button>
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    {% endif %}
+
+    {% else %}
+    <div class="row">
+        <div class="col-12">
+            <div class="card border-0 shadow-sm">
+                <div class="card-body text-center py-5">
+                    <i class="fas fa-school fa-3x text-muted mb-3"></i>
+                    <h5 class="text-muted">Seleccione un curso para ver la asistencia</h5>
+                    <p class="text-muted">Use los filtros de arriba para comenzar</p>
+                </div>
+            </div>
+        </div>
+    </div>
+    {% endif %}
+</div>
+
+<!-- Modal para marcar asistencia rápida -->
+<div class="modal fade" id="modalAsistenciaRapida" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">
+                    <i class="fas fa-user-check"></i> Marcar Asistencia
+                </h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <form id="formAsistenciaRapida">
+                    <input type="hidden" id="rapid_id_alumno" name="id_alumno">
+                    <input type="hidden" id="rapid_fecha" name="fecha" value="{{ fecha }}">
+                    
+                    <div class="mb-3">
+                        <strong>Alumno:</strong> <span id="rapid_nombre_alumno"></span>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label for="rapid_estado" class="form-label">Estado</label>
+                        <select class="form-select" id="rapid_estado" name="estado" required>
+                            <option value="presente">Presente</option>
+                            <option value="ausente">Ausente</option>
+                            <option value="tardanza">Tardanza</option>
+                            <option value="justificado">Justificado</option>
+                        </select>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label for="rapid_hora_llegada" class="form-label">Hora de Llegada</label>
+                        <input type="time" class="form-control" id="rapid_hora_llegada" name="hora_llegada">
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label for="rapid_observaciones" class="form-label">Observaciones</label>
+                        <textarea class="form-control" id="rapid_observaciones" name="observaciones" rows="2"></textarea>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                <button type="button" class="btn btn-success" onclick="guardarAsistenciaRapida()">
+                    <i class="fas fa-save"></i> Guardar
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+function marcarAsistenciaRapida(idAlumno, nombreAlumno) {
+    $('#rapid_id_alumno').val(idAlumno);
+    $('#rapid_nombre_alumno').text(nombreAlumno);
+    
+    // Establecer hora actual
+    const now = new Date();
+    const timeString = now.getHours().toString().padStart(2, '0') + ':' + 
+                      now.getMinutes().toString().padStart(2, '0');
+    $('#rapid_hora_llegada').val(timeString);
+    
+    $('#modalAsistenciaRapida').modal('show');
+}
+
+function guardarAsistenciaRapida() {
+    const formData = new FormData($('#formAsistenciaRapida')[0]);
+    
+    $.ajax({
+        url: '/asistencia/marcar',
+        method: 'POST',
+        data: formData,
+        processData: false,
+        contentType: false,
+        success: function(response) {
+            $('#modalAsistenciaRapida').modal('hide');
+            mostrarNotificacion('Asistencia marcada correctamente', 'success');
+            // Recargar la página para ver los cambios
+            setTimeout(() => location.reload(), 1000);
+        },
+        error: function(xhr) {
+            mostrarNotificacion('Error al marcar asistencia', 'error');
+        }
+    });
+}
+
+function mostrarModalMarcarTodos() {
+    // Implementar funcionalidad para marcar asistencia masiva
+    alert('Funcionalidad en desarrollo: Marcar asistencia para todo el curso');
+}
+
+function mostrarNotificacion(mensaje, tipo) {
+    const alertClass = tipo === 'success' ? 'alert-success' : 'alert-danger';
+    const icon = tipo === 'success' ? 'fas fa-check-circle' : 'fas fa-exclamation-triangle';
+    
+    const alert = $(`
+        <div class="alert ${alertClass} alert-dismissible fade show" role="alert">
+            <i class="${icon}"></i> ${mensaje}
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+    `);
+    
+    $('.container').prepend(alert);
+    
+    setTimeout(function() {
+        alert.fadeOut();
+    }, 5000);
+}
+</script>
+{% endblock %}

@@ -1,0 +1,1742 @@
+/* Sistema de Asistencia - Colegio AML */
+
+/* Variables CSS */
+:root {
+    --primary-color: #0d6efd;
+    --success-color: #198754;
+    --warning-color: #ffc107;
+    --danger-color: #dc3545;
+    --info-color: #0dcaf0;
+    --light-color: #f8f9fa;
+    --dark-color: #212529;
+    --border-radius: 0.375rem;
+    --box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075);
+    
+    /* Variables para tema claro */
+    --bg-color: #ffffff;
+    --bg-secondary: #f8f9fa;
+    --text-color: #212529;
+    --text-muted: #6c757d;
+    --text-light: #ffffff;
+    --border-color: #dee2e6;
+    --card-bg: #ffffff;
+    --navbar-bg: #0d6efd;
+    --navbar-text: #ffffff;
+    --input-bg: #ffffff;
+    --input-border: #ced4da;
+    --table-hover: rgba(13, 110, 253, 0.05);
+}
+
+/* Variables para tema oscuro - Paleta elegante con tonos pasteles oscuros */
+[data-theme="dark"] {
+    /* Fondos principales - Degradado de negro a plomo */
+    --bg-color: linear-gradient(135deg, #0d0d0f 0%, #1a1a1d 50%, #2d2d32 100%);
+    --bg-secondary: linear-gradient(135deg, #151517 0%, #1f1f23 50%, #2a2a2f 100%);
+    --card-bg: linear-gradient(135deg, #16161a 0%, #1e1e24 50%, #2b2b32 100%);
+    --input-bg: linear-gradient(135deg, #1c1c21 0%, #252529 50%, #323238 100%);
+    
+    /* Fondos sólidos para elementos específicos */
+    --bg-solid: #16161a;              /* Negro cromático pastel */
+    --bg-secondary-solid: #1e1e24;     /* Gris antracita pastel */
+    --card-bg-solid: #242429;          /* Plomo oscuro pastel */
+    
+    /* Textos - CORREGIDO: Blanco para modo oscuro */
+    --text-color: #ffffff;             /* Blanco puro para legibilidad */
+    --text-muted: #b8c5cc;            /* Gris claro para texto secundario */
+    --text-accent: #e8f4f8;           /* Blanco celeste muy suave */
+    --text-light: #f8f9fa;            /* Blanco ligeramente gris */
+    
+    /* Bordes y líneas - Tonos cromáticos oscuros */
+    --border-color: #3a3a42;          /* Gris azulado oscuro */
+    --input-border: #4a4a52;          /* Gris perla oscuro */
+    --border-accent: #5a5a62;         /* Plomo medio */
+    
+    /* Navegación - Degradado elegante */
+    --navbar-bg: linear-gradient(135deg, #0f0f12 0%, #1c1c22 50%, #292932 100%);
+    --navbar-text: #e8f4f8;           /* Blanco celeste pastel */
+    
+    /* Elementos interactivos - Pasteles cromáticos */
+    --primary-color: #7db8c7;          /* Azul grisáceo pastel */
+    --success-color: #8bc5a3;          /* Verde grisáceo pastel */
+    --warning-color: #d4c087;          /* Amarillo ocre pastel */
+    --danger-color: #d49797;           /* Rojo grisáceo pastel */
+    --info-color: #94b8d1;             /* Azul gris pastel */
+    
+    /* Efectos y sombras - Más profundos y elegantes */
+    --box-shadow: 0 4px 12px rgba(0, 0, 0, 0.25), 0 2px 6px rgba(13, 13, 15, 0.4);
+    --box-shadow-hover: 0 6px 16px rgba(0, 0, 0, 0.35), 0 4px 8px rgba(13, 13, 15, 0.5);
+    --table-hover: rgba(125, 184, 199, 0.08);  /* Hover sutil con azul grisáceo pastel */
+    
+    /* Degradados adicionales para elementos especiales */
+    --gradient-primary: linear-gradient(135deg, #6a9bb3 0%, #8db5c7 50%, #b1d0dc 100%);
+    --gradient-secondary: linear-gradient(135deg, #2a2a2f 0%, #35353b 50%, #404047 100%);
+    --gradient-accent: linear-gradient(135deg, #3f4147 0%, #4a4b52 50%, #55565d 100%);
+}
+
+/* Estilos generales */
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background: var(--bg-color);
+    color: var(--text-color);
+    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    min-height: 100vh;
+}
+
+/* Modo claro - textos oscuros */
+body {
+    color: #212529;
+}
+
+/* Modo oscuro - textos claros */
+[data-theme="dark"] body {
+    background: var(--bg-color);
+    color: #ffffff !important;
+}
+
+/* Tarjetas - Modo claro */
+.card {
+    background-color: var(--card-bg);
+    color: var(--text-color);
+    border: 1px solid var(--border-color);
+    transition: all 0.3s ease;
+}
+
+/* Tarjetas - Modo oscuro */
+[data-theme="dark"] .card {
+    background: var(--card-bg);
+    color: #ffffff !important;
+    border: 1px solid var(--border-color);
+}
+
+/* Títulos y encabezados - Modo claro */
+h1, h2, h3, h4, h5, h6, .card-title {
+    color: #212529;
+}
+
+/* Títulos y encabezados - Modo oscuro */
+[data-theme="dark"] h1, 
+[data-theme="dark"] h2, 
+[data-theme="dark"] h3, 
+[data-theme="dark"] h4, 
+[data-theme="dark"] h5, 
+[data-theme="dark"] h6, 
+[data-theme="dark"] .card-title {
+    color: #ffffff !important;
+}
+
+/* Texto normal y párrafos - Modo claro */
+p, .card-text, span, div {
+    color: #212529;
+}
+
+/* Texto normal y párrafos - Modo oscuro */
+[data-theme="dark"] p, 
+[data-theme="dark"] .card-text, 
+[data-theme="dark"] span, 
+[data-theme="dark"] div {
+    color: #f8f9fa !important;
+}
+
+/* Texto muted (secundario) - Modo claro */
+.text-muted {
+    color: #6c757d !important;
+}
+
+/* Texto muted (secundario) - Modo oscuro */
+[data-theme="dark"] .text-muted {
+    color: #b8c5cc !important;
+}
+
+/* Enlaces - Modo claro */
+a {
+    color: #0d6efd;
+}
+
+/* Enlaces - Modo oscuro */
+[data-theme="dark"] a {
+    color: #8db5c7 !important;
+}
+
+/* Botones - asegurar contraste correcto */
+.btn {
+    color: #ffffff;
+    transition: all 0.3s ease;
+}
+
+[data-theme="dark"] .btn {
+    color: #ffffff !important;
+}
+
+/* Navegación - Estilo elegante con degradado */
+.navbar {
+    background: var(--navbar-bg) !important;
+    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    backdrop-filter: blur(10px);
+    box-shadow: var(--box-shadow);
+}
+
+[data-theme="dark"] .navbar {
+    background: var(--navbar-bg) !important;
+    border-bottom: 1px solid var(--border-color);
+}
+
+.navbar-brand {
+    font-weight: 600;
+    color: var(--navbar-text) !important;
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
+}
+
+.navbar-nav .nav-link {
+    color: var(--navbar-text) !important;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    position: relative;
+}
+
+.navbar-nav .nav-link:hover {
+    color: var(--text-accent) !important;
+    transform: translateY(-1px);
+}
+
+[data-theme="dark"] .navbar-nav .nav-link:hover {
+    color: var(--text-accent) !important;
+    text-shadow: 0 0 8px rgba(232, 244, 248, 0.3);
+}
+
+/* Botón de tema en navbar */
+#theme-toggle-btn {
+    color: var(--navbar-text) !important;
+    border: none;
+    background: none;
+    padding: 0.5rem 0.75rem;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    border-radius: 0.375rem;
+}
+
+#theme-toggle-btn:hover {
+    color: var(--text-accent) !important;
+    background: var(--gradient-secondary);
+    transform: scale(1.05);
+}
+
+[data-theme="dark"] #theme-toggle-btn:hover {
+    background: var(--gradient-accent);
+    box-shadow: 0 2px 8px rgba(232, 244, 248, 0.1);
+}
+
+#theme-toggle-btn:focus {
+    box-shadow: none;
+    outline: none;
+}
+
+/* Cards - Estilo elegante con degradados */
+.card {
+    border: 1px solid var(--border-color);
+    border-radius: calc(var(--border-radius) * 1.5);
+    box-shadow: var(--box-shadow);
+    background: var(--card-bg);
+    color: var(--text-color);
+    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    position: relative;
+    overflow: hidden;
+}
+
+[data-theme="dark"] .card {
+    background: var(--card-bg);
+    border: 1px solid var(--border-color);
+}
+
+.card:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--box-shadow-hover);
+}
+
+[data-theme="dark"] .card:hover {
+    border-color: var(--border-accent);
+    box-shadow: var(--box-shadow-hover);
+}
+
+.card-header {
+    border-bottom: 1px solid var(--border-color);
+    background: var(--bg-secondary);
+    color: var(--text-color);
+    font-weight: 600;
+    padding: 1rem 1.25rem;
+    position: relative;
+}
+
+[data-theme="dark"] .card-header {
+    background: var(--gradient-secondary);
+    color: var(--text-accent);
+    border-bottom: 1px solid var(--border-accent);
+}
+
+.card-body {
+    background: var(--card-bg);
+    color: var(--text-color);
+    padding: 1.25rem;
+}
+
+[data-theme="dark"] .card-body {
+    background: var(--card-bg-solid);
+    color: var(--text-color);
+}
+
+/* Botones - Estilo elegante con degradados pasteles */
+.btn {
+    border-radius: calc(var(--border-radius) * 1.2);
+    font-weight: 500;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    border: none;
+    padding: 0.5rem 1rem;
+    position: relative;
+    overflow: hidden;
+}
+
+.btn:hover {
+    transform: translateY(-1px);
+    box-shadow: var(--box-shadow-hover);
+}
+
+.btn-primary {
+    background: var(--gradient-primary);
+    color: var(--bg-solid);
+    font-weight: 600;
+}
+
+[data-theme="dark"] .btn-primary {
+    background: var(--gradient-primary);
+    color: var(--bg-solid);
+    border: 1px solid var(--border-accent);
+}
+
+.btn-primary:hover {
+    background: linear-gradient(135deg, #5a8ba0 0%, #7da8b7 50%, #a0c5d1 100%);
+    transform: translateY(-2px) scale(1.02);
+}
+
+/* Formularios - Estilo elegante con degradados */
+.form-control, .form-select {
+    border-radius: calc(var(--border-radius) * 1.2);
+    border: 1px solid var(--input-border);
+    background: var(--input-bg);
+    color: var(--text-color);
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    padding: 0.625rem 0.75rem;
+}
+
+[data-theme="dark"] .form-control, 
+[data-theme="dark"] .form-select {
+    background: var(--input-bg);
+    border: 1px solid var(--border-color);
+    color: var(--text-color);
+}
+
+.form-control:focus, .form-select:focus {
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 0.2rem rgba(125, 184, 199, 0.25);
+    background: var(--input-bg);
+    color: var(--text-color);
+    transform: translateY(-1px);
+}
+
+[data-theme="dark"] .form-control:focus, 
+[data-theme="dark"] .form-select:focus {
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 0.2rem rgba(125, 184, 199, 0.15), 
+                0 0 12px rgba(232, 244, 248, 0.1);
+}
+
+.form-control::placeholder {
+    color: var(--text-muted);
+    opacity: 0.8;
+}
+
+[data-theme="dark"] .form-control::placeholder {
+    color: var(--text-muted);
+    opacity: 0.7;
+}
+
+/* Labels de formulario */
+.form-label {
+    color: var(--text-color);
+    font-weight: 500;
+    margin-bottom: 0.5rem;
+}
+
+[data-theme="dark"] .form-label {
+    color: var(--text-accent);
+}
+
+/* Tablas - Estilo elegante con degradados */
+.table {
+    border-radius: calc(var(--border-radius) * 1.5);
+    overflow: hidden;
+    background: var(--card-bg);
+    color: var(--text-color);
+    box-shadow: var(--box-shadow);
+    border: 1px solid var(--border-color);
+}
+
+[data-theme="dark"] .table {
+    background: var(--card-bg-solid);
+    border: 1px solid var(--border-color);
+}
+
+.table th {
+    background: var(--gradient-secondary);
+    color: var(--text-color);
+    font-weight: 600;
+    border-bottom: 2px solid var(--border-color);
+    padding: 1rem 0.75rem;
+}
+
+[data-theme="dark"] .table th {
+    background: var(--gradient-accent);
+    color: var(--text-accent);
+    border-bottom: 2px solid var(--border-accent);
+}
+
+.table td {
+    border-color: var(--border-color);
+    color: var(--text-color);
+    padding: 0.875rem 0.75rem;
+    transition: all 0.3s ease;
+}
+
+[data-theme="dark"] .table td {
+    border-color: var(--border-color);
+    color: var(--text-color);
+}
+
+.table-hover tbody tr:hover {
+    background: var(--table-hover);
+    transform: scale(1.01);
+}
+
+[data-theme="dark"] .table-hover tbody tr:hover {
+    background: var(--table-hover);
+    box-shadow: 0 2px 8px rgba(232, 244, 248, 0.05);
+}
+
+/* Badges de estado - Colores pasteles elegantes */
+.badge {
+    font-size: 0.75em;
+    padding: 0.375rem 0.75rem;
+    border-radius: calc(var(--border-radius) * 1.5);
+    font-weight: 500;
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+    transition: all 0.3s ease;
+}
+
+.badge i {
+    margin-right: 0.25rem;
+}
+
+/* Estados de asistencia específicos con colores pasteles */
+.badge.bg-success {
+    background: var(--success-color) !important;
+    color: var(--bg-solid) !important;
+}
+
+[data-theme="dark"] .badge.bg-success {
+    background: linear-gradient(135deg, #7bb396 0%, #95c5a8 100%) !important;
+    color: var(--bg-solid) !important;
+    box-shadow: 0 2px 4px rgba(123, 179, 150, 0.3);
+}
+
+.badge.bg-warning {
+    background: var(--warning-color) !important;
+    color: var(--bg-solid) !important;
+}
+
+[data-theme="dark"] .badge.bg-warning {
+    background: linear-gradient(135deg, #c7b584 0%, #d9c99a 100%) !important;
+    color: var(--bg-solid) !important;
+    box-shadow: 0 2px 4px rgba(212, 192, 135, 0.3);
+}
+
+.badge.bg-danger {
+    background: var(--danger-color) !important;
+    color: var(--bg-solid) !important;
+}
+
+[data-theme="dark"] .badge.bg-danger {
+    background: linear-gradient(135deg, #c78d8d 0%, #d9a3a3 100%) !important;
+    color: var(--bg-solid) !important;
+    box-shadow: 0 2px 4px rgba(212, 151, 151, 0.3);
+}
+
+.badge.bg-info {
+    background: var(--info-color) !important;
+    color: var(--bg-solid) !important;
+}
+
+[data-theme="dark"] .badge.bg-info {
+    background: linear-gradient(135deg, #8aadca 0%, #a6c4d6 100%) !important;
+    color: var(--bg-solid) !important;
+    box-shadow: 0 2px 4px rgba(148, 184, 209, 0.3);
+}
+
+/* Alertas - Estilo elegante con degradados pasteles */
+.alert {
+    border-radius: calc(var(--border-radius) * 1.5);
+    border: none;
+    padding: 1rem 1.25rem;
+    margin-bottom: 1rem;
+}
+
+/* Efectos hover para badges */
+.badge:hover {
+    transform: scale(1.05);
+    opacity: 0.9;
+}
+
+/* Alertas - Estilo elegante con degradados pasteles */
+.alert {
+    border: none;
+    border-radius: calc(var(--border-radius) * 1.5);
+    font-weight: 500;
+    padding: 1rem 1.25rem;
+    margin-bottom: 1rem;
+    box-shadow: var(--box-shadow);
+}
+
+[data-theme="dark"] .alert {
+    border: 1px solid var(--border-color);
+    box-shadow: var(--box-shadow);
+}
+}
+
+.alert i {
+    margin-right: 0.5rem;
+}
+
+/* Modales */
+.modal-content {
+    border-radius: var(--border-radius);
+    border: none;
+    box-shadow: 0 1rem 3rem rgba(0, 0, 0, 0.175);
+    background-color: var(--card-bg);
+    color: var(--text-color);
+}
+
+.modal-header {
+    border-bottom: 1px solid var(--border-color);
+    background-color: var(--bg-secondary);
+    color: var(--text-color);
+}
+
+.modal-footer {
+    border-top: 1px solid var(--border-color);
+    background-color: var(--bg-secondary);
+}
+
+.modal-title {
+    color: var(--text-color);
+}
+
+/* jQuery UI Autocomplete */
+.ui-autocomplete {
+    max-height: 200px;
+    overflow-y: auto;
+    border-radius: var(--border-radius);
+    border: 1px solid var(--border-color);
+    box-shadow: var(--box-shadow);
+    background-color: var(--card-bg);
+    color: var(--text-color);
+}
+
+.ui-menu-item {
+    color: var(--text-color);
+}
+
+.ui-menu-item:hover, .ui-state-focus {
+    background-color: var(--table-hover) !important;
+    border: none !important;
+    color: var(--text-color) !important;
+}
+
+.ui-menu-item {
+    padding: 0.5rem 1rem;
+}
+
+.ui-menu-item:hover {
+    background-color: var(--light-color);
+}
+
+/* Indicadores de carga */
+.loading {
+    position: relative;
+}
+
+.loading::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 20px;
+    height: 20px;
+    margin: -10px 0 0 -10px;
+    border: 2px solid #f3f3f3;
+    border-top: 2px solid var(--primary-color);
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+/* Responsividad */
+@media (max-width: 768px) {
+    .container {
+        padding-left: 1rem;
+        padding-right: 1rem;
+    }
+    
+    .card-body {
+        padding: 1rem;
+    }
+    
+    .btn-group-sm .btn {
+        padding: 0.25rem 0.5rem;
+        font-size: 0.875rem;
+    }
+    
+    .table-responsive {
+        font-size: 0.875rem;
+    }
+}
+
+/* Animaciones */
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+.fade-in {
+    animation: fadeIn 0.5s ease-in-out;
+}
+
+/* Utilidades personalizadas */
+.text-primary { color: var(--primary-color) !important; }
+.text-success { color: var(--success-color) !important; }
+.text-warning { color: var(--warning-color) !important; }
+.text-danger { color: var(--danger-color) !important; }
+.text-info { color: var(--info-color) !important; }
+
+.bg-primary { background-color: var(--primary-color) !important; }
+.bg-success { background-color: var(--success-color) !important; }
+.bg-warning { background-color: var(--warning-color) !important; }
+.bg-danger { background-color: var(--danger-color) !important; }
+.bg-info { background-color: var(--info-color) !important; }
+
+/* Footer */
+footer {
+    margin-top: auto;
+}
+
+/* ========================================
+   Sistema de Asistencia - Colegio AML
+   CSS Consolidado de todas las plantillas
+======================================== */
+
+/* ========================================
+   ESTILOS GENERALES DEL SISTEMA
+======================================== */
+
+/* Gradientes principales */
+.gradient-primary {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+}
+
+.gradient-secondary {
+    background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+}
+
+/* ========================================
+   SISTEMA DE HUELLAS DACTILARES - INDEX
+======================================== */
+
+.fingerprint-card {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    border-radius: 15px;
+    padding: 2rem;
+    text-align: center;
+    margin-bottom: 2rem;
+}
+
+.fingerprint-icon {
+    font-size: 4rem;
+    margin-bottom: 1rem;
+    text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+}
+
+.stats-card {
+    background: white;
+    border-radius: 10px;
+    padding: 1.5rem;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+    text-align: center;
+    transition: transform 0.3s ease;
+}
+
+.stats-card:hover {
+    transform: translateY(-5px);
+}
+
+.stats-number {
+    font-size: 2.5rem;
+    font-weight: bold;
+    color: #667eea;
+}
+
+.stats-label {
+    color: #6c757d;
+    font-size: 0.9rem;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+.quick-actions {
+    background: white;
+    border-radius: 10px;
+    padding: 2rem;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+}
+
+.action-btn {
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    padding: 1rem;
+    margin: 0.5rem 0;
+    text-decoration: none;
+    color: #333;
+    background: #f8f9fa;
+    border-radius: 8px;
+    transition: all 0.3s ease;
+}
+
+.action-btn:hover {
+    background: #e9ecef;
+    color: #667eea;
+    text-decoration: none;
+    transform: translateX(5px);
+}
+
+.action-icon {
+    margin-right: 1rem;
+    font-size: 1.5rem;
+    width: 40px;
+    text-align: center;
+}
+
+/* ========================================
+   REGISTRO DE HUELLAS DACTILARES
+======================================== */
+
+.fingerprint-scanner {
+    background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+    border-radius: 20px;
+    padding: 3rem;
+    text-align: center;
+    color: white;
+    margin-bottom: 2rem;
+}
+
+.scanner-area {
+    background: rgba(255,255,255,0.2);
+    border: 3px dashed rgba(255,255,255,0.5);
+    border-radius: 15px;
+    padding: 3rem;
+    margin: 2rem 0;
+    transition: all 0.3s ease;
+    cursor: pointer;
+}
+
+.scanner-area:hover {
+    background: rgba(255,255,255,0.3);
+    border-color: rgba(255,255,255,0.8);
+}
+
+.scanner-area.scanning {
+    animation: pulse 2s infinite;
+    border-color: #28a745;
+    background: rgba(40, 167, 69, 0.2);
+}
+
+@keyframes pulse {
+    0% { transform: scale(1); }
+    50% { transform: scale(1.05); }
+    100% { transform: scale(1); }
+}
+
+.fingerprint-preview {
+    width: 150px;
+    height: 150px;
+    border: 3px solid #dee2e6;
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto 1rem;
+    background: #f8f9fa;
+}
+
+.fingerprint-preview img {
+    max-width: 100%;
+    max-height: 100%;
+    border-radius: 7px;
+}
+
+.quality-indicator {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 1rem 0;
+}
+
+.quality-bar {
+    width: 200px;
+    height: 10px;
+    background: #e9ecef;
+    border-radius: 5px;
+    overflow: hidden;
+    margin: 0 1rem;
+}
+
+.quality-fill {
+    height: 100%;
+    background: linear-gradient(90deg, #dc3545 0%, #ffc107 50%, #28a745 100%);
+    width: 0%;
+    transition: width 0.5s ease;
+}
+
+.alumno-card {
+    background: white;
+    border-radius: 10px;
+    padding: 1.5rem;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+    margin-bottom: 2rem;
+}
+
+.alumno-selected {
+    border: 2px solid #28a745;
+    background: rgba(40, 167, 69, 0.05);
+}
+
+.finger-options {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    margin: 1rem 0;
+}
+
+.finger-btn {
+    padding: 0.5rem 1rem;
+    border: 2px solid #dee2e6;
+    background: white;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.finger-btn:hover {
+    border-color: #667eea;
+    background: rgba(102, 126, 234, 0.1);
+}
+
+.finger-btn.selected {
+    border-color: #28a745;
+    background: #28a745;
+    color: white;
+}
+
+/* ========================================
+   TERMINAL BIOMÉTRICO
+======================================== */
+
+.terminal-container {
+    background: #1a1a1a;
+    border-radius: 10px;
+    padding: 0;
+    overflow: hidden;
+    box-shadow: 0 8px 16px rgba(0,0,0,0.3);
+}
+
+.terminal-header {
+    background: #2d2d2d;
+    padding: 1rem;
+    border-bottom: 1px solid #444;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.terminal-title {
+    color: #fff;
+    margin: 0;
+    font-size: 1.1rem;
+    font-weight: 500;
+}
+
+.terminal-controls {
+    display: flex;
+    gap: 0.5rem;
+}
+
+.terminal-btn {
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    border: none;
+    cursor: pointer;
+}
+
+.terminal-btn.close { background: #ff5f56; }
+.terminal-btn.minimize { background: #ffbd2e; }
+.terminal-btn.maximize { background: #27ca3f; }
+
+.terminal-body {
+    background: #000;
+    color: #00ff00;
+    font-family: 'Courier New', monospace;
+    font-size: 14px;
+    padding: 1rem;
+    min-height: 400px;
+    max-height: 600px;
+    overflow-y: auto;
+}
+
+.terminal-line {
+    margin: 0.5rem 0;
+    line-height: 1.4;
+}
+
+.terminal-prompt {
+    color: #00ff00;
+}
+
+.terminal-command {
+    color: #ffffff;
+}
+
+.terminal-output {
+    color: #cccccc;
+}
+
+.terminal-error {
+    color: #ff6b6b;
+}
+
+.terminal-success {
+    color: #51cf66;
+}
+
+.terminal-warning {
+    color: #ffd43b;
+}
+
+.terminal-info {
+    color: #74c0fc;
+}
+
+.scanner-status {
+    display: flex;
+    align-items: center;
+    padding: 1rem;
+    margin: 1rem 0;
+    border-radius: 8px;
+    font-weight: 500;
+}
+
+.scanner-status.connected {
+    background: rgba(40, 167, 69, 0.1);
+    border: 1px solid #28a745;
+    color: #28a745;
+}
+
+.scanner-status.disconnected {
+    background: rgba(220, 53, 69, 0.1);
+    border: 1px solid #dc3545;
+    color: #dc3545;
+}
+
+.scanner-status.scanning {
+    background: rgba(255, 193, 7, 0.1);
+    border: 1px solid #ffc107;
+    color: #ffc107;
+}
+
+/* ========================================
+   GESTIÓN DE ALUMNOS
+======================================== */
+
+.student-profile-card {
+    background: white;
+    border-radius: 15px;
+    overflow: hidden;
+    box-shadow: 0 8px 16px rgba(0,0,0,0.1);
+    margin-bottom: 2rem;
+}
+
+.student-header {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    padding: 2rem;
+    text-align: center;
+}
+
+.student-avatar {
+    width: 100px;
+    height: 100px;
+    border-radius: 50%;
+    background: rgba(255,255,255,0.2);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto 1rem;
+    font-size: 3rem;
+}
+
+.student-info {
+    padding: 2rem;
+}
+
+.info-row {
+    display: flex;
+    justify-content: space-between;
+    padding: 0.75rem 0;
+    border-bottom: 1px solid #eee;
+}
+
+.info-label {
+    font-weight: 600;
+    color: #666;
+}
+
+.info-value {
+    color: #333;
+}
+
+.fingerprints-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 1rem;
+    margin: 2rem 0;
+}
+
+.fingerprint-item {
+    background: white;
+    border: 2px solid #eee;
+    border-radius: 10px;
+    padding: 1rem;
+    text-align: center;
+    transition: all 0.3s ease;
+    cursor: pointer;
+}
+
+.fingerprint-item:hover {
+    border-color: #667eea;
+    transform: translateY(-2px);
+}
+
+.fingerprint-item.registered {
+    border-color: #28a745;
+    background: rgba(40, 167, 69, 0.05);
+}
+
+.fingerprint-item.empty {
+    border-style: dashed;
+    color: #999;
+}
+
+.fingerprint-preview-small {
+    width: 80px;
+    height: 80px;
+    border-radius: 8px;
+    background: #f8f9fa;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto 0.5rem;
+    font-size: 2rem;
+    color: #ccc;
+}
+
+.fingerprint-preview-small img {
+    max-width: 100%;
+    max-height: 100%;
+    border-radius: 5px;
+}
+
+/* ========================================
+   ESTADÍSTICAS BIOMÉTRICAS
+======================================== */
+
+.dashboard-card {
+    background: white;
+    border-radius: 15px;
+    padding: 2rem;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+    margin-bottom: 2rem;
+    transition: transform 0.3s ease;
+}
+
+.dashboard-card:hover {
+    transform: translateY(-3px);
+}
+
+.metric-card {
+    text-align: center;
+    padding: 1.5rem;
+    background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+    border-radius: 10px;
+    margin-bottom: 1rem;
+}
+
+.metric-number {
+    font-size: 3rem;
+    font-weight: bold;
+    color: #667eea;
+    margin-bottom: 0.5rem;
+}
+
+.metric-label {
+    color: #6c757d;
+    font-size: 0.9rem;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+.progress-container {
+    background: #f8f9fa;
+    border-radius: 10px;
+    padding: 1.5rem;
+    margin: 1rem 0;
+}
+
+.progress-bar-custom {
+    height: 20px;
+    background: linear-gradient(90deg, #667eea 0%, #764ba2 100%);
+    border-radius: 10px;
+    transition: width 0.5s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-weight: bold;
+    font-size: 0.8rem;
+}
+
+.quality-stats {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+    gap: 1rem;
+    margin: 2rem 0;
+}
+
+.quality-item {
+    text-align: center;
+    padding: 1rem;
+    border-radius: 8px;
+    background: #f8f9fa;
+}
+
+.quality-count {
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto 0.5rem;
+    color: white;
+    font-weight: bold;
+    font-size: 1.2rem;
+}
+
+.chart-container {
+    position: relative;
+    height: 300px;
+    margin: 2rem 0;
+}
+
+/* ========================================
+   ASISTENCIA
+======================================== */
+
+.progress-custom {
+    height: 10px;
+}
+
+.info-alumno-hidden {
+    display: none;
+}
+
+/* ========================================
+   HEADER Y NAVEGACIÓN
+======================================== */
+
+.dropdown-menu-custom {
+    width: 300px;
+}
+
+.avatar-small {
+    width: 32px;
+    height: 32px;
+}
+
+.avatar-medium {
+    width: 40px;
+    height: 40px;
+}
+
+/* ========================================
+   UTILIDADES Y HELPERS
+======================================== */
+
+.icon-large {
+    font-size: 1.5rem;
+}
+
+.text-gradient {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+
+.shadow-custom {
+    box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+}
+
+.border-radius-custom {
+    border-radius: 15px;
+}
+
+/* ========================================
+   RESPONSIVE DESIGN
+======================================== */
+
+@media (max-width: 768px) {
+    .fingerprint-card {
+        padding: 1.5rem;
+    }
+    
+    .fingerprint-icon {
+        font-size: 3rem;
+    }
+    
+    .stats-number {
+        font-size: 2rem;
+    }
+    
+    .fingerprint-scanner {
+        padding: 2rem;
+    }
+    
+    .scanner-area {
+        padding: 2rem;
+    }
+    
+    .fingerprints-grid {
+        grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+        gap: 0.5rem;
+    }
+    
+    .quality-stats {
+        grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+    }
+    
+    .dropdown-menu-custom {
+        width: 250px;
+    }
+}
+
+@media (max-width: 576px) {
+    .metric-number {
+        font-size: 2rem;
+    }
+    
+    .dashboard-card {
+        padding: 1rem;
+    }
+    
+    .student-header {
+        padding: 1.5rem;
+    }
+    
+    .student-avatar {
+        width: 80px;
+        height: 80px;
+        font-size: 2rem;
+    }
+}
+
+/* ========================================
+   ANIMACIONES ADICIONALES
+======================================== */
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes slideIn {
+    from { transform: translateX(-100%); }
+    to { transform: translateX(0); }
+}
+
+@keyframes bounce {
+    0%, 20%, 50%, 80%, 100% { transform: translateY(0); }
+    40% { transform: translateY(-30px); }
+    60% { transform: translateY(-15px); }
+}
+
+.animate-fadeIn {
+    animation: fadeIn 0.5s ease-out;
+}
+
+.animate-slideIn {
+    animation: slideIn 0.3s ease-out;
+}
+
+.animate-bounce {
+    animation: bounce 2s infinite;
+}
+.asistencia-card {
+    transition: all 0.3s ease;
+    cursor: pointer;
+}
+
+.asistencia-card:hover {
+    transform: scale(1.02);
+    box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15);
+}
+
+.estado-presente { border-left: 4px solid var(--success-color); }
+.estado-ausente { border-left: 4px solid var(--danger-color); }
+.estado-tardanza { border-left: 4px solid var(--warning-color); }
+.estado-justificado { border-left: 4px solid var(--info-color); }
+
+/* Gráficos y estadísticas */
+.stat-card {
+    text-align: center;
+    padding: 1.5rem;
+}
+
+.stat-number {
+    font-size: 2.5rem;
+    font-weight: 700;
+    margin-bottom: 0.5rem;
+}
+
+.stat-label {
+    font-size: 0.875rem;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    opacity: 0.7;
+}
+
+/* Progreso de asistencia */
+.progress {
+    height: 0.75rem;
+    border-radius: 0.375rem;
+}
+
+.progress-bar {
+    border-radius: 0.375rem;
+}
+
+/* Estados de formulario */
+.form-control.is-invalid {
+    border-color: var(--danger-color);
+    box-shadow: 0 0 0 0.2rem rgba(220, 53, 69, 0.25);
+}
+
+.form-control.is-valid {
+    border-color: var(--success-color);
+    box-shadow: 0 0 0 0.2rem rgba(25, 135, 84, 0.25);
+}
+
+/* Tooltips personalizados */
+.tooltip {
+    font-size: 0.875rem;
+}
+
+.tooltip-inner {
+    background-color: var(--dark-color);
+    border-radius: var(--border-radius);
+}
+
+/* Scrollbar personalizado */
+::-webkit-scrollbar {
+    width: 8px;
+}
+
+::-webkit-scrollbar-track {
+    background: #f1f1f1;
+    border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb {
+    background: #c1c1c1;
+    border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: #a8a8a8;
+}
+
+/* ================================
+   TEMA OSCURO - ESTILOS ESPECÍFICOS
+   ================================ */
+
+/* Formularios en tema oscuro */
+[data-theme="dark"] .form-control {
+    background-color: var(--bg-secondary);
+    border-color: var(--border-color);
+    color: var(--text-color);
+}
+
+[data-theme="dark"] .form-control:focus {
+    background-color: var(--bg-secondary);
+    border-color: var(--primary-color);
+    color: var(--text-color);
+    box-shadow: 0 0 0 0.2rem rgba(13, 110, 253, 0.25);
+}
+
+[data-theme="dark"] .form-select {
+    background-color: var(--bg-secondary);
+    border-color: var(--border-color);
+    color: var(--text-color);
+}
+
+[data-theme="dark"] .form-select:focus {
+    background-color: var(--bg-secondary);
+    border-color: var(--primary-color);
+    color: var(--text-color);
+}
+
+/* Tablas en tema oscuro */
+[data-theme="dark"] .table {
+    color: var(--text-color);
+    background-color: var(--card-bg);
+}
+
+[data-theme="dark"] .table-hover tbody tr:hover {
+    background-color: rgba(255, 255, 255, 0.075);
+}
+
+[data-theme="dark"] .table-dark {
+    background-color: var(--bg-secondary);
+    color: var(--text-color);
+}
+
+/* Modales en tema oscuro */
+[data-theme="dark"] .modal-content {
+    background-color: var(--card-bg);
+    color: var(--text-color);
+    border-color: var(--border-color);
+}
+
+[data-theme="dark"] .modal-header {
+    border-bottom-color: var(--border-color);
+}
+
+[data-theme="dark"] .modal-footer {
+    border-top-color: var(--border-color);
+}
+
+/* Dropdowns en tema oscuro */
+[data-theme="dark"] .dropdown-menu {
+    background-color: var(--card-bg);
+    border-color: var(--border-color);
+}
+
+[data-theme="dark"] .dropdown-item {
+    color: var(--text-color);
+}
+
+[data-theme="dark"] .dropdown-item:hover {
+    background-color: var(--bg-secondary);
+    color: var(--text-color);
+}
+
+[data-theme="dark"] .dropdown-divider {
+    border-top-color: var(--border-color);
+}
+
+/* Alertas en tema oscuro */
+[data-theme="dark"] .alert-info {
+    background-color: rgba(13, 202, 240, 0.1);
+    border-color: var(--info-color);
+    color: var(--info-color);
+}
+
+[data-theme="dark"] .alert-success {
+    background-color: rgba(25, 135, 84, 0.1);
+    border-color: var(--success-color);
+    color: var(--success-color);
+}
+
+[data-theme="dark"] .alert-warning {
+    background-color: rgba(255, 193, 7, 0.1);
+    border-color: var(--warning-color);
+    color: var(--warning-color);
+}
+
+[data-theme="dark"] .alert-danger {
+    background-color: rgba(220, 53, 69, 0.1);
+    border-color: var(--danger-color);
+    color: var(--danger-color);
+}
+
+/* Switch del tema oscuro */
+.theme-switch {
+    position: relative;
+    display: inline-block;
+    width: 60px;
+    height: 34px;
+}
+
+.theme-switch input {
+    opacity: 0;
+    width: 0;
+    height: 0;
+}
+
+.theme-slider {
+    position: absolute;
+    cursor: pointer;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: #ccc;
+    transition: 0.4s;
+    border-radius: 34px;
+}
+
+.theme-slider:before {
+    position: absolute;
+    content: "";
+    height: 26px;
+    width: 26px;
+    left: 4px;
+    bottom: 4px;
+    background-color: white;
+    transition: 0.4s;
+    border-radius: 50%;
+}
+
+input:checked + .theme-slider {
+    background-color: var(--primary-color);
+}
+
+input:checked + .theme-slider:before {
+    transform: translateX(26px);
+}
+
+/* Icono de luna/sol en el switch */
+.theme-slider:after {
+    content: '☀️';
+    position: absolute;
+    top: 50%;
+    left: 8px;
+    transform: translateY(-50%);
+    font-size: 16px;
+    transition: 0.4s;
+}
+
+input:checked + .theme-slider:after {
+    content: '🌙';
+    left: 36px;
+}
+
+/* Scrollbar en tema oscuro */
+[data-theme="dark"] ::-webkit-scrollbar {
+    width: 8px;
+}
+
+[data-theme="dark"] ::-webkit-scrollbar-track {
+    background: var(--bg-secondary);
+}
+
+[data-theme="dark"] ::-webkit-scrollbar-thumb {
+    background: #555;
+    border-radius: 4px;
+}
+
+[data-theme="dark"] ::-webkit-scrollbar-thumb:hover {
+    background: #777;
+}
+
+/* Text muted en tema oscuro */
+[data-theme="dark"] .text-muted {
+    color: var(--text-muted) !important;
+}
+
+/* Borders en tema oscuro */
+[data-theme="dark"] .border {
+    border-color: var(--border-color) !important;
+}
+
+[data-theme="dark"] .border-top {
+    border-top-color: var(--border-color) !important;
+}
+
+[data-theme="dark"] .border-bottom {
+    border-bottom-color: var(--border-color) !important;
+}
+
+/* Footer con tema */
+.footer-themed {
+    background-color: var(--bg-secondary);
+    border-top: 1px solid var(--border-color);
+    color: var(--text-color);
+    transition: all 0.3s ease;
+}
+
+/* Terminal con tema oscuro */
+[data-theme="dark"] .terminal-container {
+    background-color: var(--bg-secondary);
+    border-color: var(--border-color);
+}
+
+[data-theme="dark"] .terminal-header {
+    background-color: var(--bg-color);
+    border-bottom-color: var(--border-color);
+    color: var(--text-color);
+}
+
+[data-theme="dark"] .terminal-body {
+    background-color: #1a1a1a;
+    color: #00ff00;
+}
+
+[data-theme="dark"] .scanner-preview {
+    background-color: var(--bg-secondary);
+    border-color: var(--border-color);
+}
+
+/* Animación para transición de tema */
+* {
+    transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease;
+}
+
+/* Mejoras específicas para modo nocturno */
+[data-theme="dark"] {
+    /* Botones con hover mejorado */
+    .btn-primary {
+        background-color: var(--primary-color);
+        border-color: var(--primary-color);
+        color: var(--bg-color);
+    }
+    
+    .btn-primary:hover {
+        background-color: #A5D6FA;
+        border-color: #A5D6FA;
+        color: var(--bg-color);
+    }
+    
+    .btn-success {
+        background-color: var(--success-color);
+        border-color: var(--success-color);
+    }
+    
+    .btn-warning {
+        background-color: var(--warning-color);
+        border-color: var(--warning-color);
+        color: var(--bg-color);
+    }
+    
+    .btn-danger {
+        background-color: var(--danger-color);
+        border-color: var(--danger-color);
+    }
+    
+    /* Enlaces con color de acento */
+    .nav-link:hover {
+        color: var(--primary-color) !important;
+    }
+    
+    /* Dropdowns mejorados */
+    .dropdown-menu {
+        background-color: var(--card-bg);
+        border-color: var(--border-color);
+    }
+    
+    .dropdown-item {
+        color: var(--text-color);
+    }
+    
+    .dropdown-item:hover {
+        background-color: var(--table-hover);
+        color: var(--text-color);
+    }
+    
+    /* Badges con mejor contraste */
+    .badge {
+        color: var(--bg-color) !important;
+    }
+    
+    /* Cards con sombra sutil */
+    .card {
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.6);
+    }
+    
+    /* Texto de ayuda */
+    .form-text {
+        color: var(--text-muted);
+    }
+    
+    /* Separadores */
+    .dropdown-divider {
+        border-color: var(--border-color);
+    }
+    
+    hr {
+        border-color: var(--border-color);
+        opacity: 0.5;
+    }
+    
+    /* Pagination */
+    .pagination .page-link {
+        background-color: var(--card-bg);
+        border-color: var(--border-color);
+        color: var(--text-color);
+    }
+    
+    .pagination .page-link:hover {
+        background-color: var(--table-hover);
+        border-color: var(--primary-color);
+        color: var(--primary-color);
+    }
+    
+    .pagination .page-item.active .page-link {
+        background-color: var(--primary-color);
+        border-color: var(--primary-color);
+        color: var(--bg-color);
+    }
+    
+    /* Toasts mejorados */
+    .toast {
+        background-color: var(--card-bg);
+        border: 1px solid var(--border-color);
+        color: var(--text-color);
+    }
+    
+    /* Progress bars */
+    .progress {
+        background-color: var(--bg-secondary);
+    }
+    
+    .progress-bar {
+        background-color: var(--primary-color);
+    }
+}

@@ -1,0 +1,169 @@
+# Sistema de Asistencia - Colegio AML
+# Archivo .gitignore actualizado
+
+# Entorno virtual
+venv/
+env/
+ENV/
+env.bak/
+venv.bak/
+
+# Archivos de Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+MANIFEST
+
+# IDEs
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# macOS
+.DS_Store
+.AppleDouble
+.LSOverride
+
+# Archivos de configuración local
+config.local.py
+.env
+.env.local
+
+# Archivos de testing (eliminados del proyecto)
+test_*.py
+*_test.py
+demo_*.py
+
+# Logs
+*.log
+logs/
+
+# Archivos temporales
+*.tmp
+*.temp
+*.bak
+
+# Archivos de base de datos locales
+*.db
+*.sqlite
+
+# Archivos de instalación de drivers (eliminados)
+install_*.sh
+setup_*.sh
+
+# Archivos de huellas dactilares (por seguridad)
+fingerprints/
+huellas/
+*.fpd
+*.egg
+MANIFEST
+
+# PyInstaller
+*.manifest
+*.spec
+
+# Configuración de base de datos
+config/database.py
+config/secrets.py
+.env
+
+# Logs
+*.log
+logs/
+
+# Archivos temporales
+*.tmp
+*.temp
+.DS_Store
+.vscode/
+.idea/
+
+# Archivos de huellas dactilares (imágenes sensibles)
+uploads/fingerprints/
+static/uploads/
+
+# Configuración específica del entorno
+instance/
+.webassets-cache
+
+# Coverage reports
+htmlcov/
+.tox/
+.coverage
+.coverage.*
+.cache
+nosetests.xml
+coverage.xml
+*.cover
+.hypothesis/
+.pytest_cache/
+
+# Jupyter Notebook
+.ipynb_checkpoints
+
+# IPython
+profile_default/
+ipython_config.py
+
+# pyenv
+.python-version
+
+# celery beat schedule file
+celerybeat-schedule
+
+# SageMath parsed files
+*.sage.py
+
+# Environments
+.env
+.venv
+env/
+venv/
+ENV/
+env.bak/
+venv.bak/
+
+# Spyder project settings
+.spyderproject
+.spyproject
+
+# Rope project settings
+.ropeproject
+
+# mkdocs documentation
+/site
+
+# mypy
+.mypy_cache/
+.dmypy.json
+dmypy.json
+
+# Archivos específicos del proyecto
+test_results/
+backups/
+*.db
+*.sqlite
+*.sqlite3
+
+# Archivos de hardware específicos
+hardware_logs/
+calibration_data/

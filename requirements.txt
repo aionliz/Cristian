@@ -1,0 +1,26 @@
+# Dependencias del Sistema de Asistencia - Colegio AML
+# Framework web
+Flask==3.1.1
+Flask-Bcrypt==1.0.1
+
+# Base de datos
+PyMySQL==1.1.1
+
+# Procesamiento de imágenes para huellas dactilares
+opencv-python==4.10.0.84
+numpy==2.1.3
+Pillow==11.0.0
+
+# Comunicación con hardware biométrico
+pyserial==3.5
+pyusb==1.3.1
+libusb1==3.3.1
+
+# Dependencias de Flask
+bcrypt==4.3.0
+blinker==1.9.0
+click==8.2.1
+itsdangerous==2.2.0
+Jinja2==3.1.6
+MarkupSafe==3.0.2
+Werkzeug==3.1.3

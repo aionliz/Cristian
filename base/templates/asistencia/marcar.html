@@ -1,0 +1,307 @@
+{% extends "base.html" %}
+
+{% block title %}Marcar Asistencia - Colegio AML{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="row">
+        <div class="col-12">
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <h1 class="h3">
+                    <i class="fas fa-user-check text-success"></i>
+                    Marcar Asistencia
+                </h1>
+                <a href="{{ url_for('asistencia.index') }}" class="btn btn-outline-secondary">
+                    <i class="fas fa-arrow-left"></i> Volver
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <!-- Formulario de asistencia -->
+        <div class="col-md-8">
+            <div class="card border-0 shadow-sm">
+                <div class="card-header bg-light">
+                    <h5 class="mb-0">
+                        <i class="fas fa-clipboard-check"></i>
+                        Registro de Asistencia
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <form method="POST" id="form-asistencia">
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label for="fecha" class="form-label">
+                                    <i class="fas fa-calendar"></i> Fecha
+                                </label>
+                                <input type="date" class="form-control" id="fecha" name="fecha" 
+                                       value="{{ fecha_actual }}" required>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label for="hora_llegada" class="form-label">
+                                    <i class="fas fa-clock"></i> Hora de Llegada
+                                </label>
+                                <input type="time" class="form-control" id="hora_llegada" name="hora_llegada">
+                            </div>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="alumno-search" class="form-label">
+                                <i class="fas fa-user"></i> Buscar Alumno
+                            </label>
+                            <input type="text" class="form-control" id="alumno-search" 
+                                   placeholder="Escriba el nombre, apellido o RUT del alumno..." 
+                                   autocomplete="off">
+                            <input type="hidden" id="id_alumno" name="id_alumno" required>
+                            <div class="invalid-feedback">
+                                Debe seleccionar un alumno válido.
+                            </div>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="estado" class="form-label">
+                                <i class="fas fa-check-circle"></i> Estado de Asistencia
+                            </label>
+                            <select class="form-select" id="estado" name="estado" required>
+                                <option value="">Seleccione un estado...</option>
+                                <option value="presente" class="text-success">
+                                    <i class="fas fa-check"></i> Presente
+                                </option>
+                                <option value="ausente" class="text-danger">
+                                    <i class="fas fa-times"></i> Ausente
+                                </option>
+                                <option value="tardanza" class="text-warning">
+                                    <i class="fas fa-clock"></i> Tardanza
+                                </option>
+                                <option value="justificado" class="text-info">
+                                    <i class="fas fa-file-alt"></i> Ausencia Justificada
+                                </option>
+                            </select>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="observaciones" class="form-label">
+                                <i class="fas fa-comment"></i> Observaciones (Opcional)
+                            </label>
+                            <textarea class="form-control" id="observaciones" name="observaciones" 
+                                      rows="3" placeholder="Comentarios adicionales..."></textarea>
+                        </div>
+
+                        <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+                            <button type="button" class="btn btn-outline-secondary me-md-2" onclick="limpiarFormulario()">
+                                <i class="fas fa-undo"></i> Limpiar
+                            </button>
+                            <button type="submit" class="btn btn-success">
+                                <i class="fas fa-save"></i> Marcar Asistencia
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <!-- Panel de información -->
+        <div class="col-md-4">
+            <!-- Información del alumno seleccionado -->
+            <div class="card border-0 shadow-sm mb-3 info-alumno-hidden" id="info-alumno">
+                <div class="card-header bg-primary text-white">
+                    <h6 class="mb-0">
+                        <i class="fas fa-user"></i>
+                        Información del Alumno
+                    </h6>
+                </div>
+                <div class="card-body">
+                    <div id="datos-alumno"></div>
+                </div>
+            </div>
+
+            <!-- Acciones rápidas -->
+            <div class="card border-0 shadow-sm">
+                <div class="card-header bg-light">
+                    <h6 class="mb-0">
+                        <i class="fas fa-bolt"></i>
+                        Acciones Rápidas
+                    </h6>
+                </div>
+                <div class="card-body">
+                    <div class="d-grid gap-2">
+                        <button type="button" class="btn btn-outline-primary btn-sm" onclick="marcarHoraActual()">
+                            <i class="fas fa-clock"></i> Usar Hora Actual
+                        </button>
+                        <button type="button" class="btn btn-outline-success btn-sm" onclick="marcarPresente()">
+                            <i class="fas fa-check"></i> Marcar Presente
+                        </button>
+                        <a href="{{ url_for('asistencia.listar_por_curso') }}" class="btn btn-outline-info btn-sm">
+                            <i class="fas fa-users"></i> Ver por Curso
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Estadísticas rápidas -->
+            <div class="card border-0 shadow-sm mt-3">
+                <div class="card-header bg-light">
+                    <h6 class="mb-0">
+                        <i class="fas fa-chart-pie"></i>
+                        Resumen de Hoy
+                    </h6>
+                </div>
+                <div class="card-body">
+                    <div class="row text-center">
+                        <div class="col-6">
+                            <div class="mb-2">
+                                <span class="h4 text-success" id="count-presentes">0</span>
+                            </div>
+                            <small class="text-muted">Presentes</small>
+                        </div>
+                        <div class="col-6">
+                            <div class="mb-2">
+                                <span class="h4 text-danger" id="count-ausentes">0</span>
+                            </div>
+                            <small class="text-muted">Ausentes</small>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+$(document).ready(function() {
+    // Configurar autocompletado para búsqueda de alumnos
+    configurarAutocompletado();
+    
+    // Marcar hora actual por defecto
+    marcarHoraActual();
+    
+    // Manejar envío del formulario
+    $('#form-asistencia').on('submit', function(e) {
+        e.preventDefault();
+        marcarAsistencia();
+    });
+    
+    // Cargar estadísticas del día
+    cargarEstadisticasHoy();
+});
+
+function configurarAutocompletado() {
+    $('#alumno-search').autocomplete({
+        source: function(request, response) {
+            $.get('/asistencia/buscar_alumno', { term: request.term })
+                .done(function(data) {
+                    response(data);
+                })
+                .fail(function() {
+                    response([]);
+                });
+        },
+        minLength: 2,
+        select: function(event, ui) {
+            $('#id_alumno').val(ui.item.id);
+            mostrarInfoAlumno(ui.item);
+            return true;
+        },
+        change: function(event, ui) {
+            if (!ui.item) {
+                $('#id_alumno').val('');
+                $('#info-alumno').hide();
+            }
+        }
+    });
+}
+
+function mostrarInfoAlumno(alumno) {
+    const html = `
+        <div class="mb-2">
+            <strong>Nombre:</strong> ${alumno.nombre} ${alumno.apellido}
+        </div>
+        <div class="mb-2">
+            <strong>RUT:</strong> ${alumno.rut}
+        </div>
+        <div class="text-muted">
+            <small><i class="fas fa-info-circle"></i> Información cargada correctamente</small>
+        </div>
+    `;
+    
+    $('#datos-alumno').html(html);
+    $('#info-alumno').show();
+}
+
+function marcarHoraActual() {
+    const now = new Date();
+    const hora = now.getHours().toString().padStart(2, '0');
+    const minutos = now.getMinutes().toString().padStart(2, '0');
+    $('#hora_llegada').val(`${hora}:${minutos}`);
+}
+
+function marcarPresente() {
+    $('#estado').val('presente');
+}
+
+function limpiarFormulario() {
+    $('#form-asistencia')[0].reset();
+    $('#id_alumno').val('');
+    $('#info-alumno').hide();
+    $('#fecha').val('{{ fecha_actual }}');
+    marcarHoraActual();
+}
+
+function marcarAsistencia() {
+    const formData = new FormData($('#form-asistencia')[0]);
+    
+    // Validar que se haya seleccionado un alumno
+    if (!$('#id_alumno').val()) {
+        $('#alumno-search').addClass('is-invalid');
+        return;
+    } else {
+        $('#alumno-search').removeClass('is-invalid');
+    }
+    
+    $.ajax({
+        url: '/asistencia/marcar',
+        method: 'POST',
+        data: formData,
+        processData: false,
+        contentType: false,
+        success: function(response) {
+            mostrarNotificacion('Asistencia marcada correctamente', 'success');
+            limpiarFormulario();
+            cargarEstadisticasHoy();
+        },
+        error: function(xhr) {
+            mostrarNotificacion('Error al marcar asistencia', 'error');
+        }
+    });
+}
+
+function mostrarNotificacion(mensaje, tipo) {
+    const alertClass = tipo === 'success' ? 'alert-success' : 'alert-danger';
+    const icon = tipo === 'success' ? 'fas fa-check-circle' : 'fas fa-exclamation-triangle';
+    
+    const alert = $(`
+        <div class="alert ${alertClass} alert-dismissible fade show" role="alert">
+            <i class="${icon}"></i> ${mensaje}
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+    `);
+    
+    $('.container').prepend(alert);
+    
+    // Auto-dismiss después de 5 segundos
+    setTimeout(function() {
+        alert.fadeOut();
+    }, 5000);
+}
+
+function cargarEstadisticasHoy() {
+    // Aquí harías una petición AJAX para obtener las estadísticas del día
+    // Por ahora, datos de ejemplo
+    $('#count-presentes').text('45');
+    $('#count-ausentes').text('5');
+}
+</script>
+{% endblock %}

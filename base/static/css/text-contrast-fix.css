@@ -1,0 +1,593 @@
+/* Corrección de Contraste de Texto - Modo Día/Noche */
+
+/* =================================================================== */
+/* MODO CLARO - Textos gris pastel sobre fondos claros */
+/* =================================================================== */
+
+/* Textos principales - gris pastel en modo claro */
+body:not([data-theme="dark"]) {
+    color: #6b7280 !important; /* Gris pastel */
+}
+
+body:not([data-theme="dark"]) .card {
+    background-color: #ffffff;
+    color: #6b7280 !important; /* Gris pastel */
+}
+
+body:not([data-theme="dark"]) .card-title,
+body:not([data-theme="dark"]) .card-text,
+body:not([data-theme="dark"]) h1,
+body:not([data-theme="dark"]) h2,
+body:not([data-theme="dark"]) h3,
+body:not([data-theme="dark"]) h4,
+body:not([data-theme="dark"]) h5,
+body:not([data-theme="dark"]) h6,
+body:not([data-theme="dark"]) p,
+body:not([data-theme="dark"]) span,
+body:not([data-theme="dark"]) div {
+    color: #6b7280 !important; /* Gris pastel */
+}
+
+body:not([data-theme="dark"]) .text-muted {
+    color: #9ca3af !important; /* Gris pastel más claro */
+}
+
+/* =================================================================== */
+/* MODO OSCURO - Textos blanco celeste sobre fondos oscuros */
+/* =================================================================== */
+
+/* Textos principales - blanco celeste en modo oscuro */
+[data-theme="dark"] body {
+    color: #e0f2fe !important; /* Blanco celeste suave */
+}
+
+[data-theme="dark"] .card {
+    background: linear-gradient(135deg, #16161a 0%, #1e1e24 50%, #2b2b32 100%);
+    color: #e0f2fe !important; /* Blanco celeste suave */
+    border: 1px solid #3a3a42;
+}
+
+[data-theme="dark"] .card-title,
+[data-theme="dark"] .card-text,
+[data-theme="dark"] h1,
+[data-theme="dark"] h2,
+[data-theme="dark"] h3,
+[data-theme="dark"] h4,
+[data-theme="dark"] h5,
+[data-theme="dark"] h6,
+[data-theme="dark"] p,
+[data-theme="dark"] span,
+[data-theme="dark"] div {
+    color: #e0f2fe !important; /* Blanco celeste suave */
+}
+
+[data-theme="dark"] .text-muted {
+    color: #b3e5fc !important; /* Celeste pastel más intenso */
+}
+
+/* =================================================================== */
+/* NAVEGACIÓN - Estilos específicos */
+/* =================================================================== */
+
+/* Navegación en modo claro */
+body:not([data-theme="dark"]) .navbar {
+    background-color: #0d6efd !important;
+    z-index: 1030 !important; /* Asegurar que esté encima de otros elementos */
+}
+
+body:not([data-theme="dark"]) .navbar-brand,
+body:not([data-theme="dark"]) .nav-link,
+body:not([data-theme="dark"]) .navbar-text {
+    color: #ffffff !important; /* Blanco para contraste en navbar */
+}
+
+/* Navegación en modo oscuro */
+[data-theme="dark"] .navbar {
+    background: linear-gradient(135deg, #0f0f12 0%, #1c1c22 50%, #292932 100%) !important;
+    z-index: 1030 !important; /* Asegurar que esté encima de otros elementos */
+}
+
+[data-theme="dark"] .navbar-brand,
+[data-theme="dark"] .nav-link,
+[data-theme="dark"] .navbar-text {
+    color: #e0f2fe !important; /* Blanco celeste para navbar */
+}
+
+/* Menú desplegable de navegación */
+.navbar-collapse {
+    z-index: 1035 !important; /* Mayor que la navbar para estar encima */
+}
+
+.navbar-nav .dropdown-menu {
+    z-index: 1040 !important; /* Encima de todo para dropdown menus */
+}
+
+/* Botón hamburguesa */
+.navbar-toggler {
+    z-index: 1035 !important; /* Asegurar que sea visible */
+}
+
+/* =================================================================== */
+/* BOTONES - Contraste correcto */
+/* =================================================================== */
+
+/* Botones en modo claro */
+body:not([data-theme="dark"]) .btn {
+    color: #000000 !important; /* Negro para mejor contraste */
+}
+
+body:not([data-theme="dark"]) .btn-primary {
+    background-color: #0d6efd;
+    border-color: #0d6efd;
+    color: #000000 !important; /* Negro para contraste */
+}
+
+body:not([data-theme="dark"]) .btn-success {
+    background-color: #198754;
+    border-color: #198754;
+    color: #000000 !important; /* Negro para contraste */
+}
+
+body:not([data-theme="dark"]) .btn-warning {
+    background-color: #ffc107;
+    border-color: #ffc107;
+    color: #000000 !important; /* Negro para contraste */
+}
+
+body:not([data-theme="dark"]) .btn-danger {
+    background-color: #dc3545;
+    border-color: #dc3545;
+    color: #000000 !important; /* Negro para contraste */
+}
+
+body:not([data-theme="dark"]) .btn-info {
+    background-color: #0dcaf0;
+    border-color: #0dcaf0;
+    color: #000000 !important; /* Negro para contraste */
+}
+
+body:not([data-theme="dark"]) .btn-secondary {
+    background-color: #6c757d;
+    border-color: #6c757d;
+    color: #000000 !important; /* Negro para contraste */
+}
+
+/* Botones en modo oscuro */
+[data-theme="dark"] .btn {
+    color: #ffffff !important;
+}
+
+[data-theme="dark"] .btn-primary {
+    background-color: #7db8c7;
+    border-color: #7db8c7;
+    color: #212529 !important;
+}
+
+[data-theme="dark"] .btn-success {
+    background-color: #8bc5a3;
+    border-color: #8bc5a3;
+    color: #212529 !important;
+}
+
+[data-theme="dark"] .btn-warning {
+    background-color: #d4c087;
+    border-color: #d4c087;
+    color: #212529 !important;
+}
+
+/* =================================================================== */
+/* ALERTAS Y ELEMENTOS ESPECIALES */
+/* =================================================================== */
+
+/* Alertas en modo claro */
+body:not([data-theme="dark"]) .alert {
+    color: #212529;
+}
+
+body:not([data-theme="dark"]) .alert-info {
+    background-color: #d1ecf1;
+    border-color: #bee5eb;
+    color: #0c5460;
+}
+
+/* Alertas en modo oscuro */
+[data-theme="dark"] .alert {
+    color: #ffffff;
+    background-color: #2a2a2f;
+    border-color: #3a3a42;
+}
+
+[data-theme="dark"] .alert-info {
+    background-color: #1a2332;
+    border-color: #2a3442;
+    color: #94b8d1;
+}
+
+/* =================================================================== */
+/* FORMULARIOS */
+/* =================================================================== */
+
+/* Formularios en modo claro */
+body:not([data-theme="dark"]) .form-control {
+    background-color: #ffffff;
+    border-color: #ced4da;
+    color: #6b7280; /* Gris pastel */
+}
+
+body:not([data-theme="dark"]) .form-label {
+    color: #6b7280; /* Gris pastel */
+}
+
+/* Formularios en modo oscuro */
+[data-theme="dark"] .form-control {
+    background: linear-gradient(135deg, #1c1c21 0%, #252529 50%, #323238 100%);
+    border-color: #4a4a52;
+    color: #e0f2fe !important; /* Blanco celeste */
+}
+
+[data-theme="dark"] .form-label {
+    color: #e0f2fe !important; /* Blanco celeste */
+}
+
+/* =================================================================== */
+/* TABLAS */
+/* =================================================================== */
+
+/* Tablas en modo claro */
+body:not([data-theme="dark"]) .table {
+    color: #6b7280; /* Gris pastel */
+}
+
+body:not([data-theme="dark"]) .table th,
+body:not([data-theme="dark"]) .table td {
+    color: #6b7280; /* Gris pastel */
+}
+
+/* Tablas en modo oscuro */
+[data-theme="dark"] .table {
+    color: #e0f2fe; /* Blanco celeste */
+    background-color: transparent;
+}
+
+[data-theme="dark"] .table th,
+[data-theme="dark"] .table td {
+    color: #e0f2fe !important; /* Blanco celeste */
+    border-color: #3a3a42;
+}
+
+[data-theme="dark"] .table-hover tbody tr:hover {
+    background-color: rgba(125, 184, 199, 0.08);
+    color: #e0f2fe !important; /* Blanco celeste */
+}
+
+/* =================================================================== */
+/* DROPDOWN MENUS */
+/* =================================================================== */
+
+/* Dropdown en modo claro */
+body:not([data-theme="dark"]) .dropdown-menu {
+    background-color: #ffffff;
+    border-color: #dee2e6;
+}
+
+body:not([data-theme="dark"]) .dropdown-item {
+    color: #6b7280; /* Gris pastel */
+}
+
+/* Dropdown en modo oscuro */
+[data-theme="dark"] .dropdown-menu {
+    background-color: #242429;
+    border-color: #3a3a42;
+}
+
+[data-theme="dark"] .dropdown-item {
+    color: #e0f2fe !important; /* Blanco celeste */
+}
+
+[data-theme="dark"] .dropdown-item:hover {
+    background-color: #3a3a42;
+    color: #e0f2fe !important; /* Blanco celeste */
+}
+
+/* =================================================================== */
+/* MODALES */
+/* =================================================================== */
+
+/* Modales en modo claro */
+body:not([data-theme="dark"]) .modal-content {
+    background-color: #ffffff;
+    border: 1px solid #dee2e6;
+    color: #6b7280 !important; /* Gris pastel */
+}
+
+body:not([data-theme="dark"]) .modal-title {
+    color: #6b7280 !important; /* Gris pastel */
+}
+
+/* Modales en modo oscuro */
+[data-theme="dark"] .modal-content {
+    background: linear-gradient(135deg, #16161a 0%, #1e1e24 50%, #2b2b32 100%);
+    border: 1px solid #3a3a42;
+    color: #e0f2fe !important; /* Blanco celeste */
+}
+
+[data-theme="dark"] .modal-header {
+    border-bottom-color: #3a3a42;
+}
+
+[data-theme="dark"] .modal-footer {
+    border-top-color: #3a3a42;
+}
+
+[data-theme="dark"] .modal-title {
+    color: #e0f2fe !important; /* Blanco celeste */
+}
+
+/* =================================================================== */
+/* BREADCRUMBS Y NAVEGACIÓN SECUNDARIA */
+/* =================================================================== */
+
+/* Breadcrumbs en modo claro */
+body:not([data-theme="dark"]) .breadcrumb-item {
+    color: #9ca3af !important; /* Gris pastel más claro */
+}
+
+body:not([data-theme="dark"]) .breadcrumb-item.active {
+    color: #6b7280 !important; /* Gris pastel */
+}
+
+/* Breadcrumbs en modo oscuro */
+[data-theme="dark"] .breadcrumb-item {
+    color: #b3e5fc !important; /* Celeste pastel */
+}
+
+[data-theme="dark"] .breadcrumb-item.active {
+    color: #e0f2fe !important; /* Blanco celeste */
+}
+
+/* =================================================================== */
+/* BADGES Y ETIQUETAS */
+/* =================================================================== */
+
+[data-theme="dark"] .badge {
+    color: #212529 !important;
+}
+
+/* =================================================================== */
+/* ELEMENTOS ESPECÍFICOS DEL SISTEMA BIOMÉTRICO */
+/* =================================================================== */
+
+/* Sistema biométrico en modo claro */
+body:not([data-theme="dark"]) .fingerprint-card {
+    background-color: #ffffff;
+    color: #6b7280 !important; /* Gris pastel */
+}
+
+body:not([data-theme="dark"]) .fingerprint-card h1,
+body:not([data-theme="dark"]) .fingerprint-card h2,
+body:not([data-theme="dark"]) .fingerprint-card h3,
+body:not([data-theme="dark"]) .fingerprint-card h4,
+body:not([data-theme="dark"]) .fingerprint-card h5,
+body:not([data-theme="dark"]) .fingerprint-card h6,
+body:not([data-theme="dark"]) .fingerprint-card p,
+body:not([data-theme="dark"]) .fingerprint-card span,
+body:not([data-theme="dark"]) .fingerprint-card div,
+body:not([data-theme="dark"]) .fingerprint-card label {
+    color: #6b7280 !important; /* Gris pastel */
+}
+
+body:not([data-theme="dark"]) .student-card {
+    background-color: #f8f9fa;
+    color: #6b7280 !important; /* Gris pastel */
+}
+
+body:not([data-theme="dark"]) .student-card h1,
+body:not([data-theme="dark"]) .student-card h2,
+body:not([data-theme="dark"]) .student-card h3,
+body:not([data-theme="dark"]) .student-card h4,
+body:not([data-theme="dark"]) .student-card h5,
+body:not([data-theme="dark"]) .student-card h6,
+body:not([data-theme="dark"]) .student-card p,
+body:not([data-theme="dark"]) .student-card span,
+body:not([data-theme="dark"]) .student-card div,
+body:not([data-theme="dark"]) .student-card label {
+    color: #6b7280 !important; /* Gris pastel */
+}
+
+body:not([data-theme="dark"]) .terminal-card {
+    background-color: #ffffff;
+    color: #6b7280 !important; /* Gris pastel */
+}
+
+body:not([data-theme="dark"]) .status-message {
+    color: #6b7280 !important; /* Gris pastel */
+}
+
+body:not([data-theme="dark"]) .device-status-bar {
+    background-color: #f8f9fa;
+    color: #6b7280 !important; /* Gris pastel */
+}
+
+body:not([data-theme="dark"]) .container-fluid h1,
+body:not([data-theme="dark"]) .container h1 {
+    color: #6b7280 !important; /* Gris pastel */
+}
+
+/* Sistema biométrico en modo oscuro */
+[data-theme="dark"] .fingerprint-card {
+    background: linear-gradient(135deg, #16161a 0%, #1e1e24 50%, #2b2b32 100%);
+    color: #e0f2fe !important; /* Blanco celeste */
+}
+
+[data-theme="dark"] .student-card {
+    background: linear-gradient(135deg, #1a1a1f 0%, #252530 50%, #303040 100%);
+    color: #e0f2fe !important; /* Blanco celeste */
+}
+
+[data-theme="dark"] .terminal-card {
+    background: linear-gradient(135deg, #16161a 0%, #1e1e24 50%, #2b2b32 100%);
+    color: #e0f2fe !important; /* Blanco celeste */
+}
+
+[data-theme="dark"] .status-message {
+    color: #e0f2fe !important; /* Blanco celeste */
+}
+
+[data-theme="dark"] .device-status-bar {
+    background: linear-gradient(135deg, #1a1a1f 0%, #252530 50%, #303040 100%);
+    color: #e0f2fe !important; /* Blanco celeste */
+}
+
+/* =================================================================== */
+/* ESTADOS DE HUELLAS DACTILARES Y ELEMENTOS ESPECÍFICOS */
+/* =================================================================== */
+
+/* Estilos en modo claro */
+body:not([data-theme="dark"]) .fingerprint-status {
+    color: #6b7280 !important; /* Gris pastel */
+}
+
+body:not([data-theme="dark"]) .status-registered {
+    color: #198754 !important; /* Verde para registrado */
+}
+
+body:not([data-theme="dark"]) .status-pending {
+    color: #dc3545 !important; /* Rojo para pendiente */
+}
+
+body:not([data-theme="dark"]) .btn-fingerprint {
+    color: #6b7280 !important; /* Gris pastel para texto del botón */
+}
+
+body:not([data-theme="dark"]) .device-status {
+    color: #6b7280 !important; /* Gris pastel */
+}
+
+body:not([data-theme="dark"]) .search-results {
+    color: #6b7280 !important; /* Gris pastel */
+}
+
+body:not([data-theme="dark"]) .student-info {
+    color: #6b7280 !important; /* Gris pastel */
+}
+
+/* Lista de estudiantes */
+body:not([data-theme="dark"]) .list-group-item {
+    color: #6b7280 !important; /* Gris pastel */
+    background-color: #ffffff;
+}
+
+body:not([data-theme="dark"]) .list-group-item h5,
+body:not([data-theme="dark"]) .list-group-item p,
+body:not([data-theme="dark"]) .list-group-item span {
+    color: #6b7280 !important; /* Gris pastel */
+}
+
+/* Estilos en modo oscuro */
+[data-theme="dark"] .fingerprint-status {
+    color: #e0f2fe !important; /* Blanco celeste */
+}
+
+[data-theme="dark"] .status-registered {
+    color: #90EE90 !important; /* Verde claro para registrado */
+}
+
+[data-theme="dark"] .status-pending {
+    color: #FFB6C1 !important; /* Rosa claro para pendiente */
+}
+
+[data-theme="dark"] .btn-fingerprint {
+    color: #e0f2fe !important; /* Blanco celeste para texto del botón */
+}
+
+[data-theme="dark"] .device-status {
+    color: #e0f2fe !important; /* Blanco celeste */
+}
+
+[data-theme="dark"] .search-results {
+    color: #e0f2fe !important; /* Blanco celeste */
+}
+
+[data-theme="dark"] .student-info {
+    color: #e0f2fe !important; /* Blanco celeste */
+}
+
+/* Lista de estudiantes en modo oscuro */
+[data-theme="dark"] .list-group-item {
+    color: #e0f2fe !important; /* Blanco celeste */
+    background: linear-gradient(135deg, #1a1a1f 0%, #252530 50%, #303040 100%);
+    border-color: #3a3a42;
+}
+
+[data-theme="dark"] .list-group-item h5,
+[data-theme="dark"] .list-group-item p,
+[data-theme="dark"] .list-group-item span {
+    color: #e0f2fe !important; /* Blanco celeste */
+}
+
+/* =================================================================== */
+/* CORRECCIONES ADICIONALES PARA TEXTO BLANCO EN MODO CLARO */
+/* =================================================================== */
+
+/* Forzar gris pastel en modo claro para todos los elementos de texto */
+body:not([data-theme="dark"]) * {
+    color: #6b7280 !important; /* Gris pastel por defecto */
+}
+
+/* Excepciones para mantener colores específicos */
+body:not([data-theme="dark"]) .navbar-brand,
+body:not([data-theme="dark"]) .nav-link,
+body:not([data-theme="dark"]) .navbar-text {
+    color: #ffffff !important; /* Mantener blanco para navegación */
+}
+
+body:not([data-theme="dark"]) .btn {
+    color: #000000 !important; /* Negro para botones con color */
+}
+
+/* Asegurar que los textos dentro de contenedores específicos sean gris pastel */
+body:not([data-theme="dark"]) .container *,
+body:not([data-theme="dark"]) .container-fluid *,
+body:not([data-theme="dark"]) .card *,
+body:not([data-theme="dark"]) .row *,
+body:not([data-theme="dark"]) .col * {
+    color: #6b7280 !important; /* Gris pastel */
+}
+
+/* Excepciones para botones dentro de contenedores */
+body:not([data-theme="dark"]) .container .btn,
+body:not([data-theme="dark"]) .container-fluid .btn,
+body:not([data-theme="dark"]) .card .btn,
+body:not([data-theme="dark"]) .row .btn,
+body:not([data-theme="dark"]) .col .btn {
+    color: #000000 !important; /* Negro para botones */
+}
+
+/* =================================================================== */
+/* CORRECCIONES DE Z-INDEX PARA NAVEGACIÓN */
+/* =================================================================== */
+
+/* Asegurar que el contenido principal no interfiera con la navegación */
+.container,
+.container-fluid,
+.card,
+.row,
+.col {
+    position: relative;
+    z-index: 1 !important; /* Bajo z-index para que la navegación esté encima */
+}
+
+/* Contenido principal del cuerpo */
+main {
+    position: relative;
+    z-index: 1 !important;
+}
+
+/* Modales siguen teniendo prioridad alta */
+.modal {
+    z-index: 1050 !important;
+}
+
+.modal-backdrop {
+    z-index: 1040 !important;
+}

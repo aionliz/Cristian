@@ -1,0 +1,394 @@
+{% extends 'base.html' %}
+
+{% block title %}Reportes de Asistencia{% endblock %}
+
+{% block content %}
+<div class="main-content">
+    <div class="container-fluid">
+        <!-- Header -->
+        <div class="row mb-4">
+            <div class="col-12">
+                <div class="d-flex justify-content-between align-items-center">
+                    <div>
+                        <h2 class="mb-0">📊 Reportes de Asistencia</h2>
+                        <p class="text-muted">Genera reportes detallados de asistencia</p>
+                    </div>
+                    <button class="btn btn-primary" onclick="exportReport()">
+                        <i class="fas fa-download"></i> Exportar PDF
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Filtros -->
+        <div class="row mb-4">
+            <div class="col-12">
+                <div class="card">
+                    <div class="card-header">
+                        <h5 class="card-title mb-0">
+                            <i class="fas fa-filter"></i> Filtros de Reporte
+                        </h5>
+                    </div>
+                    <div class="card-body">
+                        <form id="filtros-form" method="GET">
+                            <div class="row">
+                                <div class="col-md-3 mb-3">
+                                    <label for="mes" class="form-label">Mes</label>
+                                    <input type="month" class="form-control" id="mes" name="mes" 
+                                           value="{{ mes if mes else '' }}" required>
+                                </div>
+                                <div class="col-md-3 mb-3">
+                                    <label for="curso" class="form-label">Curso</label>
+                                    <select class="form-select" id="curso" name="curso">
+                                        <option value="">Todos los cursos</option>
+                                        <option value="1" {{ 'selected' if id_curso == '1' else '' }}>1° Básico A</option>
+                                        <option value="2" {{ 'selected' if id_curso == '2' else '' }}>1° Básico B</option>
+                                        <option value="3" {{ 'selected' if id_curso == '3' else '' }}>2° Básico A</option>
+                                        <option value="4" {{ 'selected' if id_curso == '4' else '' }}>2° Básico B</option>
+                                        <option value="5" {{ 'selected' if id_curso == '5' else '' }}>3° Básico A</option>
+                                    </select>
+                                </div>
+                                <div class="col-md-3 mb-3">
+                                    <label for="tipo-reporte" class="form-label">Tipo de Reporte</label>
+                                    <select class="form-select" id="tipo-reporte" name="tipo">
+                                        <option value="general">Reporte General</option>
+                                        <option value="detallado">Reporte Detallado</option>
+                                        <option value="resumen">Resumen Estadístico</option>
+                                    </select>
+                                </div>
+                                <div class="col-md-3 mb-3 d-flex align-items-end">
+                                    <button type="submit" class="btn btn-primary w-100">
+                                        <i class="fas fa-search"></i> Generar Reporte
+                                    </button>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Estadísticas Generales -->
+        <div class="row mb-4">
+            <div class="col-md-3">
+                <div class="card stat-card">
+                    <div class="card-body text-center">
+                        <div class="stat-icon bg-success">
+                            <i class="fas fa-check"></i>
+                        </div>
+                        <h3 class="stat-number text-success" id="total-presente">0</h3>
+                        <p class="stat-label">Asistencias</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="card stat-card">
+                    <div class="card-body text-center">
+                        <div class="stat-icon bg-danger">
+                            <i class="fas fa-times"></i>
+                        </div>
+                        <h3 class="stat-number text-danger" id="total-ausente">0</h3>
+                        <p class="stat-label">Ausencias</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="card stat-card">
+                    <div class="card-body text-center">
+                        <div class="stat-icon bg-warning">
+                            <i class="fas fa-clock"></i>
+                        </div>
+                        <h3 class="stat-number text-warning" id="total-tarde">0</h3>
+                        <p class="stat-label">Atrasos</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="card stat-card">
+                    <div class="card-body text-center">
+                        <div class="stat-icon bg-info">
+                            <i class="fas fa-percentage"></i>
+                        </div>
+                        <h3 class="stat-number text-info" id="porcentaje-asistencia">0%</h3>
+                        <p class="stat-label">% Asistencia</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Gráfico de Asistencia -->
+        <div class="row mb-4">
+            <div class="col-md-8">
+                <div class="card">
+                    <div class="card-header">
+                        <h5 class="card-title mb-0">
+                            <i class="fas fa-chart-line"></i> Tendencia de Asistencia
+                        </h5>
+                    </div>
+                    <div class="card-body">
+                        <canvas id="grafico-asistencia" height="100"></canvas>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card">
+                    <div class="card-header">
+                        <h5 class="card-title mb-0">
+                            <i class="fas fa-chart-pie"></i> Distribución
+                        </h5>
+                    </div>
+                    <div class="card-body">
+                        <canvas id="grafico-distribucion" height="200"></canvas>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Tabla de Reportes -->
+        <div class="row">
+            <div class="col-12">
+                <div class="card">
+                    <div class="card-header">
+                        <h5 class="card-title mb-0">
+                            <i class="fas fa-table"></i> Detalle de Asistencia
+                        </h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="table-responsive">
+                            <table class="table table-hover" id="tabla-asistencia">
+                                <thead class="table-dark">
+                                    <tr>
+                                        <th>RUT</th>
+                                        <th>Nombre Completo</th>
+                                        <th>Curso</th>
+                                        <th>Días Presente</th>
+                                        <th>Días Ausente</th>
+                                        <th>Atrasos</th>
+                                        <th>% Asistencia</th>
+                                        <th>Estado</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="tbody-asistencia">
+                                    <!-- Los datos se cargan dinámicamente -->
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal de detalles -->
+<div class="modal fade" id="modal-detalle" tabindex="-1">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Detalle de Asistencia</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <div id="detalle-contenido">
+                    <!-- Contenido dinámico -->
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+// Datos simulados para el reporte
+const datosAsistencia = [
+    {
+        rut: '12.345.678-9',
+        nombre: 'Juan Pérez González',
+        curso: '1° Básico A',
+        presente: 18,
+        ausente: 2,
+        atrasos: 1,
+        porcentaje: 90
+    },
+    {
+        rut: '98.765.432-1',
+        nombre: 'María García López',
+        curso: '1° Básico A',
+        presente: 20,
+        ausente: 0,
+        atrasos: 0,
+        porcentaje: 100
+    },
+    {
+        rut: '11.222.333-4',
+        nombre: 'Carlos Rodríguez Silva',
+        curso: '1° Básico B',
+        presente: 16,
+        ausente: 4,
+        atrasos: 2,
+        porcentaje: 80
+    },
+    {
+        rut: '55.666.777-8',
+        nombre: 'Ana Martínez Díaz',
+        curso: '2° Básico A',
+        presente: 19,
+        ausente: 1,
+        atrasos: 0,
+        porcentaje: 95
+    }
+];
+
+function cargarDatosReporte() {
+    // Calcular estadísticas generales
+    const totalPresente = datosAsistencia.reduce((sum, item) => sum + item.presente, 0);
+    const totalAusente = datosAsistencia.reduce((sum, item) => sum + item.ausente, 0);
+    const totalAtrasos = datosAsistencia.reduce((sum, item) => sum + item.atrasos, 0);
+    const porcentajePromedio = Math.round(datosAsistencia.reduce((sum, item) => sum + item.porcentaje, 0) / datosAsistencia.length);
+
+    // Actualizar estadísticas
+    document.getElementById('total-presente').textContent = totalPresente;
+    document.getElementById('total-ausente').textContent = totalAusente;
+    document.getElementById('total-tarde').textContent = totalAtrasos;
+    document.getElementById('porcentaje-asistencia').textContent = porcentajePromedio + '%';
+
+    // Cargar tabla
+    const tbody = document.getElementById('tbody-asistencia');
+    tbody.innerHTML = '';
+
+    datosAsistencia.forEach(alumno => {
+        const row = tbody.insertRow();
+        const estado = alumno.porcentaje >= 85 ? 
+            '<span class="badge bg-success">Excelente</span>' :
+            alumno.porcentaje >= 70 ? 
+            '<span class="badge bg-warning">Regular</span>' :
+            '<span class="badge bg-danger">Crítico</span>';
+
+        row.innerHTML = `
+            <td>${alumno.rut}</td>
+            <td>${alumno.nombre}</td>
+            <td>${alumno.curso}</td>
+            <td><span class="badge bg-success">${alumno.presente}</span></td>
+            <td><span class="badge bg-danger">${alumno.ausente}</span></td>
+            <td><span class="badge bg-warning">${alumno.atrasos}</span></td>
+            <td><strong>${alumno.porcentaje}%</strong></td>
+            <td>${estado}</td>
+        `;
+        
+        row.style.cursor = 'pointer';
+        row.onclick = () => mostrarDetalle(alumno);
+    });
+}
+
+function mostrarDetalle(alumno) {
+    const modal = new bootstrap.Modal(document.getElementById('modal-detalle'));
+    const contenido = document.getElementById('detalle-contenido');
+    
+    contenido.innerHTML = `
+        <div class="row">
+            <div class="col-md-6">
+                <h6>Información del Estudiante</h6>
+                <p><strong>RUT:</strong> ${alumno.rut}</p>
+                <p><strong>Nombre:</strong> ${alumno.nombre}</p>
+                <p><strong>Curso:</strong> ${alumno.curso}</p>
+            </div>
+            <div class="col-md-6">
+                <h6>Estadísticas de Asistencia</h6>
+                <p><strong>Días Presente:</strong> ${alumno.presente}</p>
+                <p><strong>Días Ausente:</strong> ${alumno.ausente}</p>
+                <p><strong>Atrasos:</strong> ${alumno.atrasos}</p>
+                <p><strong>Porcentaje:</strong> ${alumno.porcentaje}%</p>
+            </div>
+        </div>
+    `;
+    
+    modal.show();
+}
+
+function crearGraficoAsistencia() {
+    const ctx = document.getElementById('grafico-asistencia').getContext('2d');
+    
+    // Datos simulados por día
+    const diasMes = Array.from({length: 20}, (_, i) => i + 1);
+    const asistenciasDiarias = diasMes.map(() => Math.floor(Math.random() * 10) + 15);
+    
+    new Chart(ctx, {
+        type: 'line',
+        data: {
+            labels: diasMes.map(d => `Día ${d}`),
+            datasets: [{
+                label: 'Asistencias Diarias',
+                data: asistenciasDiarias,
+                borderColor: '#007bff',
+                backgroundColor: 'rgba(0, 123, 255, 0.1)',
+                tension: 0.4,
+                fill: true
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            scales: {
+                y: {
+                    beginAtZero: true
+                }
+            }
+        }
+    });
+}
+
+function crearGraficoDistribucion() {
+    const ctx = document.getElementById('grafico-distribucion').getContext('2d');
+    
+    const totalPresente = datosAsistencia.reduce((sum, item) => sum + item.presente, 0);
+    const totalAusente = datosAsistencia.reduce((sum, item) => sum + item.ausente, 0);
+    const totalAtrasos = datosAsistencia.reduce((sum, item) => sum + item.atrasos, 0);
+    
+    new Chart(ctx, {
+        type: 'doughnut',
+        data: {
+            labels: ['Presente', 'Ausente', 'Atrasos'],
+            datasets: [{
+                data: [totalPresente, totalAusente, totalAtrasos],
+                backgroundColor: ['#28a745', '#dc3545', '#ffc107']
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false
+        }
+    });
+}
+
+function exportReport() {
+    // Implementar exportación a PDF
+    Utils.showToast('Funcionalidad de exportación en desarrollo', 'info');
+}
+
+// Cargar datos al inicializar la página
+document.addEventListener('DOMContentLoaded', function() {
+    cargarDatosReporte();
+    
+    // Verificar si Chart.js está disponible
+    if (typeof Chart !== 'undefined') {
+        crearGraficoAsistencia();
+        crearGraficoDistribucion();
+    } else {
+        console.warn('Chart.js no está disponible. Los gráficos no se mostrarán.');
+    }
+    
+    // Establecer el mes actual por defecto
+    const mesInput = document.getElementById('mes');
+    if (!mesInput.value) {
+        const hoy = new Date();
+        const mesActual = hoy.getFullYear() + '-' + String(hoy.getMonth() + 1).padStart(2, '0');
+        mesInput.value = mesActual;
+    }
+});
+</script>
+
+<!-- Chart.js para gráficos -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+{% endblock %}
