@@ -1,9 +1,10 @@
 # Sistema de Asistencia - Colegio AML
-# Archivo .gitignore actualizado
+# Archivo .gitignore unificado
 
 # Entorno virtual
 venv/
 env/
+env-todo/
 ENV/
 env.bak/
 venv.bak/
@@ -48,62 +49,41 @@ config.local.py
 .env
 .env.local
 
-# Archivos de testing (eliminados del proyecto)
+# Archivos temporales y de respaldo
+*.tmp
+*.temp
+*.bak
+*.backup
+*_old*
+*_temp*
+*.orig
+cookies.txt
+
+# Archivos de testing
 test_*.py
 *_test.py
-demo_*.py
+test_*.html
+test_*.js
+
+# Documentación temporal
+*-README.md
+SOLUCION-*.md
+CSS-UNIFICATION-*.md
+REORGANIZACION-*.md
 
 # Logs
 *.log
 logs/
 
-# Archivos temporales
-*.tmp
-*.temp
-*.bak
-
 # Archivos de base de datos locales
 *.db
 *.sqlite
-
-# Archivos de instalación de drivers (eliminados)
-install_*.sh
-setup_*.sh
+*.sqlite3
 
 # Archivos de huellas dactilares (por seguridad)
 fingerprints/
 huellas/
 *.fpd
-*.egg
-MANIFEST
-
-# PyInstaller
-*.manifest
-*.spec
-
-# Configuración de base de datos
-config/database.py
-config/secrets.py
-.env
-
-# Logs
-*.log
-logs/
-
-# Archivos temporales
-*.tmp
-*.temp
-.DS_Store
-.vscode/
-.idea/
-
-# Archivos de huellas dactilares (imágenes sensibles)
-uploads/fingerprints/
-static/uploads/
-
-# Configuración específica del entorno
-instance/
-.webassets-cache
 
 # Coverage reports
 htmlcov/
@@ -120,50 +100,10 @@ coverage.xml
 # Jupyter Notebook
 .ipynb_checkpoints
 
-# IPython
-profile_default/
-ipython_config.py
-
-# pyenv
-.python-version
-
-# celery beat schedule file
-celerybeat-schedule
-
-# SageMath parsed files
-*.sage.py
-
-# Environments
-.env
-.venv
-env/
-venv/
-ENV/
-env.bak/
-venv.bak/
-
-# Spyder project settings
-.spyderproject
-.spyproject
-
-# Rope project settings
-.ropeproject
-
-# mkdocs documentation
-/site
-
-# mypy
-.mypy_cache/
-.dmypy.json
-dmypy.json
-
-# Archivos específicos del proyecto
-test_results/
-backups/
-*.db
-*.sqlite
-*.sqlite3
-
-# Archivos de hardware específicos
+# Hardware específico
 hardware_logs/
 calibration_data/
+
+# Archivos de respaldo automáticos
+backups/
+*~

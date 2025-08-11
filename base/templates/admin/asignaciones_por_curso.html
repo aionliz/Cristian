@@ -1,0 +1,168 @@
+{% extends "base.html" %}
+
+{% block title %}Asignaciones por Curso{% endblock %}
+
+{% block body %}
+<div class="container">
+    <div class="card">
+        <div class="card-header">
+            <div class="d-flex justify-content-between align-items-center">
+                <h4><i class="fas fa-users"></i> Asignaciones por Curso</h4>
+                <a href="/asignaturas/gestionar_asignaciones" class="btn btn-secondary">
+                    <i class="fas fa-arrow-left"></i> Volver
+                </a>
+            </div>
+        </div>
+        <div class="card-body">
+            <!-- Filtros -->
+            <div class="row mb-4">
+                <div class="col-md-6">
+                    <label for="cursoFilter"><i class="fas fa-filter"></i> Filtrar por Curso:</label>
+                    <select class="form-select" id="cursoFilter">
+                        <option value="">Todos los cursos</option>
+                        {% for curso in cursos %}
+                        <option value="{{ curso.id_curso }}" {% if curso_seleccionado and
+                            curso.id_curso==curso_seleccionado.id_curso %}selected{% endif %}>
+                            {{ curso.nombre_completo }}
+                        </option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="col-md-6 d-flex align-items-end">
+                    <button class="btn btn-primary btn-filtrar-curso">
+                        <i class="fas fa-search"></i> Filtrar
+                    </button>
+                </div>
+            </div>
+
+            {% if curso_seleccionado %}
+            <div class="alert alert-info">
+                <h5><i class="fas fa-info-circle"></i> Curso: {{ curso_seleccionado.nombre_completo }}</h5>
+                <p>Total de alumnos: {{ total_alumnos }}</p>
+                <p>Total de asignaturas: {{ total_asignaturas }}</p>
+            </div>
+            {% endif %}
+
+            <!-- Listado de asignaciones por curso -->
+            {% if asignaciones_por_curso %}
+            <div class="accordion" id="cursosAccordion">
+                {% for curso_data in asignaciones_por_curso %}
+                <div class="accordion-item">
+                    <h2 class="accordion-header" id="heading{{ loop.index }}">
+                        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
+                            data-bs-target="#collapse{{ loop.index }}" aria-expanded="false">
+                            <strong>{{ curso_data.curso.nombre_completo }}</strong>
+                            <span class="badge bg-primary ms-2">{{ curso_data.asignaciones|length }} asignaturas</span>
+                            <span class="badge bg-info ms-2">{{ curso_data.total_alumnos }} alumnos</span>
+                        </button>
+                    </h2>
+                    <div id="collapse{{ loop.index }}" class="accordion-collapse collapse"
+                        data-bs-parent="#cursosAccordion">
+                        <div class="accordion-body">
+                            {% if curso_data.asignaciones %}
+                            <div class="table-responsive">
+                                <table class="table table-striped">
+                                    <thead>
+                                        <tr>
+                                            <th><i class="fas fa-book"></i> Asignatura</th>
+                                            <th><i class="fas fa-chalkboard-teacher"></i> Profesor</th>
+                                            <th><i class="fas fa-info-circle"></i> Estado</th>
+                                            <th><i class="fas fa-calendar"></i> Fecha Asignación</th>
+                                            <th><i class="fas fa-cogs"></i> Acciones</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        {% for asignacion in curso_data.asignaciones %}
+                                        <tr>
+                                            <td>
+                                                <strong>{{ asignacion.asignatura_nombre }}</strong>
+                                                {% if asignacion.asignatura_descripcion %}
+                                                <br><small class="text-muted">{{ asignacion.asignatura_descripcion
+                                                    }}</small>
+                                                {% endif %}
+                                            </td>
+                                            <td>
+                                                {{ asignacion.profesor_nombres }} {{ asignacion.profesor_apellidos }}
+                                                {% if asignacion.profesor_especialidad %}
+                                                <br><small class="text-muted">{{ asignacion.profesor_especialidad
+                                                    }}</small>
+                                                {% endif %}
+                                            </td>
+                                            <td>
+                                                {% if asignacion.activo %}
+                                                <span class="badge bg-success">Activa</span>
+                                                {% else %}
+                                                <span class="badge bg-secondary">Inactiva</span>
+                                                {% endif %}
+                                            </td>
+                                            <td>{{ asignacion.fecha_asignacion.strftime('%d/%m/%Y') if
+                                                asignacion.fecha_asignacion else 'N/A' }}</td>
+                                            <td>
+                                                <div class="btn-group btn-group-sm">
+                                                    <button class="btn btn-outline-primary btn-sm"
+                                                        data-action="ver-detalle"
+                                                        data-id="{{ asignacion.id_asignacion }}">
+                                                        <i class="fas fa-eye"></i>
+                                                    </button>
+                                                    <button class="btn btn-outline-warning btn-sm" data-action="editar"
+                                                        data-id="{{ asignacion.id_asignacion }}">
+                                                        <i class="fas fa-edit"></i>
+                                                    </button>
+                                                    <button class="btn btn-outline-danger btn-sm" data-action="eliminar"
+                                                        data-id="{{ asignacion.id_asignacion }}">
+                                                        <i class="fas fa-trash"></i>
+                                                    </button>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                        {% endfor %}
+                                    </tbody>
+                                </table>
+                            </div>
+
+                            <!-- Lista de alumnos del curso -->
+                            {% if curso_data.alumnos %}
+                            <div class="mt-4">
+                                <h6><i class="fas fa-users"></i> Alumnos del curso:</h6>
+                                <div class="row">
+                                    {% for alumno in curso_data.alumnos %}
+                                    <div class="col-md-6 col-lg-4 mb-2">
+                                        <div class="card card-body p-2">
+                                            <small>
+                                                <strong>{{ alumno.nombres }} {{ alumno.apellidos }}</strong>
+                                                {% if alumno.codigo_alumno %}
+                                                <br>Código: {{ alumno.codigo_alumno }}
+                                                {% endif %}
+                                            </small>
+                                        </div>
+                                    </div>
+                                    {% endfor %}
+                                </div>
+                            </div>
+                            {% endif %}
+                            {% else %}
+                            <div class="alert alert-warning">
+                                <i class="fas fa-exclamation-triangle"></i>
+                                No hay asignaturas asignadas a este curso.
+                            </div>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+            {% else %}
+            <div class="alert alert-info">
+                <i class="fas fa-info-circle"></i>
+                Seleccione un curso para ver sus asignaciones y alumnos.
+            </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+
+</div>
+</div>
+
+
+{% endblock %}

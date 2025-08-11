@@ -29,14 +29,14 @@
                     </h5>
                 </div>
                 <div class="card-body">
-                    <form method="POST" id="form-asistencia">
+                    <form method="POST" id="form-asistencia" action="{{ url_for('asistencia.marcar_asistencia') }}">
                         <div class="row">
                             <div class="col-md-6 mb-3">
                                 <label for="fecha" class="form-label">
                                     <i class="fas fa-calendar"></i> Fecha
                                 </label>
-                                <input type="date" class="form-control" id="fecha" name="fecha" 
-                                       value="{{ fecha_actual }}" required>
+                                <input type="date" class="form-control" id="fecha" name="fecha"
+                                    value="{{ fecha_actual }}" required>
                             </div>
                             <div class="col-md-6 mb-3">
                                 <label for="hora_llegada" class="form-label">
@@ -50,9 +50,8 @@
                             <label for="alumno-search" class="form-label">
                                 <i class="fas fa-user"></i> Buscar Alumno
                             </label>
-                            <input type="text" class="form-control" id="alumno-search" 
-                                   placeholder="Escriba el nombre, apellido o RUT del alumno..." 
-                                   autocomplete="off">
+                            <input type="text" class="form-control" id="alumno-search"
+                                placeholder="Escriba el nombre o apellido del alumno..." autocomplete="off">
                             <input type="hidden" id="id_alumno" name="id_alumno" required>
                             <div class="invalid-feedback">
                                 Debe seleccionar un alumno válido.
@@ -84,12 +83,12 @@
                             <label for="observaciones" class="form-label">
                                 <i class="fas fa-comment"></i> Observaciones (Opcional)
                             </label>
-                            <textarea class="form-control" id="observaciones" name="observaciones" 
-                                      rows="3" placeholder="Comentarios adicionales..."></textarea>
+                            <textarea class="form-control" id="observaciones" name="observaciones" rows="3"
+                                placeholder="Comentarios adicionales..."></textarea>
                         </div>
 
                         <div class="d-grid gap-2 d-md-flex justify-content-md-end">
-                            <button type="button" class="btn btn-outline-secondary me-md-2" onclick="limpiarFormulario()">
+                            <button type="button" class="btn btn-outline-secondary me-md-2" id="btn-limpiar-formulario">
                                 <i class="fas fa-undo"></i> Limpiar
                             </button>
                             <button type="submit" class="btn btn-success">
@@ -126,10 +125,10 @@
                 </div>
                 <div class="card-body">
                     <div class="d-grid gap-2">
-                        <button type="button" class="btn btn-outline-primary btn-sm" onclick="marcarHoraActual()">
+                        <button type="button" class="btn btn-outline-primary btn-sm" id="btn-marcar-hora-actual">
                             <i class="fas fa-clock"></i> Usar Hora Actual
                         </button>
-                        <button type="button" class="btn btn-outline-success btn-sm" onclick="marcarPresente()">
+                        <button type="button" class="btn btn-outline-success btn-sm" id="btn-marcar-presente">
                             <i class="fas fa-check"></i> Marcar Presente
                         </button>
                         <a href="{{ url_for('asistencia.listar_por_curso') }}" class="btn btn-outline-info btn-sm">
@@ -167,141 +166,4 @@
         </div>
     </div>
 </div>
-{% endblock %}
-
-{% block scripts %}
-<script>
-$(document).ready(function() {
-    // Configurar autocompletado para búsqueda de alumnos
-    configurarAutocompletado();
-    
-    // Marcar hora actual por defecto
-    marcarHoraActual();
-    
-    // Manejar envío del formulario
-    $('#form-asistencia').on('submit', function(e) {
-        e.preventDefault();
-        marcarAsistencia();
-    });
-    
-    // Cargar estadísticas del día
-    cargarEstadisticasHoy();
-});
-
-function configurarAutocompletado() {
-    $('#alumno-search').autocomplete({
-        source: function(request, response) {
-            $.get('/asistencia/buscar_alumno', { term: request.term })
-                .done(function(data) {
-                    response(data);
-                })
-                .fail(function() {
-                    response([]);
-                });
-        },
-        minLength: 2,
-        select: function(event, ui) {
-            $('#id_alumno').val(ui.item.id);
-            mostrarInfoAlumno(ui.item);
-            return true;
-        },
-        change: function(event, ui) {
-            if (!ui.item) {
-                $('#id_alumno').val('');
-                $('#info-alumno').hide();
-            }
-        }
-    });
-}
-
-function mostrarInfoAlumno(alumno) {
-    const html = `
-        <div class="mb-2">
-            <strong>Nombre:</strong> ${alumno.nombre} ${alumno.apellido}
-        </div>
-        <div class="mb-2">
-            <strong>RUT:</strong> ${alumno.rut}
-        </div>
-        <div class="text-muted">
-            <small><i class="fas fa-info-circle"></i> Información cargada correctamente</small>
-        </div>
-    `;
-    
-    $('#datos-alumno').html(html);
-    $('#info-alumno').show();
-}
-
-function marcarHoraActual() {
-    const now = new Date();
-    const hora = now.getHours().toString().padStart(2, '0');
-    const minutos = now.getMinutes().toString().padStart(2, '0');
-    $('#hora_llegada').val(`${hora}:${minutos}`);
-}
-
-function marcarPresente() {
-    $('#estado').val('presente');
-}
-
-function limpiarFormulario() {
-    $('#form-asistencia')[0].reset();
-    $('#id_alumno').val('');
-    $('#info-alumno').hide();
-    $('#fecha').val('{{ fecha_actual }}');
-    marcarHoraActual();
-}
-
-function marcarAsistencia() {
-    const formData = new FormData($('#form-asistencia')[0]);
-    
-    // Validar que se haya seleccionado un alumno
-    if (!$('#id_alumno').val()) {
-        $('#alumno-search').addClass('is-invalid');
-        return;
-    } else {
-        $('#alumno-search').removeClass('is-invalid');
-    }
-    
-    $.ajax({
-        url: '/asistencia/marcar',
-        method: 'POST',
-        data: formData,
-        processData: false,
-        contentType: false,
-        success: function(response) {
-            mostrarNotificacion('Asistencia marcada correctamente', 'success');
-            limpiarFormulario();
-            cargarEstadisticasHoy();
-        },
-        error: function(xhr) {
-            mostrarNotificacion('Error al marcar asistencia', 'error');
-        }
-    });
-}
-
-function mostrarNotificacion(mensaje, tipo) {
-    const alertClass = tipo === 'success' ? 'alert-success' : 'alert-danger';
-    const icon = tipo === 'success' ? 'fas fa-check-circle' : 'fas fa-exclamation-triangle';
-    
-    const alert = $(`
-        <div class="alert ${alertClass} alert-dismissible fade show" role="alert">
-            <i class="${icon}"></i> ${mensaje}
-            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-        </div>
-    `);
-    
-    $('.container').prepend(alert);
-    
-    // Auto-dismiss después de 5 segundos
-    setTimeout(function() {
-        alert.fadeOut();
-    }, 5000);
-}
-
-function cargarEstadisticasHoy() {
-    // Aquí harías una petición AJAX para obtener las estadísticas del día
-    // Por ahora, datos de ejemplo
-    $('#count-presentes').text('45');
-    $('#count-ausentes').text('5');
-}
-</script>
 {% endblock %}

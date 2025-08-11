@@ -1,0 +1,186 @@
+{% extends "base.html" %}
+
+{% block title %}Detalle de Asignación - Sistema de Asistencia{% endblock %}
+
+{% block head %}
+<link href="{{ url_for('static', filename='css/curso-form.css') }}" rel="stylesheet">
+{% endblock %}
+
+{% block content %}
+<div class="container-fluid mt-4">
+    <div class="row">
+        <div class="col-12">
+            <!-- Encabezado -->
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <div>
+                    <h2 class="mb-0">
+                        <i class="fas fa-chalkboard-teacher text-primary me-2"></i>
+                        Detalle de Asignación
+                    </h2>
+                    <p class="text-muted mb-0">Información completa de la asignación</p>
+                </div>
+                <div>
+                    <a href="{{ url_for('asignatura.gestionar_asignaciones') }}" class="btn btn-outline-secondary">
+                        <i class="fas fa-arrow-left me-1"></i> Volver
+                    </a>
+                </div>
+            </div>
+
+            <!-- Información de la Asignación -->
+            <div class="row">
+                <div class="col-md-8">
+                    <div class="card shadow-sm mb-4">
+                        <div class="card-header bg-light">
+                            <h5 class="card-title mb-0">
+                                <i class="fas fa-info-circle me-2"></i>
+                                Información de la Asignación
+                            </h5>
+                        </div>
+                        <div class="card-body">
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <h6 class="text-primary">
+                                        <i class="fas fa-book me-1"></i> Asignatura
+                                    </h6>
+                                    <p class="mb-3">
+                                        <strong>{{ asignatura.nombre }}</strong><br>
+                                        <small class="text-muted">{{ asignatura.descripcion or 'Sin descripción'
+                                            }}</small>
+                                    </p>
+
+                                    <h6 class="text-primary">
+                                        <i class="fas fa-graduation-cap me-1"></i> Curso
+                                    </h6>
+                                    <p class="mb-3">
+                                        <strong>{{ curso.nombre_completo }}</strong><br>
+                                        <small class="text-muted">{{ curso.nivel_texto }}</small>
+                                    </p>
+                                </div>
+                                <div class="col-md-6">
+                                    <h6 class="text-primary">
+                                        <i class="fas fa-user-tie me-1"></i> Profesor
+                                    </h6>
+                                    <p class="mb-3">
+                                        <strong>{{ profesor.nombres }} {{ profesor.apellidos }}</strong><br>
+                                        <small class="text-muted">{{ profesor.email }}</small>
+                                    </p>
+
+                                    <h6 class="text-primary">
+                                        <i class="fas fa-calendar me-1"></i> Estado
+                                    </h6>
+                                    <p class="mb-3">
+                                        {% if asignacion.activo %}
+                                        <span class="badge bg-success">Activa</span>
+                                        {% else %}
+                                        <span class="badge bg-secondary">Inactiva</span>
+                                        {% endif %}
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-md-4">
+                    <div class="card shadow-sm mb-4">
+                        <div class="card-header bg-light">
+                            <h6 class="card-title mb-0">
+                                <i class="fas fa-cogs me-2"></i>
+                                Acciones
+                            </h6>
+                        </div>
+                        <div class="card-body">
+                            <div class="d-grid gap-2">
+                                <a href="{{ url_for('curso.detalle_curso', id_curso=curso.id_curso) }}"
+                                    class="btn btn-outline-primary btn-sm">
+                                    <i class="fas fa-graduation-cap me-1"></i>
+                                    Ver Curso Completo
+                                </a>
+                                <a href="{{ url_for('asignatura.detalle_asignatura', id_asignatura=asignatura.id_asignatura) }}"
+                                    class="btn btn-outline-info btn-sm">
+                                    <i class="fas fa-book me-1"></i>
+                                    Ver Asignatura
+                                </a>
+                                <a href="{{ url_for('profesores.detalle_profesor', id_profesor=profesor.id_profesor) }}"
+                                    class="btn btn-outline-secondary btn-sm">
+                                    <i class="fas fa-user-tie me-1"></i>
+                                    Ver Profesor
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Lista de Alumnos -->
+            {% if alumnos %}
+            <div class="card shadow-sm">
+                <div class="card-header bg-light">
+                    <h5 class="card-title mb-0">
+                        <i class="fas fa-users me-2"></i>
+                        Alumnos Inscritos
+                        <span class="badge bg-primary ms-2">{{ alumnos|length }}</span>
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table class="table table-striped table-hover">
+                            <thead class="table-dark">
+                                <tr>
+                                    <th>Nombre Completo</th>
+                                    <th>Email</th>
+                                    <th>Teléfono</th>
+                                    <th>Acciones</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for alumno in alumnos %}
+                                <tr>
+                                    <td>
+                                        <strong>{{ alumno.nombres }} {{ alumno.apellidos }}</strong>
+                                    </td>
+                                    <td>
+                                        {% if alumno.email %}
+                                        <a href="mailto:{{ alumno.email }}" class="text-decoration-none">
+                                            {{ alumno.email }}
+                                        </a>
+                                        {% else %}
+                                        <small class="text-muted">Sin email</small>
+                                        {% endif %}
+                                    </td>
+                                    <td>
+                                        {% if alumno.telefono %}
+                                        <a href="tel:{{ alumno.telefono }}" class="text-decoration-none">
+                                            {{ alumno.telefono }}
+                                        </a>
+                                        {% else %}
+                                        <small class="text-muted">Sin teléfono</small>
+                                        {% endif %}
+                                    </td>
+                                    <td>
+                                        <a href="{{ url_for('asistencia.detalle_alumno', id_alumno=alumno.id_alumno) }}"
+                                            class="btn btn-sm btn-outline-info" title="Ver asistencia">
+                                            <i class="fas fa-chart-line"></i>
+                                        </a>
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+            {% else %}
+            <div class="card shadow-sm">
+                <div class="card-body text-center py-5">
+                    <i class="fas fa-user-slash fa-3x text-muted mb-3"></i>
+                    <h5 class="text-muted">No hay alumnos inscritos</h5>
+                    <p class="text-muted">Esta asignación no tiene alumnos inscritos actualmente.</p>
+                </div>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}
+

@@ -1,0 +1,197 @@
+{% extends 'base.html' %}
+
+{% block title %}Gestión de Asignaturas - Colegio AML{% endblock %}
+
+{% block content %}
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-12">
+            <!-- Header -->
+            <div class="card border-0 shadow-sm mb-4">
+                <div class="card-body">
+                    <div class="row align-items-center">
+                        <div class="col-md-8">
+                            <h4 class="mb-1">
+                                <i class="fas fa-book"></i> Gestión de Asignaturas
+                            </h4>
+                            <p class="text-muted mb-0">Administra las asignaturas del colegio</p>
+                        </div>
+                        <div class="col-md-4 text-end">
+                            <a href="{{ url_for('asignatura.agregar_asignatura') }}" class="btn btn-primary">
+                                <i class="fas fa-plus"></i> Nueva Asignatura
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Filtros de búsqueda -->
+            <div class="row mb-4">
+                <div class="col-md-6">
+                    <div class="search-container">
+                        <span class="input-group-text"><i class="fas fa-search"></i></span>
+                        <input type="text" class="form-control search-input" id="buscar-asignatura"
+                            placeholder="Buscar por nombre de asignatura..." autocomplete="off">
+                        <button type="button" class="limpiar-busqueda" id="limpiar-busqueda" style="display: none;"
+                            title="Limpiar búsqueda">
+                            <i class="fas fa-times"></i>
+                        </button>
+                    </div>
+                    <span class="contador-resultados" id="contador-resultados" style="display: none;">
+                        0 resultados
+                    </span>
+                </div>
+            </div>
+
+            <!-- Estadísticas -->
+            <div class="row mb-4">
+                <div class="col-md-4">
+                    <div class="card stat-card">
+                        <div class="card-body text-center">
+                            <div class="stat-icon bg-primary">
+                                <i class="fas fa-book"></i>
+                            </div>
+                            <h3 class="stat-number text-primary" id="total-asignaturas">{{ asignaturas|length }}</h3>
+                            <p class="stat-label">Total Asignaturas</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="card stat-card">
+                        <div class="card-body text-center">
+                            <div class="stat-icon bg-success">
+                                <i class="fas fa-chalkboard-teacher"></i>
+                            </div>
+                            <h3 class="stat-number text-success" id="asignaturas-con-profesores">
+                                {{ asignaturas|selectattr("total_profesores", "greaterthan", 0)|list|length }}
+                            </h3>
+                            <p class="stat-label">Con Profesores</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="card stat-card">
+                        <div class="card-body text-center">
+                            <div class="stat-icon bg-warning">
+                                <i class="fas fa-exclamation-triangle"></i>
+                            </div>
+                            <h3 class="stat-number text-warning" id="asignaturas-sin-profesores">
+                                {{ asignaturas|selectattr("total_profesores", "equalto", 0)|list|length }}
+                            </h3>
+                            <p class="stat-label">Sin Profesores</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Tabla de asignaturas -->
+            <div class="row">
+                <div class="col-12">
+                    <div class="card">
+                        <div class="card-header">
+                            <h5 class="card-title mb-0">
+                                <i class="fas fa-table"></i> Lista de Asignaturas
+                            </h5>
+                        </div>
+                        <div class="card-body">
+                            {% if asignaturas %}
+                            <div class="table-responsive">
+                                <table class="table table-hover" id="tabla-asignaturas">
+                                    <thead class="table-dark">
+                                        <tr>
+                                            <th>Nombre</th>
+                                            <th>Descripción</th>
+                                            <th>Profesores</th>
+                                            <th>Acciones</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="tbody-asignaturas">
+                                        {% for asignatura in asignaturas %}
+                                        <tr data-id="{{ asignatura.id_asignatura }}">
+                                            <td>
+                                                <strong>{{ asignatura.nombre }}</strong>
+                                            </td>
+                                            <td>
+                                                {% if asignatura.descripcion %}
+                                                {{ asignatura.descripcion }}
+                                                {% else %}
+                                                <span class="text-muted">Sin descripción</span>
+                                                {% endif %}
+                                            </td>
+                                            <td>
+                                                <span
+                                                    class="badge {{ 'bg-success' if asignatura.total_profesores > 0 else 'bg-warning' }}">
+                                                    {{ asignatura.total_profesores }} profesor{{ 'es' if
+                                                    asignatura.total_profesores != 1 else '' }}
+                                                </span>
+                                            </td>
+                                            <td>
+                                                <div class="btn-group" role="group">
+                                                    <a href="{{ url_for('asignatura.detalle_asignatura', id_asignatura=asignatura.id_asignatura) }}"
+                                                        class="btn btn-sm btn-outline-info" title="Ver detalles">
+                                                        <i class="fas fa-eye"></i>
+                                                    </a>
+                                                    <a href="{{ url_for('asignatura.editar_asignatura', id_asignatura=asignatura.id_asignatura) }}"
+                                                        class="btn btn-sm btn-outline-primary" title="Editar">
+                                                        <i class="fas fa-edit"></i>
+                                                    </a>
+                                                    <button type="button" class="btn btn-sm btn-outline-danger"
+                                                        onclick="confirmarEliminacion({{ asignatura.id_asignatura }}, '{{ asignatura.nombre|escape }}')"
+                                                        title="Eliminar">
+                                                        <i class="fas fa-trash"></i>
+                                                    </button>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                        {% endfor %}
+                                    </tbody>
+                                </table>
+                            </div>
+                            {% else %}
+                            <div class="text-center py-5">
+                                <i class="fas fa-book fa-3x text-muted mb-3"></i>
+                                <h5 class="text-muted">No hay asignaturas registradas</h5>
+                                <p class="text-muted">Comienza agregando una nueva asignatura</p>
+                                <a href="{{ url_for('asignatura.agregar_asignatura') }}" class="btn btn-primary">
+                                    <i class="fas fa-plus"></i> Agregar Primera Asignatura
+                                </a>
+                            </div>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal de confirmación para eliminar -->
+<div class="modal fade" id="modalEliminar" tabindex="-1" aria-labelledby="modalEliminarLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="modalEliminarLabel">
+                    <i class="fas fa-exclamation-triangle text-warning"></i> Confirmar Eliminación
+                </h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <p>¿Estás seguro de que deseas eliminar la asignatura <strong id="nombre-asignatura"></strong>?</p>
+                <div class="alert alert-warning">
+                    <i class="fas fa-info-circle"></i>
+                    <strong>Nota:</strong> No podrás eliminar asignaturas que tengan profesores asociados.
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                <form id="form-eliminar" method="POST" style="display: inline;">
+                    <button type="submit" class="btn btn-danger">
+                        <i class="fas fa-trash"></i> Eliminar
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock %}

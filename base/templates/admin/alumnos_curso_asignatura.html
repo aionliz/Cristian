@@ -1,0 +1,253 @@
+{% extends "base.html" %}
+
+{% block title %}Alumnos de {{ asignacion_info.curso_completo }} - {{ asignacion_info.nombre_asignatura }} - Colegio
+AML{% endblock %}
+
+{% block content %}
+<div class="container mt-4"
+    data-profesor-id="{% if asignacion_info.id_profesor %}{{ asignacion_info.id_profesor }}{% endif %}"
+    data-asistencia-url="{{ url_for('asistencia.marcar_asistencia') }}">
+    <div class="row">
+        <div class="col-12">
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <h1 class="h3">
+                    <i class="fas fa-users text-primary"></i>
+                    Alumnos del Curso
+                </h1>
+                <div>
+                    <a href="{{ url_for('asignatura.detalle_asignatura', id_asignatura=asignatura.id_asignatura) }}"
+                        class="btn btn-outline-secondary">
+                        <i class="fas fa-arrow-left"></i> Volver a Asignatura
+                    </a>
+                    <a href="{{ url_for('asignatura.gestionar_asignaciones') }}" class="btn btn-outline-primary">
+                        <i class="fas fa-cog"></i> Gestionar Asignaciones
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Información de la asignación -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="card border-0 shadow-sm">
+                <div class="card-header bg-primary text-white">
+                    <h5 class="mb-0">
+                        <i class="fas fa-info-circle"></i> Información de la Asignación
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-4">
+                            <h6><i class="fas fa-book"></i> Asignatura</h6>
+                            <p class="mb-0">{{ asignacion_info.nombre_asignatura }}</p>
+                            {% if asignacion_info.descripcion_asignatura %}
+                            <small class="text-muted">{{ asignacion_info.descripcion_asignatura }}</small>
+                            {% endif %}
+                        </div>
+                        <div class="col-md-4">
+                            <h6><i class="fas fa-school"></i> Curso</h6>
+                            <p class="mb-0">{{ asignacion_info.curso_completo }}</p>
+                            <small class="text-muted">{{ asignacion_info.nombre_curso }}</small>
+                        </div>
+                        <div class="col-md-4">
+                            <h6><i class="fas fa-chalkboard-teacher"></i> Profesor</h6>
+                            <p class="mb-0">{{ asignacion_info.profesor_completo }}</p>
+                            {% if asignacion_info.especialidad_profesor %}
+                            <small class="text-muted">{{ asignacion_info.especialidad_profesor }}</small>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Estadísticas rápidas -->
+    <div class="row mb-4">
+        <div class="col-md-3">
+            <div class="card text-center border-0 shadow-sm">
+                <div class="card-body">
+                    <h3 class="text-primary">{{ alumnos|length }}</h3>
+                    <p class="mb-0 text-muted">Total Alumnos</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card text-center border-0 shadow-sm">
+                <div class="card-body">
+                    <h3 class="text-success">{{ alumnos|selectattr("activo", "equalto", 1)|list|length }}</h3>
+                    <p class="mb-0 text-muted">Activos</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card text-center border-0 shadow-sm">
+                <div class="card-body">
+                    <h3 class="text-info">
+                        {% set hombres = alumnos|selectattr("genero", "equalto", "M")|list|length %}
+                        {{ hombres }}
+                    </h3>
+                    <p class="mb-0 text-muted">Hombres</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card text-center border-0 shadow-sm">
+                <div class="card-body">
+                    <h3 class="text-warning">
+                        {% set mujeres = alumnos|selectattr("genero", "equalto", "F")|list|length %}
+                        {{ mujeres }}
+                    </h3>
+                    <p class="mb-0 text-muted">Mujeres</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Lista de alumnos -->
+    <div class="row">
+        <div class="col-12">
+            <div class="card border-0 shadow-sm">
+                <div class="card-header bg-light">
+                    <h5 class="mb-0">
+                        <i class="fas fa-list"></i> Lista de Alumnos
+                    </h5>
+                </div>
+                <div class="card-body">
+                    {% if alumnos %}
+                    <div class="table-responsive">
+                        <table class="table table-hover">
+                            <thead class="table-dark">
+                                <tr>
+                                    <th>Nombre Completo</th>
+                                    <th>Email</th>
+                                    <th>Teléfono</th>
+                                    <th>Fecha Ingreso</th>
+                                    <th>Estado</th>
+                                    <th>Acciones</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for alumno in alumnos %}
+                                <tr>
+                                    <td>
+                                        <div>
+                                            <strong>{{ alumno.nombre }} {{ alumno.apellido_paterno }}</strong>
+                                            {% if alumno.apellido_materno %}
+                                            {{ alumno.apellido_materno }}
+                                            {% endif %}
+                                        </div>
+                                        {% if alumno.genero %}
+                                        <small class="text-muted">
+                                            {{ 'Masculino' if alumno.genero == 'M' else 'Femenino' }}
+                                        </small>
+                                        {% endif %}
+                                    </td>
+                                    <td>{{ alumno.email or '-' }}</td>
+                                    <td>{{ alumno.telefono or '-' }}</td>
+                                    <td>
+                                        {% if alumno.fecha_ingreso %}
+                                        {{ alumno.fecha_ingreso.strftime('%d/%m/%Y') }}
+                                        {% else %}
+                                        <span class="text-muted">No registrada</span>
+                                        {% endif %}
+                                    </td>
+                                    <td>
+                                        {% if alumno.activo %}
+                                        <span class="badge bg-success">Activo</span>
+                                        {% else %}
+                                        <span class="badge bg-secondary">Inactivo</span>
+                                        {% endif %}
+                                    </td>
+                                    <td>
+                                        <div class="btn-group btn-group-sm" role="group">
+                                            <a href="{{ url_for('asistencia.detalle_alumno', id_alumno=alumno.id_alumno) }}"
+                                                class="btn btn-outline-info" title="Ver asistencia">
+                                                <i class="fas fa-calendar-check"></i>
+                                            </a>
+                                            <a href="{{ url_for('admin.editar_alumno', id=alumno.id_alumno) }}"
+                                                class="btn btn-outline-primary" title="Editar alumno">
+                                                <i class="fas fa-edit"></i>
+                                            </a>
+                                            <button class="btn btn-outline-success btn-marcar-asistencia"
+                                                data-id-alumno="{{ alumno.id_alumno }}"
+                                                data-nombre-alumno="{{ alumno.nombre }} {{ alumno.apellido_paterno }}"
+                                                title="Marcar asistencia">
+                                                <i class="fas fa-check"></i>
+                                            </button>
+                                        </div>
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                    {% else %}
+                    <div class="text-center py-5">
+                        <i class="fas fa-users-slash fa-3x text-muted mb-3"></i>
+                        <h5 class="text-muted">No hay alumnos registrados</h5>
+                        <p class="text-muted">No se encontraron alumnos para este curso y asignatura.</p>
+                        <a href="{{ url_for('admin.gestionar_alumnos') }}" class="btn btn-primary">
+                            <i class="fas fa-user-plus"></i> Gestionar Alumnos
+                        </a>
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal para marcar asistencia rápida -->
+<div class="modal fade" id="modalAsistenciaRapida" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">
+                    <i class="fas fa-user-check"></i> Marcar Asistencia
+                </h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <form id="formAsistenciaRapida">
+                    <input type="hidden" id="rapid_id_alumno" name="id_alumno">
+                    <input type="hidden" id="rapid_fecha" name="fecha" value="{{ moment().format('YYYY-MM-DD') }}">
+
+                    <div class="mb-3">
+                        <strong>Alumno:</strong> <span id="rapid_nombre_alumno"></span>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="rapid_estado" class="form-label">Estado</label>
+                        <select class="form-select" id="rapid_estado" name="estado" required>
+                            <option value="presente">Presente</option>
+                            <option value="ausente">Ausente</option>
+                            <option value="tardanza">Tardanza</option>
+                            <option value="justificado">Justificado</option>
+                        </select>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="rapid_hora_llegada" class="form-label">Hora de Llegada</label>
+                        <input type="time" class="form-control" id="rapid_hora_llegada" name="hora_llegada">
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="rapid_observaciones" class="form-label">Observaciones</label>
+                        <textarea class="form-control" id="rapid_observaciones" name="observaciones"
+                            rows="2"></textarea>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                <button type="button" class="btn btn-primary btn-guardar-asistencia">
+                    <i class="fas fa-save"></i> Guardar
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock %}

@@ -1,0 +1,163 @@
+{% extends "base.html" %}
+
+{% block title %}Editar Curso - Sistema de Asistencia{% endblock %}
+
+{% block content %}
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header d-flex justify-content-between align-items-center">
+                    <h4 class="mb-0">
+                        <i class="fas fa-edit text-primary me-2"></i>
+                        Editar Curso: {{ curso.nombre_completo }}
+                    </h4>
+                    <div class="d-flex gap-2">
+                        <a href="{{ url_for('admin.detalle_curso', id_curso=curso.id_curso) }}"
+                            class="btn btn-info btn-sm">
+                            <i class="fas fa-eye me-1"></i>
+                            Ver Detalle
+                        </a>
+                        <a href="{{ url_for('admin.gestionar_cursos') }}" class="btn btn-secondary btn-sm">
+                            <i class="fas fa-arrow-left me-1"></i>
+                            Volver
+                        </a>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <form method="POST" action="{{ url_for('admin.editar_curso', id_curso=curso.id_curso) }}">
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label for="nivel" class="form-label">
+                                        <i class="fas fa-layer-group me-1"></i>
+                                        Nivel <span class="text-danger">*</span>
+                                    </label>
+                                    <select class="form-select" id="nivel" name="nivel" required>
+                                        <option value="">Seleccionar nivel...</option>
+                                        <option value="1" {{ 'selected' if curso.nivel=='1' else '' }}>1° Básico
+                                        </option>
+                                        <option value="2" {{ 'selected' if curso.nivel=='2' else '' }}>2° Básico
+                                        </option>
+                                        <option value="3" {{ 'selected' if curso.nivel=='3' else '' }}>3° Básico
+                                        </option>
+                                        <option value="4" {{ 'selected' if curso.nivel=='4' else '' }}>4° Básico
+                                        </option>
+                                        <option value="5" {{ 'selected' if curso.nivel=='5' else '' }}>5° Básico
+                                        </option>
+                                        <option value="6" {{ 'selected' if curso.nivel=='6' else '' }}>6° Básico
+                                        </option>
+                                        <option value="7" {{ 'selected' if curso.nivel=='7' else '' }}>7° Básico
+                                        </option>
+                                        <option value="8" {{ 'selected' if curso.nivel=='8' else '' }}>8° Básico
+                                        </option>
+                                        <option value="9" {{ 'selected' if curso.nivel=='9' else '' }}>1° Medio</option>
+                                        <option value="10" {{ 'selected' if curso.nivel=='10' else '' }}>2° Medio
+                                        </option>
+                                        <option value="11" {{ 'selected' if curso.nivel=='11' else '' }}>3° Medio
+                                        </option>
+                                        <option value="12" {{ 'selected' if curso.nivel=='12' else '' }}>4° Medio
+                                        </option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label for="letra" class="form-label">
+                                        <i class="fas fa-font me-1"></i>
+                                        Letra <span class="text-danger">*</span>
+                                    </label>
+                                    <select class="form-select" id="letra" name="letra" required>
+                                        <option value="">Seleccionar letra...</option>
+                                        <option value="A" {{ 'selected' if curso.letra=='A' else '' }}>A</option>
+                                        <option value="B" {{ 'selected' if curso.letra=='B' else '' }}>B</option>
+                                        <option value="C" {{ 'selected' if curso.letra=='C' else '' }}>C</option>
+                                        <option value="D" {{ 'selected' if curso.letra=='D' else '' }}>D</option>
+                                        <option value="E" {{ 'selected' if curso.letra=='E' else '' }}>E</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="descripcion" class="form-label">
+                                <i class="fas fa-align-left me-1"></i>
+                                Descripción
+                            </label>
+                            <textarea class="form-control" id="descripcion" name="descripcion" rows="3"
+                                placeholder="Descripción opcional del curso...">{{ curso.descripcion or '' }}</textarea>
+                        </div>
+
+                        <div class="mb-3 form-check">
+                            <input type="checkbox" class="form-check-input" id="activo" name="activo" {{ 'checked' if
+                                curso.activo else '' }}>
+                            <label class="form-check-label" for="activo">
+                                <i class="fas fa-toggle-on text-success me-1"></i>
+                                Curso activo
+                            </label>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-12">
+                                <div class="d-flex gap-2">
+                                    <button type="submit" class="btn btn-primary">
+                                        <i class="fas fa-save me-1"></i>
+                                        Actualizar Curso
+                                    </button>
+                                    <a href="{{ url_for('admin.gestionar_cursos') }}" class="btn btn-secondary">
+                                        <i class="fas fa-times me-1"></i>
+                                        Cancelar
+                                    </a>
+                                    {% if curso.activo %}
+                                    <a href="{{ url_for('admin.eliminar_curso', id_curso=curso.id_curso) }}"
+                                        class="btn btn-danger ms-auto"
+                                        data-confirm="¿Estás seguro de que deseas eliminar el curso {{ curso.nombre_completo }}? Esta acción no se puede deshacer.">
+                                        <i class="fas fa-trash me-1"></i>
+                                        Eliminar Curso
+                                    </a>
+                                    {% endif %}
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+            <!-- Información adicional del curso -->
+            <div class="card mt-4">
+                <div class="card-header">
+                    <h5 class="mb-0">
+                        <i class="fas fa-info-circle text-info me-2"></i>
+                        Información del Curso
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-3">
+                            <strong>Nombre completo:</strong><br>
+                            <span class="text-muted">{{ curso.nombre_completo }}</span>
+                        </div>
+                        <div class="col-md-3">
+                            <strong>Estado:</strong><br>
+                            <span class="badge {{ 'bg-success' if curso.activo else 'bg-danger' }}">
+                                {{ 'Activo' if curso.activo else 'Inactivo' }}
+                            </span>
+                        </div>
+                        <div class="col-md-3">
+                            <strong>Creado:</strong><br>
+                            <span class="text-muted">{{ curso.created_at.strftime('%d/%m/%Y') if curso.created_at else
+                                'No disponible' }}</span>
+                        </div>
+                        <div class="col-md-3">
+                            <strong>Última actualización:</strong><br>
+                            <span class="text-muted">{{ curso.updated_at.strftime('%d/%m/%Y') if curso.updated_at else
+                                'No disponible' }}</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock %}

@@ -1,0 +1,174 @@
+/**
+ * Estilos específicos para el formulario de cursos
+ * Mejora la UX de los dropdowns múltiples con paleta pastel
+ */
+
+/* Mejoras para los select múltiples con colores pasteles */
+.form-select-multiple {
+    min-height: 120px;
+    background-image: none; /* Remover la flecha del select */
+    background-color: var(--pastel-gray-50);
+    border-color: var(--pastel-gray-300);
+    color: var(--pastel-gray-700);
+}
+
+.form-select-multiple option {
+    padding: 8px 12px;
+    border-radius: 4px;
+    margin: 2px 0;
+    background-color: var(--pastel-gray-50);
+    color: var(--pastel-gray-700);
+}
+
+.form-select-multiple option:checked {
+    background: linear-gradient(135deg, var(--pastel-blue) 0%, var(--pastel-blue-dark) 100%);
+    color: var(--pastel-blue-text);
+    font-weight: 500;
+}
+
+.form-select-multiple option:hover {
+    background-color: var(--pastel-blue-light);
+    color: var(--pastel-blue-text);
+}
+
+.form-select-multiple option:checked:hover {
+    background: linear-gradient(135deg, var(--pastel-blue-dark) 0%, var(--pastel-lavender) 100%);
+    color: var(--pastel-blue-text);
+}
+
+/* Status de selecciones con colores pasteles */
+#selection-status {
+    margin-top: 1rem;
+}
+
+#selection-status .alert {
+    border-left: 4px solid;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+#selection-status .alert-info {
+    border-left-color: var(--pastel-lavender);
+    background-color: var(--pastel-lavender-light);
+    color: var(--pastel-lavender-text);
+}
+
+#selection-status .alert-success {
+    border-left-color: var(--pastel-green);
+    background-color: var(--pastel-green-light);
+    color: var(--pastel-green-text);
+}
+
+/* Animaciones suaves */
+.form-select-multiple {
+    transition: all 0.3s ease;
+}
+
+.form-select-multiple:focus {
+    transform: scale(1.02);
+    box-shadow: 0 4px 12px rgba(135, 206, 235, 0.3) !important;
+    border-color: var(--pastel-blue) !important;
+}
+
+/* Mejoras para las cards con colores pasteles */
+.card.border-info {
+    transition: all 0.3s ease;
+    border-color: var(--pastel-lavender) !important;
+}
+
+.card.border-info:hover {
+    box-shadow: 0 4px 12px rgba(220, 208, 255, 0.2);
+}
+
+.card.border-info .card-header {
+    background: linear-gradient(135deg, var(--pastel-lavender) 0%, var(--pastel-lavender-dark) 100%);
+    color: var(--pastel-lavender-text);
+    border-bottom-color: var(--pastel-lavender-dark);
+}
+
+/* Tooltips mejorados */
+.form-select-multiple[title]:hover::after {
+    content: attr(title);
+    position: absolute;
+    bottom: 100%;
+    left: 50%;
+    transform: translateX(-50%);
+    background: #212529;
+    color: white;
+    padding: 4px 8px;
+    border-radius: 4px;
+    font-size: 12px;
+    white-space: nowrap;
+    z-index: 1000;
+    opacity: 0.9;
+}
+
+/* Responsive design */
+@media (max-width: 768px) {
+    .form-select-multiple {
+        min-height: 100px;
+    }
+    
+    .form-select-multiple option {
+        padding: 6px 10px;
+    }
+}
+
+/* Indicadores visuales para múltiple selección */
+.form-select-multiple::before {
+    content: "💡 Mantén Ctrl/Cmd presionado para seleccionar múltiples opciones";
+    position: absolute;
+    top: -25px;
+    left: 0;
+    font-size: 11px;
+    color: #6c757d;
+    pointer-events: none;
+}
+
+.form-group-multiple {
+    position: relative;
+    margin-top: 25px;
+}
+
+/* Estilos para las opciones de select */
+.form-select-multiple option[disabled] {
+    color: #6c757d;
+    background-color: #f8f9fa;
+}
+
+/* Mejoras para el formulario en general con colores pasteles */
+.curso-form .card-header {
+    background: linear-gradient(135deg, var(--pastel-blue) 0%, var(--pastel-blue-dark) 100%);
+    color: var(--pastel-blue-text);
+}
+
+.curso-form .form-label {
+    font-weight: 600;
+    color: var(--pastel-gray-700);
+}
+
+.curso-form .form-label i {
+    color: var(--pastel-blue-text);
+    margin-right: 0.5rem;
+}
+
+/* Animaciones para feedback con colores pasteles */
+@keyframes pulse-success {
+    0% { background-color: var(--pastel-green-light); }
+    50% { background-color: rgba(152, 216, 168, 0.3); }
+    100% { background-color: var(--pastel-green-light); }
+}
+
+@keyframes pulse-info {
+    0% { background-color: var(--pastel-lavender-light); }
+    50% { background-color: rgba(220, 208, 255, 0.3); }
+    100% { background-color: var(--pastel-lavender-light); }
+}
+
+.alert-success {
+    animation: pulse-success 2s ease-in-out;
+}
+
+.alert-info {
+    animation: pulse-info 2s ease-in-out;
+}

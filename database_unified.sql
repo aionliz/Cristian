@@ -1,17 +1,22 @@
--- Script SQL para crear las tablas del sistema de asistencia
--- Base de datos: colegioaml
+-- =========================================================
+-- SCRIPT UNIFICADO DE BASE DE DATOS - SISTEMA DE ASISTENCIA BIOMÉTRICA
+-- Base de datos: colegio_AML
 -- Sistema biométrico con DigitalPersona U.are.U 4500
+-- =========================================================
 
 -- Crear la base de datos si no existe
-CREATE DATABASE IF NOT EXISTS `colegioaml` CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
-USE `colegioaml`;
+CREATE DATABASE IF NOT EXISTS `colegio_AML` CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+USE `colegio_AML`;
 
 -- Deshabilitar verificaciones de claves foráneas temporalmente
 SET FOREIGN_KEY_CHECKS = 0;
 
--- Eliminar tablas si existen para empezar de cero (¡CUIDADO! Esto borra todos los datos)
+-- =========================================================
+-- ELIMINAR TABLAS EXISTENTES (¡CUIDADO! Esto borra todos los datos)
+-- =========================================================
 DROP TABLE IF EXISTS `huellas_dactilares`;
 DROP TABLE IF EXISTS `asistencias`;
+DROP TABLE IF EXISTS `asignaciones`;
 DROP TABLE IF EXISTS `usuarios`;
 DROP TABLE IF EXISTS `apoderados_alumnos`;
 DROP TABLE IF EXISTS `alumnos`;
@@ -20,37 +25,50 @@ DROP TABLE IF EXISTS `asignaturas`;
 DROP TABLE IF EXISTS `cursos`;
 DROP TABLE IF EXISTS `comunas`;
 
+-- Eliminar vistas si existen
+DROP VIEW IF EXISTS `vista_asistencia_completa`;
+DROP VIEW IF EXISTS `vista_estadisticas_huellas`;
+DROP VIEW IF EXISTS `vista_asignaciones_completa`;
+
 -- Habilitar verificaciones de claves foráneas nuevamente
 SET FOREIGN_KEY_CHECKS = 1;
 
--- 1. Tabla 'comunas'
+-- =========================================================
+-- 1. TABLA 'comunas'
+-- =========================================================
 CREATE TABLE `comunas` (
     `id_comuna` INT PRIMARY KEY AUTO_INCREMENT,
-    `nombre` VARCHAR(100) NOT NULL
+    `nombre` VARCHAR(100) NOT NULL UNIQUE
 );
 
--- Insertar solo las comunas únicas de tu lista
 INSERT INTO `comunas` (`nombre`) VALUES
 ('San Ramon'),
 ('La Pintana'),
 ('La Granja'),
 ('La Cisterna'),
-('San Bernardo')
-ON DUPLICATE KEY UPDATE `nombre` = `nombre`;
+('San Bernardo');
 
--- 2. Tabla 'asignaturas'
+-- =========================================================
+-- 2. TABLA 'asignaturas'
+-- =========================================================
 CREATE TABLE `asignaturas` (
     `id_asignatura` INT PRIMARY KEY AUTO_INCREMENT,
-    `nombre` VARCHAR(100) NOT NULL
+    `nombre` VARCHAR(100) NOT NULL UNIQUE,
+    `descripcion` TEXT,
+    `activo` BOOLEAN DEFAULT TRUE,
+    `created_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    `updated_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
 );
 
-INSERT INTO `asignaturas` (`nombre`) VALUES
-('Programación Orientada a Objeto'),
-('Modelamiento BD'),
-('Web'),
-('Matemáticas');
+INSERT INTO `asignaturas` (`nombre`, `descripcion`) VALUES
+('Programación Orientada a Objeto', 'Desarrollo de software con paradigmas orientados a objetos'),
+('Modelamiento BD', 'Diseño y modelamiento de bases de datos relacionales'),
+('Web', 'Desarrollo de aplicaciones web front-end y back-end'),
+('Matemáticas', 'Matemáticas aplicadas a la informática');
 
--- 3. Tabla 'cursos'
+-- =========================================================
+-- 3. TABLA 'cursos'
+-- =========================================================
 CREATE TABLE `cursos` (
     `id_curso` INT PRIMARY KEY AUTO_INCREMENT,
     `nivel` INT NOT NULL,
@@ -59,40 +77,45 @@ CREATE TABLE `cursos` (
     `descripcion` TEXT,
     `activo` BOOLEAN DEFAULT TRUE,
     `created_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    `updated_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+    `updated_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    UNIQUE KEY `unique_nivel_letra` (`nivel`, `letra`)
 );
 
-INSERT INTO `cursos` (`nivel`, `letra`) VALUES
-(4, 'B');
+INSERT INTO `cursos` (`nivel`, `letra`, `descripcion`) VALUES
+(4, 'B', 'Cuarto Medio B - Especialidad Informática');
 
--- 4. Tabla 'profesores'
+-- =========================================================
+-- 4. TABLA 'profesores'
+-- =========================================================
 CREATE TABLE `profesores` (
     `id_profesor` INT PRIMARY KEY AUTO_INCREMENT,
     `nombre` VARCHAR(100) NOT NULL,
     `apellido` VARCHAR(100) NOT NULL,
     `email` VARCHAR(100) UNIQUE NOT NULL,
+    `telefono` VARCHAR(20),
     `especialidad` VARCHAR(100),
-    `id_asignatura_fk` INT,
+    `fecha_ingreso` DATE,
     `activo` BOOLEAN DEFAULT TRUE,
     `created_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    `updated_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-    FOREIGN KEY (`id_asignatura_fk`) REFERENCES `asignaturas`(`id_asignatura`)
+    `updated_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
 );
 
--- Insertar profesores
-INSERT INTO `profesores` (`nombre`, `apellido`, `email`, `especialidad`, `id_asignatura_fk`) VALUES
-('Juan', 'Pérez', 'juan.perez@colegio-aml.cl', 'Programación', 1),
-('María', 'González', 'maria.gonzalez@colegio-aml.cl', 'Base de Datos', 2),
-('Liza', 'Molina', 'liza.molina@colegio-aml.cl', 'Desarrollo Web', 3),
-('Carlos', 'Rodríguez', 'carlos.rodriguez@colegio-aml.cl', 'Matemáticas', 4);
+INSERT INTO `profesores` (`nombre`, `apellido`, `email`, `especialidad`, `fecha_ingreso`) VALUES
+('Juan', 'Pérez', 'juan.perez@colegio-aml.cl', 'Programación', '2024-03-01'),
+('María', 'González', 'maria.gonzalez@colegio-aml.cl', 'Base de Datos', '2024-03-01'),
+('Liza', 'Molina', 'liza.molina@colegio-aml.cl', 'Desarrollo Web', '2024-03-01'),
+('Carlos', 'Rodríguez', 'carlos.rodriguez@colegio-aml.cl', 'Matemáticas', '2024-03-01');
 
--- 5. Tabla 'alumnos'
+-- =========================================================
+-- 5. TABLA 'alumnos'
+-- =========================================================
 CREATE TABLE `alumnos` (
     `id_alumno` INT PRIMARY KEY AUTO_INCREMENT,
     `nombre` VARCHAR(100) NOT NULL,
     `apellido_paterno` VARCHAR(100) NOT NULL,
     `apellido_materno` VARCHAR(100) NOT NULL,
     `fecha_nacimiento` DATE,
+    `fecha_ingreso` DATE,
     `edad` INT,
     `direccion` VARCHAR(255),
     `email` VARCHAR(100) UNIQUE NOT NULL,
@@ -107,49 +130,75 @@ CREATE TABLE `alumnos` (
 );
 
 -- Insertar 40 alumnos del 4° medio B
-INSERT INTO `alumnos` (`nombre`, `apellido_paterno`, `apellido_materno`, `fecha_nacimiento`, `edad`, `direccion`, `email`, `id_comuna_fk`, `id_curso_fk`) VALUES
-('Daniel Isaias', 'Acevedo', 'Peña', '2007-05-10', 17, 'Fernando Albano', 'danielacevini@gmail.com', 1, 1),
-('Cristian Patricio', 'Aguirre', 'Parra', '2007-10-03', 17, 'Pasaje el Consulado', 'aguirrecristian2007@gmail.com', 2, 1),
-('Tomás Justino', 'Alzamora', 'Zorricueta', '2007-09-24', 17, 'José Ghiardo', 'tomas122@gmail.com', 3, 1),
-('Emilia Paz', 'Arredondo', 'Contreras', '2007-01-14', 18, 'Sargento Candelaria', 'arredondocontrerasemilia@gmail.com', 1, 1),
-('Miguel Angel Matías', 'Cabezas', 'Aliaga', '2007-02-07', 18, 'Cadete G Perry', 'miguelangelmca07@gmail.com', 1, 1),
-('Sofía Carolina', 'Cáceres', 'Durán', '2007-06-08', 17, 'Aurora de Chile', 'sodiacarolinacaceresduran@gmail.com', 1, 1),
-('Yanira Belén', 'Cayo', 'Cuevas', '2007-12-10', 17, 'Almirante la Torre', 'yaniracayocuevas@gmail.com', 1, 1),
-('Dailyn', 'Cid', 'Sepulveda', '2007-12-23', 17, 'Javiera Carrera', 'dailyncitamichelle23@gmail.com', 1, 1),
-('Constanza Belén', 'Concha', 'Venegas', '2007-06-12', 18, 'Gabriela Mistral', 'cbelenconcha@gmail.com', 1, 1),
-('Cristofer Alejandro', 'Fuentes', 'Manibet', '2008-01-06', 17, 'Futaleufu', 'cristofer.fuentes979@gmail.com', 1, 1),
-('Lissett Constanza', 'Fuentes', 'Peña', '2008-02-29', 17, 'Jasinto Benavente', 'lissettfuentes27@gmail.com', 1, 1),
-('Karla Hellen', 'García', 'Guevara', '2006-03-11', 19, 'Tacora', 'karloncha1121@gmail.com', 3, 1),
-('Alonso Gabriel', 'Gatica', 'Méndez', '2007-11-07', 17, 'Eugenio Matte Hurtado', 'gabriel.alonso0711@gmail.com', 1, 1),
-('Tomás Alfredo', 'Gutiérrez', 'Tenorio', '2007-08-15', 17, 'Av. Los Libertadores', 'elias.guerrero.hernandez@alumnos.sip.cl', 1, 1),
-('Aileen Yarithza', 'Jara', 'Belmar', '2007-09-09', 17, 'Ismael Tocornal', 'aileen.jara0@gmail.com', 1, 1),
-('Fernando', 'Jara', 'Delgadillo', '2007-12-03', 17, 'Santa Rosa', 'fernando.jara.delgadillo@alumnos.sip.cl', 2, 1),
-('Dayana Arlette', 'Jerez', 'Ríos', '2006-06-10', 18, 'San Juan Bautizta', 'Jeresdayana868@gmail.com', 2, 1),
-('Juan Diego', 'Medina', 'Pernia', '2007-05-15', 17, 'Vicuña Mackenna', 'juandiego4370@gmail.com', 4, 1),
-('Giovanni Eduardo', 'Molinet', 'Navarrete', '2007-11-20', 17, 'Los Aromos', 'giovanni.molinet.navarrete@alumnos.sip.cl', 1, 1),
-('Brandon Ignacio', 'Morales', 'Aguilar', '2007-08-30', 17, 'Santa Ines de Asis', 'randon.modales.aguila@gmail.com', 1, 1),
-('Vicente Adolfo', 'Moreno', 'Zapata', '2007-05-26', 17, 'Crecente Errazuriz', 'vicente.adolfo1009@gmail.com', 1, 1),
-('Benjamín Ignacio', 'Pizarro', 'García', '2007-10-08', 17, 'Cadete G Perry', 'bg301024@gmail.com', 1, 1),
-('Benjamín Rodrigo', 'Poblete', 'Donoso', '2007-12-31', 17, 'Juan Luis Sanfuentes', 'benjitap098@gmail.com', 1, 1),
-('Victoria Estefanía', 'Repol', 'Monje', '2008-01-14', 17, 'Francisco Ensinas', 'repol.viky@gmail.com', 5, 1),
-('Amaro León', 'Rivera', 'Millán', '2007-06-30', 17, 'Baquedano', 'amaritorivera.mati@gmail.com', 1, 1),
-('Jade Alexandra', 'Rojas', 'Navarro', '2007-09-12', 17, 'Las Flores', 'jade.rojas.navarro@alumnos.sip.cl', 2, 1),
-('Diego Benjamín', 'Rojas', 'Palma', '2007-08-09', 17, 'Claro de Luna', 'diego.rojaz.palma@gmail.com', 1, 1),
-('Mathias Joaquín', 'Rosales', 'Gallegos', '2007-11-16', 17, 'Ismael Tocornal', 'mathiasrosales482@gmail.com', 1, 1),
-('Bastián Alexander', 'Rubilar', 'Soto', '2007-06-22', 17, 'Ismael Tocornal', 'bastian.rubilar.s@gmail.com', 1, 1),
-('Davis Alejandro', 'Saldaña', 'González', '2007-05-13', 17, 'Pasaje Los Guindos', 'davis.saskp7@gmail.com', 1, 1),
-('Renato Antonio', 'Silva', 'Cruz', '2008-03-27', 16, 'Pasaje Cuatro', 'silvacruzrenato18@gmail.com', 2, 1),
-('Gustavo Alonso', 'Soto', 'Morales', '2007-07-08', 17, 'Los Eucaliptos', 'gustavo.soto.morales@alumnos.sip.cl', 1, 1),
-('Pablo Alejandro Andrés', 'Tapia', 'Concha', '2005-08-30', 19, 'Pasaje Cuatro', 'pablotapiaconcha@gmail.com', 2, 1),
-('Tahía Anaís', 'Terán', 'González', '2008-03-06', 17, 'Sayen', 'tahiateran999@gmail.com', 2, 1),
-('Madeline Jazmín', 'Toledo', 'Manríquez', '2007-11-23', 17, 'Eluney Manuel Rodriguez', 'madelinetoledo665@gmail.com', 1, 1),
-('Constanza Noemí', 'Torres', 'Suazo', '2007-11-17', 17, 'Riquelme', 'constanzatorress@gmail.com', 1, 1),
-('Alexander Nicolás', 'Uribe', 'Zambrano', '2007-12-25', 17, 'Jose Santos Gonzalez Vera', 'alex.uri2107@gmail.com', 1, 1),
-('Eyner Alberto', 'Valdez', 'Cifuentes', '2007-02-25', 18, 'Juan Luis Sanfuentes', 'eynervaldez125@gmail.com', 1, 1),
-('Loreto Ines', 'Vargas', 'Fuentes', '2007-05-21', 17, 'Jacinto benavente', 'magicloreto@gmail.com', 1, 1),
-('Fabián Ignacio', 'Vargas', 'Molina', '2007-11-27', 17, 'Los Copihues', 'fabian.vargas.molina@alumnos.sip.cl', 1, 1);
+INSERT INTO `alumnos` (`nombre`, `apellido_paterno`, `apellido_materno`, `fecha_nacimiento`, `fecha_ingreso`, `edad`, `direccion`, `email`, `id_comuna_fk`, `id_curso_fk`) VALUES
+('Daniel Isaias', 'Acevedo', 'Peña', '2007-05-10', '2025-03-01', 17, 'Fernando Albano', 'danielacevini@gmail.com', 1, 1),
+('Cristian Patricio', 'Aguirre', 'Parra', '2007-10-03', '2025-03-01', 17, 'Pasaje el Consulado', 'aguirrecristian2007@gmail.com', 2, 1),
+('Tomás Justino', 'Alzamora', 'Zorricueta', '2007-09-24', '2025-03-01', 17, 'José Ghiardo', 'tomas122@gmail.com', 3, 1),
+('Emilia Paz', 'Arredondo', 'Contreras', '2007-01-14', '2025-03-01', 18, 'Sargento Candelaria', 'arredondocontrerasemilia@gmail.com', 1, 1),
+('Miguel Angel Matías', 'Cabezas', 'Aliaga', '2007-02-07', '2025-03-01', 18, 'Cadete G Perry', 'miguelangelmca07@gmail.com', 1, 1),
+('Sofía Carolina', 'Cáceres', 'Durán', '2007-06-08', '2025-03-01', 17, 'Aurora de Chile', 'sodiacarolinacaceresduran@gmail.com', 1, 1),
+('Yanira Belén', 'Cayo', 'Cuevas', '2007-12-10', '2025-03-01', 17, 'Almirante la Torre', 'yaniracayocuevas@gmail.com', 1, 1),
+('Dailyn', 'Cid', 'Sepulveda', '2007-12-23', '2025-03-01', 17, 'Javiera Carrera', 'dailyncitamichelle23@gmail.com', 1, 1),
+('Constanza Belén', 'Concha', 'Venegas', '2007-06-12', '2025-03-01', 18, 'Gabriela Mistral', 'cbelenconcha@gmail.com', 1, 1),
+('Cristofer Alejandro', 'Fuentes', 'Manibet', '2008-01-06', '2025-03-01', 17, 'Futaleufu', 'cristofer.fuentes979@gmail.com', 1, 1),
+('Lissett Constanza', 'Fuentes', 'Peña', '2008-02-29', '2025-03-01', 17, 'Jasinto Benavente', 'lissettfuentes27@gmail.com', 1, 1),
+('Karla Hellen', 'García', 'Guevara', '2006-03-11', '2025-03-01', 19, 'Tacora', 'karloncha1121@gmail.com', 3, 1),
+('Alonso Gabriel', 'Gatica', 'Méndez', '2007-11-07', '2025-03-01', 17, 'Eugenio Matte Hurtado', 'gabriel.alonso0711@gmail.com', 1, 1),
+('Tomás Alfredo', 'Gutiérrez', 'Tenorio', '2007-08-15', '2025-03-01', 17, 'Av. Los Libertadores', 'elias.guerrero.hernandez@alumnos.sip.cl', 1, 1),
+('Aileen Yarithza', 'Jara', 'Belmar', '2007-09-09', '2025-03-01', 17, 'Ismael Tocornal', 'aileen.jara0@gmail.com', 1, 1),
+('Fernando', 'Jara', 'Delgadillo', '2007-12-03', '2025-03-01', 17, 'Santa Rosa', 'fernando.jara.delgadillo@alumnos.sip.cl', 2, 1),
+('Dayana Arlette', 'Jerez', 'Ríos', '2006-06-10', '2025-03-01', 18, 'San Juan Bautizta', 'Jeresdayana868@gmail.com', 2, 1),
+('Juan Diego', 'Medina', 'Pernia', '2007-05-15', '2025-03-01', 17, 'Vicuña Mackenna', 'juandiego4370@gmail.com', 4, 1),
+('Giovanni Eduardo', 'Molinet', 'Navarrete', '2007-11-20', '2025-03-01', 17, 'Los Aromos', 'giovanni.molinet.navarrete@alumnos.sip.cl', 1, 1),
+('Brandon Ignacio', 'Morales', 'Aguilar', '2007-08-30', '2025-03-01', 17, 'Santa Ines de Asis', 'randon.modales.aguila@gmail.com', 1, 1),
+('Vicente Adolfo', 'Moreno', 'Zapata', '2007-05-26', '2025-03-01', 17, 'Crecente Errazuriz', 'vicente.adolfo1009@gmail.com', 1, 1),
+('Benjamín Ignacio', 'Pizarro', 'García', '2007-10-08', '2025-03-01', 17, 'Cadete G Perry', 'bg301024@gmail.com', 1, 1),
+('Benjamín Rodrigo', 'Poblete', 'Donoso', '2007-12-31', '2025-03-01', 17, 'Juan Luis Sanfuentes', 'benjitap098@gmail.com', 1, 1),
+('Victoria Estefanía', 'Repol', 'Monje', '2008-01-14', '2025-03-01', 17, 'Francisco Ensinas', 'repol.viky@gmail.com', 5, 1),
+('Amaro León', 'Rivera', 'Millán', '2007-06-30', '2025-03-01', 17, 'Baquedano', 'amaritorivera.mati@gmail.com', 1, 1),
+('Jade Alexandra', 'Rojas', 'Navarro', '2007-09-12', '2025-03-01', 17, 'Las Flores', 'jade.rojas.navarro@alumnos.sip.cl', 2, 1),
+('Diego Benjamín', 'Rojas', 'Palma', '2007-08-09', '2025-03-01', 17, 'Claro de Luna', 'diego.rojaz.palma@gmail.com', 1, 1),
+('Mathias Joaquín', 'Rosales', 'Gallegos', '2007-11-16', '2025-03-01', 17, 'Ismael Tocornal', 'mathiasrosales482@gmail.com', 1, 1),
+('Bastián Alexander', 'Rubilar', 'Soto', '2007-06-22', '2025-03-01', 17, 'Ismael Tocornal', 'bastian.rubilar.s@gmail.com', 1, 1),
+('Davis Alejandro', 'Saldaña', 'González', '2007-05-13', '2025-03-01', 17, 'Pasaje Los Guindos', 'davis.saskp7@gmail.com', 1, 1),
+('Renato Antonio', 'Silva', 'Cruz', '2008-03-27', '2025-03-01', 16, 'Pasaje Cuatro', 'silvacruzrenato18@gmail.com', 2, 1),
+('Gustavo Alonso', 'Soto', 'Morales', '2007-07-08', '2025-03-01', 17, 'Los Eucaliptos', 'gustavo.soto.morales@alumnos.sip.cl', 1, 1),
+('Pablo Alejandro Andrés', 'Tapia', 'Concha', '2005-08-30', '2025-03-01', 19, 'Pasaje Cuatro', 'pablotapiaconcha@gmail.com', 2, 1),
+('Tahía Anaís', 'Terán', 'González', '2008-03-06', '2025-03-01', 17, 'Sayen', 'tahiateran999@gmail.com', 2, 1),
+('Madeline Jazmín', 'Toledo', 'Manríquez', '2007-11-23', '2025-03-01', 17, 'Eluney Manuel Rodriguez', 'madelinetoledo665@gmail.com', 1, 1),
+('Constanza Noemí', 'Torres', 'Suazo', '2007-11-17', '2025-03-01', 17, 'Riquelme', 'constanzatorress@gmail.com', 1, 1),
+('Alexander Nicolás', 'Uribe', 'Zambrano', '2007-12-25', '2025-03-01', 17, 'Jose Santos Gonzalez Vera', 'alex.uri2107@gmail.com', 1, 1),
+('Eyner Alberto', 'Valdez', 'Cifuentes', '2007-02-25', '2025-03-01', 18, 'Juan Luis Sanfuentes', 'eynervaldez125@gmail.com', 1, 1),
+('Loreto Ines', 'Vargas', 'Fuentes', '2007-05-21', '2025-03-01', 17, 'Jacinto benavente', 'magicloreto@gmail.com', 1, 1),
+('Fabián Ignacio', 'Vargas', 'Molina', '2007-11-27', '2025-03-01', 17, 'Los Copihues', 'fabian.vargas.molina@alumnos.sip.cl', 1, 1);
 
--- 6. Tabla de huellas dactilares (SISTEMA BIOMÉTRICO)
+-- =========================================================
+-- 6. TABLA 'asignaciones' (relación profesor-asignatura-curso)
+-- =========================================================
+CREATE TABLE `asignaciones` (
+    `id_asignacion` INT PRIMARY KEY AUTO_INCREMENT,
+    `id_profesor_fk` INT NOT NULL,
+    `id_asignatura_fk` INT NOT NULL,
+    `id_curso_fk` INT NOT NULL,
+    `activo` TINYINT(1) DEFAULT 1,
+    `created_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    `updated_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    FOREIGN KEY (`id_profesor_fk`) REFERENCES `profesores`(`id_profesor`) ON DELETE CASCADE,
+    FOREIGN KEY (`id_asignatura_fk`) REFERENCES `asignaturas`(`id_asignatura`) ON DELETE CASCADE,
+    FOREIGN KEY (`id_curso_fk`) REFERENCES `cursos`(`id_curso`) ON DELETE CASCADE,
+    UNIQUE KEY `unique_assignment` (`id_profesor_fk`, `id_asignatura_fk`, `id_curso_fk`)
+);
+
+-- Insertar asignaciones (cada profesor con su asignatura al 4° medio B)
+INSERT INTO `asignaciones` (`id_profesor_fk`, `id_asignatura_fk`, `id_curso_fk`) VALUES
+(1, 1, 1), -- Juan Pérez - Programación Orientada a Objeto - 4° B
+(2, 2, 1), -- María González - Modelamiento BD - 4° B
+(3, 3, 1), -- Liza Molina - Web - 4° B
+(4, 4, 1); -- Carlos Rodríguez - Matemáticas - 4° B
+
+-- =========================================================
+-- 7. TABLA 'huellas_dactilares' (SISTEMA BIOMÉTRICO)
+-- =========================================================
 CREATE TABLE `huellas_dactilares` (
     `id_huella` INT AUTO_INCREMENT PRIMARY KEY,
     `id_alumno` INT NOT NULL,
@@ -166,7 +215,9 @@ CREATE TABLE `huellas_dactilares` (
     INDEX `idx_id_alumno_activa` (`id_alumno`, `activa`)
 );
 
--- 7. Tabla 'usuarios' (SISTEMA DE AUTENTICACIÓN)
+-- =========================================================
+-- 8. TABLA 'usuarios' (SISTEMA DE AUTENTICACIÓN)
+-- =========================================================
 CREATE TABLE `usuarios` (
     `id_usuario` INT PRIMARY KEY AUTO_INCREMENT,
     `email` VARCHAR(100) UNIQUE NOT NULL,
@@ -182,12 +233,12 @@ CREATE TABLE `usuarios` (
     FOREIGN KEY (`id_alumno_fk`) REFERENCES `alumnos`(`id_alumno`) ON DELETE SET NULL
 );
 
--- 8. Insertar usuarios del sistema
--- 1. Usuario Administrador (controla las huellas dactilares)
+-- Insertar usuarios del sistema
+-- 1. Usuario Administrador
 INSERT INTO `usuarios` (`email`, `password_hash`, `rol`) VALUES
 ('admin@colegio-aml.cl', 'scrypt:32768:8:1$HQr8pF5ZTGV2NqHJ$41c8a05a5c7e8a9c6b5c7c9b5c7c9b5c7c9b5c7c9b5c7c9b5c7c9b5c7c9b5c7c9b5c7c9b5c7c9b5c7c9b5c7c9b', 'admin');
 
--- 2. Usuarios profesores (toman asistencia con huella dactilar)
+-- 2. Usuarios profesores
 INSERT INTO `usuarios` (`email`, `password_hash`, `rol`, `id_profesor_fk`) VALUES
 ('juan.perez@colegio-aml.cl', 'scrypt:32768:8:1$HQr8pF5ZTGV2NqHJ$41c8a05a5c7e8a9c6b5c7c9b5c7c9b5c7c9b5c7c9b5c7c9b5c7c9b5c7c9b5c7c9b5c7c9b5c7c9b5c7c9b5c7c9b', 'profesor', 1),
 ('maria.gonzalez@colegio-aml.cl', 'scrypt:32768:8:1$HQr8pF5ZTGV2NqHJ$41c8a05a5c7e8a9c6b5c7c9b5c7c9b5c7c9b5c7c9b5c7c9b5c7c9b5c7c9b5c7c9b5c7c9b5c7c9b5c7c9b5c7c9b', 'profesor', 2),
@@ -237,7 +288,9 @@ INSERT INTO `usuarios` (`email`, `password_hash`, `rol`, `es_apoderado`) VALUES
 ('apoderado.fuentes2@colegio-aml.cl', 'scrypt:32768:8:1$HQr8pF5ZTGV2NqHJ$41c8a05a5c7e8a9c6b5c7c9b5c7c9b5c7c9b5c7c9b5c7c9b5c7c9b5c7c9b5c7c9b5c7c9b5c7c9b5c7c9b5c7c9b', 'apoderado', TRUE),
 ('apoderado.molina@colegio-aml.cl', 'scrypt:32768:8:1$HQr8pF5ZTGV2NqHJ$41c8a05a5c7e8a9c6b5c7c9b5c7c9b5c7c9b5c7c9b5c7c9b5c7c9b5c7c9b5c7c9b5c7c9b5c7c9b5c7c9b5c7c9b', 'apoderado', TRUE);
 
--- 9. Tabla de relación apoderados-alumnos
+-- =========================================================
+-- 9. TABLA 'apoderados_alumnos' (relación apoderados-alumnos)
+-- =========================================================
 CREATE TABLE `apoderados_alumnos` (
     `id_apoderado_fk` INT,
     `id_alumno_fk` INT,
@@ -289,7 +342,9 @@ INSERT INTO `apoderados_alumnos` (`id_apoderado_fk`, `id_alumno_fk`) VALUES
 (44, 39), -- apoderado.fuentes2 -> Loreto Ines Vargas Fuentes
 (45, 40); -- apoderado.molina -> Fabián Ignacio Vargas Molina
 
--- 10. Tabla 'asistencias' (SISTEMA BIOMÉTRICO)
+-- =========================================================
+-- 10. TABLA 'asistencias' (SISTEMA BIOMÉTRICO)
+-- =========================================================
 CREATE TABLE `asistencias` (
     `id_asistencia` INT PRIMARY KEY AUTO_INCREMENT,
     `id_alumno` INT NOT NULL,
@@ -308,7 +363,7 @@ CREATE TABLE `asistencias` (
     UNIQUE KEY `unique_alumno_fecha` (`id_alumno`, `fecha`)
 );
 
--- Insertar algunos registros de asistencia de ejemplo para hoy (usando huella dactilar)
+-- Insertar registros de asistencia de ejemplo para hoy
 INSERT INTO `asistencias` (`id_alumno`, `fecha`, `estado`, `hora_llegada`, `metodo_registro`, `id_profesor`) VALUES
 (1, CURDATE(), 'presente', '08:00:00', 'huella_dactilar', 1),
 (2, CURDATE(), 'presente', '08:15:00', 'huella_dactilar', 1),
@@ -321,7 +376,9 @@ INSERT INTO `asistencias` (`id_alumno`, `fecha`, `estado`, `hora_llegada`, `meto
 (9, CURDATE(), 'presente', '08:00:00', 'huella_dactilar', 3),
 (10, CURDATE(), 'tardanza', '08:30:00', 'huella_dactilar', 3);
 
--- Índices para mejorar el rendimiento
+-- =========================================================
+-- ÍNDICES PARA MEJORAR EL RENDIMIENTO
+-- =========================================================
 CREATE INDEX `idx_asistencias_fecha` ON `asistencias`(`fecha`);
 CREATE INDEX `idx_asistencias_alumno` ON `asistencias`(`id_alumno`);
 CREATE INDEX `idx_asistencias_estado` ON `asistencias`(`estado`);
@@ -330,8 +387,15 @@ CREATE INDEX `idx_alumnos_curso` ON `alumnos`(`id_curso_fk`);
 CREATE INDEX `idx_alumnos_activo` ON `alumnos`(`activo`);
 CREATE INDEX `idx_usuarios_rol` ON `usuarios`(`rol`);
 CREATE INDEX `idx_huellas_calidad` ON `huellas_dactilares`(`calidad`);
+CREATE INDEX `idx_asignaciones_profesor` ON `asignaciones`(`id_profesor_fk`);
+CREATE INDEX `idx_asignaciones_asignatura` ON `asignaciones`(`id_asignatura_fk`);
+CREATE INDEX `idx_asignaciones_curso` ON `asignaciones`(`id_curso_fk`);
 
--- Crear vista para facilitar consultas de asistencia con información completa
+-- =========================================================
+-- VISTAS PARA FACILITAR CONSULTAS
+-- =========================================================
+
+-- Vista para asistencia completa
 CREATE VIEW `vista_asistencia_completa` AS
 SELECT 
     a.`id_asistencia`,
@@ -368,6 +432,38 @@ LEFT JOIN `huellas_dactilares` h ON a.`id_huella_usada` = h.`id_huella`
 LEFT JOIN `comunas` com ON al.`id_comuna_fk` = com.`id_comuna`
 WHERE al.`activo` = 1;
 
+-- Vista para asignaciones completas
+CREATE VIEW `vista_asignaciones_completa` AS
+SELECT 
+    a.id_asignacion,
+    a.id_profesor_fk as id_profesor,
+    a.id_asignatura_fk as id_asignatura,
+    a.id_curso_fk as id_curso,
+    a.activo,
+    a.created_at,
+    a.updated_at,
+    -- Información del profesor
+    p.nombre as profesor_nombre,
+    p.apellido as profesor_apellido,
+    CONCAT(p.nombre, ' ', p.apellido) as profesor_completo,
+    p.email as profesor_email,
+    p.especialidad as profesor_especialidad,
+    -- Información de la asignatura
+    asig.nombre as asignatura_nombre,
+    asig.nombre as nombre_asignatura,
+    -- Información del curso
+    c.nivel,
+    c.letra,
+    c.nombre as curso_nombre,
+    CONCAT(c.nivel, '° ', c.letra) as curso_completo,
+    -- Conteo de alumnos en el curso
+    (SELECT COUNT(*) FROM `alumnos` al WHERE al.`id_curso_fk` = c.`id_curso` AND al.`activo` = 1) as `total_alumnos`
+FROM asignaciones a
+INNER JOIN profesores p ON a.id_profesor_fk = p.id_profesor
+INNER JOIN asignaturas asig ON a.id_asignatura_fk = asig.id_asignatura
+INNER JOIN cursos c ON a.id_curso_fk = c.id_curso
+WHERE a.activo = 1;
+
 -- Vista para estadísticas de huellas dactilares
 CREATE VIEW `vista_estadisticas_huellas` AS
 SELECT 
@@ -380,19 +476,23 @@ SELECT
     SUM(CASE WHEN `activa` = 0 THEN 1 ELSE 0 END) as `huellas_inactivas`
 FROM `huellas_dactilares`;
 
--- NOTA IMPORTANTE SOBRE CONTRASEÑAS:
--- Todas las contraseñas están hasheadas con scrypt y corresponden a "password123"
--- Se recomienda cambiar estas contraseñas en el primer uso del sistema
--- El administrador debe cambiar inmediatamente su contraseña por seguridad
+-- =========================================================
+-- INFORMACIÓN FINAL
+-- =========================================================
 
--- SISTEMA BIOMÉTRICO CONFIGURADO:
--- - Admin: Administra las huellas dactilares (registro/eliminación)
--- - Profesores: Toman asistencia con huella dactilar del alumno  
--- - Alumnos: 40 estudiantes del 4° medio B
--- - Apoderados: 40 apoderados (uno por alumno)
--- - Hardware: DigitalPersona U.are.U 4500 integrado
+SELECT 'Base de datos unificada creada exitosamente' as mensaje;
+SELECT 'Todas las tablas, índices y vistas han sido creadas' as estado;
+SELECT 'Usuario admin: admin@colegio-aml.cl / password123' as acceso_admin;
+SELECT 'Usuarios profesores: [email del profesor] / password123' as acceso_profesores;
+SELECT 'Sistema biométrico configurado con DigitalPersona U.are.U 4500' as hardware;
 
--- INFORMACIÓN DE ACCESO:
--- Usuario admin: admin@colegio-aml.cl / password123
--- Usuarios profesores: [email del profesor] / password123
--- Usuarios apoderados: [email del apoderado] / password123
+-- =========================================================
+-- NOTAS IMPORTANTES:
+-- =========================================================
+-- 1. Todas las contraseñas están hasheadas con scrypt y corresponden a "password123"
+-- 2. Se recomienda cambiar estas contraseñas en el primer uso del sistema
+-- 3. El administrador debe cambiar inmediatamente su contraseña por seguridad
+-- 4. Sistema biométrico configurado para DigitalPersona U.are.U 4500
+-- 5. Base de datos optimizada con índices para mejorar el rendimiento
+-- 6. Vistas creadas para facilitar las consultas complejas
+-- =========================================================

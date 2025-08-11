@@ -1,0 +1,159 @@
+{% extends "base.html" %}
+
+{% block title %}Editar Asistencia - {{ alumno.nombre_completo() }} - Colegio AML{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="row">
+        <div class="col-12">
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <h1 class="h3">
+                    <i class="fas fa-edit text-primary"></i>
+                    Editar Asistencia
+                </h1>
+                <a href="{{ url_for('asistencia.detalle_alumno', id_alumno=alumno.id_alumno) }}"
+                    class="btn btn-outline-secondary">
+                    <i class="fas fa-arrow-left"></i> Volver al Detalle
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Información del alumno -->
+    <div class="row mb-4">
+        <div class="col-md-6">
+            <div class="card border-0 shadow-sm">
+                <div class="card-header bg-info text-white">
+                    <h5 class="mb-0">
+                        <i class="fas fa-user"></i> Información del Alumno
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <p><strong>Nombre:</strong> {{ alumno.nombre_completo() }}</p>
+                    {% if alumno.nombre_curso %}
+                    <p><strong>Curso:</strong> {{ alumno.nombre_curso }}</p>
+                    {% endif %}
+                    <p><strong>Fecha:</strong> {{ asistencia.fecha.strftime('%d/%m/%Y') }}</p>
+                    <p><strong>Día:</strong> {{ asistencia.fecha.strftime('%A') }}</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Formulario de edición -->
+        <div class="col-md-6">
+            <div class="card border-0 shadow-sm">
+                <div class="card-header bg-primary text-white">
+                    <h5 class="mb-0">
+                        <i class="fas fa-clipboard-list"></i> Editar Registro de Asistencia
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <form method="POST">
+                        <div class="mb-3">
+                            <label for="estado" class="form-label">Estado de Asistencia</label>
+                            <select class="form-select" id="estado" name="estado" required>
+                                <option value="">Seleccione un estado</option>
+                                <option value="presente" {% if asistencia.estado=='presente' %}selected{% endif %}>
+                                    <i class="fas fa-check"></i> Presente
+                                </option>
+                                <option value="ausente" {% if asistencia.estado=='ausente' %}selected{% endif %}>
+                                    <i class="fas fa-times"></i> Ausente
+                                </option>
+                                <option value="tardanza" {% if asistencia.estado=='tardanza' %}selected{% endif %}>
+                                    <i class="fas fa-clock"></i> Tardanza
+                                </option>
+                                <option value="justificado" {% if asistencia.estado=='justificado' %}selected{% endif
+                                    %}>
+                                    <i class="fas fa-file-alt"></i> Justificado
+                                </option>
+                            </select>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="hora_llegada" class="form-label">Hora de Llegada</label>
+                            <input type="time" class="form-control" id="hora_llegada" name="hora_llegada"
+                                value="{{ asistencia.hora_llegada|format_time if asistencia.hora_llegada else '' }}">
+                            <div class="form-text">Solo completar si el estado es "Presente" o "Tardanza"</div>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="observaciones" class="form-label">Observaciones</label>
+                            <textarea class="form-control" id="observaciones" name="observaciones" rows="3"
+                                placeholder="Ingrese observaciones adicionales (opcional)">{{ asistencia.observaciones if asistencia.observaciones else '' }}</textarea>
+                        </div>
+
+                        <div class="d-grid gap-2">
+                            <button type="submit" class="btn btn-primary">
+                                <i class="fas fa-save"></i> Actualizar Asistencia
+                            </button>
+                            <a href="{{ url_for('asistencia.detalle_alumno', id_alumno=alumno.id_alumno) }}"
+                                class="btn btn-outline-secondary">
+                                <i class="fas fa-times"></i> Cancelar
+                            </a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Información actual del registro -->
+    <div class="row">
+        <div class="col-12">
+            <div class="card border-0 shadow-sm">
+                <div class="card-header bg-light">
+                    <h6 class="mb-0">
+                        <i class="fas fa-info-circle"></i> Estado Actual del Registro
+                    </h6>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-3">
+                            <strong>Estado Actual:</strong>
+                            {% if asistencia.estado == 'presente' %}
+                            <span class="badge bg-success ms-2">
+                                <i class="fas fa-check"></i> Presente
+                            </span>
+                            {% elif asistencia.estado == 'ausente' %}
+                            <span class="badge bg-danger ms-2">
+                                <i class="fas fa-times"></i> Ausente
+                            </span>
+                            {% elif asistencia.estado == 'tardanza' %}
+                            <span class="badge bg-warning ms-2">
+                                <i class="fas fa-clock"></i> Tardanza
+                            </span>
+                            {% elif asistencia.estado == 'justificado' %}
+                            <span class="badge bg-info ms-2">
+                                <i class="fas fa-file-alt"></i> Justificado
+                            </span>
+                            {% endif %}
+                        </div>
+                        <div class="col-md-3">
+                            <strong>Hora de Llegada:</strong>
+                            <span class="ms-2">
+                                {% if asistencia.hora_llegada %}
+                                {{ asistencia.hora_llegada|format_time }}
+                                {% else %}
+                                <span class="text-muted">No registrada</span>
+                                {% endif %}
+                            </span>
+                        </div>
+                        <div class="col-md-6">
+                            <strong>Observaciones:</strong>
+                            <span class="ms-2">
+                                {% if asistencia.observaciones %}
+                                {{ asistencia.observaciones }}
+                                {% else %}
+                                <span class="text-muted">Sin observaciones</span>
+                                {% endif %}
+                            </span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+{% endblock %}

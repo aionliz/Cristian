@@ -22,7 +22,7 @@
     <!-- Cards de acciones rápidas -->
     <div class="row mb-4">
         <div class="col-md-3 mb-3">
-            <div class="card card-premium h-100 border-0 shadow-sm">
+            <div class="card h-100 border-0 shadow-sm">
                 <div class="card-body text-center">
                     <div class="mb-3">
                         <i class="fas fa-user-check fa-2x text-success"></i>
@@ -37,7 +37,7 @@
         </div>
 
         <div class="col-md-3 mb-3">
-            <div class="card card-premium h-100 border-0 shadow-sm">
+            <div class="card h-100 border-0 shadow-sm">
                 <div class="card-body text-center">
                     <div class="mb-3">
                         <i class="fas fa-users fa-2x text-primary"></i>
@@ -102,7 +102,8 @@
                                         <i class="fas fa-fingerprint fa-3x text-primary"></i>
                                     </div>
                                     <h5 class="card-title">🔐 Sistema Biométrico</h5>
-                                    <p class="card-text text-muted">Accede al nuevo sistema de huellas dactilares para administrar y verificar asistencia</p>
+                                    <p class="card-text text-muted">Accede al nuevo sistema de huellas dactilares para
+                                        administrar y verificar asistencia</p>
                                     <a href="{{ url_for('biometric.admin_panel') }}" class="btn btn-primary btn-lg">
                                         <i class="fas fa-cogs me-2"></i>
                                         Panel Administrador
@@ -120,8 +121,10 @@
                                         <i class="fas fa-list-ul fa-3x text-success"></i>
                                     </div>
                                     <h5 class="card-title">� Terminal de Asistencia</h5>
-                                    <p class="card-text text-muted">Terminal para que los alumnos marquen asistencia con su huella dactilar</p>
-                                    <a href="{{ url_for('biometric.terminal_asistencia') }}" class="btn btn-success btn-lg">
+                                    <p class="card-text text-muted">Terminal para que los alumnos marquen asistencia con
+                                        su huella dactilar</p>
+                                    <a href="{{ url_for('biometric.terminal_asistencia') }}"
+                                        class="btn btn-success btn-lg">
                                         <i class="fas fa-hand-paper me-2"></i>
                                         Abrir Terminal
                                     </a>
@@ -132,10 +135,11 @@
                             </div>
                         </div>
                     </div>
-                    <div class="alert alert-info mt-3">
-                        <i class="fas fa-info-circle me-2"></i>
-                        <strong>Nuevo:</strong> Sistema de huellas dactilares para profesores activado. 
+                    <div class="alert alert-info alert-dismissible fade show mt-3" role="alert">
+                        <i class="fas fa-info-circle"></i>
+                        <strong>Nuevo:</strong> Sistema de huellas dactilares para profesores activado.
                         Registra tu huella para acceso seguro y rápido al sistema.
+                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
                     </div>
                 </div>
             </div>
@@ -180,13 +184,15 @@
                             </div>
                         </div>
                     </div>
-                    
+
                     <div class="mt-3">
                         <div class="progress progress-custom">
-                            <div class="progress-bar bg-success" role="progressbar" style="width: 0%" id="progress-asistencia"></div>
+                            <div class="progress-bar bg-success" role="progressbar" style="width: 0%"
+                                id="progress-asistencia"></div>
                         </div>
                         <p class="text-center mt-2 mb-0">
-                            <small class="text-muted">Porcentaje de asistencia: <span id="porcentaje-asistencia">0%</span></small>
+                            <small class="text-muted">Porcentaje de asistencia: <span
+                                    id="porcentaje-asistencia">0%</span></small>
                         </p>
                     </div>
                 </div>
@@ -196,7 +202,8 @@
 </div>
 
 <!-- Modal para buscar alumno -->
-<div class="modal fade" id="buscarAlumnoModal" tabindex="-1" aria-labelledby="buscarAlumnoModalLabel" aria-hidden="true">
+<div class="modal fade" id="buscarAlumnoModal" tabindex="-1" aria-labelledby="buscarAlumnoModalLabel"
+    aria-hidden="true">
     <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header">
@@ -207,85 +214,13 @@
             </div>
             <div class="modal-body">
                 <div class="mb-3">
-                    <label for="buscar-alumno-input" class="form-label">Nombre, apellido o RUT del alumno:</label>
-                    <input type="text" class="form-control" id="buscar-alumno-input" 
-                           placeholder="Ej: Juan Pérez, 12345678-9">
+                    <label for="buscar-alumno-input" class="form-label">Nombre o apellido del alumno:</label>
+                    <input type="text" class="form-control" id="buscar-alumno-input" placeholder="Buscar alumno...">
                 </div>
                 <div id="resultados-busqueda"></div>
             </div>
         </div>
     </div>
 </div>
-{% endblock %}
 
-{% block scripts %}
-<script>
-$(document).ready(function() {
-    // Cargar resumen del día
-    cargarResumenDia();
-    
-    // Configurar búsqueda de alumnos
-    configurarBusquedaAlumnos();
-});
-
-function cargarResumenDia() {
-    // Aquí harías una petición AJAX para obtener el resumen del día
-    // Por ahora, datos de ejemplo
-    $('#total-presentes').text('120');
-    $('#total-ausentes').text('15');
-    $('#total-tardanzas').text('8');
-    $('#total-justificados').text('3');
-    
-    const total = 120 + 15 + 8 + 3;
-    const porcentaje = Math.round(((120 + 8 + 3) / total) * 100);
-    
-    $('#porcentaje-asistencia').text(porcentaje + '%');
-    $('#progress-asistencia').css('width', porcentaje + '%');
-}
-
-function configurarBusquedaAlumnos() {
-    $('#buscar-alumno-input').on('input', function() {
-        const term = $(this).val();
-        
-        if (term.length < 2) {
-            $('#resultados-busqueda').empty();
-            return;
-        }
-        
-        $.get('/asistencia/buscar_alumno', { term: term })
-            .done(function(data) {
-                mostrarResultadosBusqueda(data);
-            })
-            .fail(function() {
-                $('#resultados-busqueda').html('<div class="alert alert-warning">Error al buscar alumnos</div>');
-            });
-    });
-}
-
-function mostrarResultadosBusqueda(alumnos) {
-    const container = $('#resultados-busqueda');
-    container.empty();
-    
-    if (alumnos.length === 0) {
-        container.html('<div class="alert alert-info">No se encontraron alumnos</div>');
-        return;
-    }
-    
-    const list = $('<div class="list-group"></div>');
-    
-    alumnos.forEach(function(alumno) {
-        const item = $(`
-            <a href="/asistencia/detalle_alumno/${alumno.id}" class="list-group-item list-group-item-action">
-                <div class="d-flex w-100 justify-content-between">
-                    <h6 class="mb-1">${alumno.nombre} ${alumno.apellido}</h6>
-                    <small class="text-muted">${alumno.rut}</small>
-                </div>
-            </a>
-        `);
-        list.append(item);
-    });
-    
-    container.append(list);
-}
-</script>
 {% endblock %}

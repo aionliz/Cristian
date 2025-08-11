@@ -1,0 +1,250 @@
+{% extends 'base.html' %}
+
+{% block title %}Gestión de Asignaciones - Colegio AML{% endblock %}
+
+{% block content %}
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-12">
+            <!-- Header -->
+            <div class="card border-0 shadow-sm mb-4">
+                <div class="card-body">
+                    <div class="row align-items-center">
+                        <div class="col-md-8">
+                            <h4 class="mb-1">
+                                <i class="fas fa-sitemap"></i> Gestión de Asignaciones
+                            </h4>
+                            <p class="text-muted mb-0">Asigna profesores a asignaturas por curso</p>
+                            <div class="alert alert-info mt-3 mb-0">
+                                <small>
+                                    <i class="fas fa-info-circle"></i>
+                                    <strong>¿Cómo usar?</strong>
+                                    Clic en "Nueva Asignación" → Selecciona Asignatura → Selecciona Curso → Asigna
+                                    Profesor
+                                </small>
+                            </div>
+                        </div>
+                        <div class="col-md-4 text-end">
+                            <div class="btn-group" role="group">
+                                <a href="{{ url_for('asignatura.gestionar_asignaturas') }}"
+                                    class="btn btn-outline-secondary">
+                                    <i class="fas fa-book"></i> Asignaturas
+                                </a>
+                                <a href="{{ url_for('asignatura.agregar_asignacion') }}" class="btn btn-success btn-lg">
+                                    <i class="fas fa-plus"></i> Nueva Asignación
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Filtros de búsqueda -->
+            <div class="row mb-4">
+                <div class="col-md-4">
+                    <select class="form-select" id="filtro-asignatura">
+                        <option value="">Todas las asignaturas</option>
+                        {% for asignatura in asignaturas %}
+                        <option value="{{ asignatura.id_asignatura }}">{{ asignatura.nombre }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="col-md-4">
+                    <select class="form-select" id="filtro-curso">
+                        <option value="">Todos los cursos</option>
+                        {% for curso in cursos %}
+                        <option value="{{ curso.id_curso }}">{{ curso.nombre_completo }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="col-md-4">
+                    <div class="search-container">
+                        <span class="input-group-text"><i class="fas fa-search"></i></span>
+                        <input type="text" class="form-control search-input" id="buscar-profesor"
+                            placeholder="Buscar profesor..." autocomplete="off">
+                    </div>
+                </div>
+            </div>
+
+            <!-- Estadísticas -->
+            <div class="row mb-4">
+                <div class="col-md-3">
+                    <div class="card stat-card">
+                        <div class="card-body text-center">
+                            <div class="stat-icon bg-primary">
+                                <i class="fas fa-sitemap"></i>
+                            </div>
+                            <h3 class="stat-number text-primary">{{ asignaciones|length }}</h3>
+                            <p class="stat-label">Total Asignaciones</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="card stat-card">
+                        <div class="card-body text-center">
+                            <div class="stat-icon bg-success">
+                                <i class="fas fa-book"></i>
+                            </div>
+                            <h3 class="stat-number text-success">{{
+                                asignaciones|map(attribute='nombre_asignatura')|unique|list|length }}</h3>
+                            <p class="stat-label">Asignaturas Activas</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="card stat-card">
+                        <div class="card-body text-center">
+                            <div class="stat-icon bg-info">
+                                <i class="fas fa-school"></i>
+                            </div>
+                            <h3 class="stat-number text-info">{{
+                                asignaciones|map(attribute='curso_completo_descriptivo')|unique|list|length }}</h3>
+                            <p class="stat-label">Cursos con Asignaciones</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="card stat-card">
+                        <div class="card-body text-center">
+                            <div class="stat-icon bg-warning">
+                                <i class="fas fa-chalkboard-teacher"></i>
+                            </div>
+                            <h3 class="stat-number text-warning">{{
+                                asignaciones|map(attribute='profesor_completo')|unique|list|length }}</h3>
+                            <p class="stat-label">Profesores Asignados</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Tabla de asignaciones -->
+            <div class="row">
+                <div class="col-12">
+                    <div class="card">
+                        <div class="card-header">
+                            <h5 class="card-title mb-0">
+                                <i class="fas fa-table"></i> Lista de Asignaciones
+                            </h5>
+                        </div>
+                        <div class="card-body">
+                            {% if asignaciones %}
+                            <div class="table-responsive">
+                                <table class="table table-hover" id="tabla-asignaciones">
+                                    <thead class="table-dark">
+                                        <tr>
+                                            <th>Asignatura</th>
+                                            <th>Curso</th>
+                                            <th>Profesor</th>
+                                            <th>Alumnos</th>
+                                            <th>Especialidad</th>
+                                            <th>Acciones</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="tbody-asignaciones">
+                                        {% for asignacion in asignaciones %}
+                                        <tr data-asignatura="{{ asignacion.id_asignatura }}"
+                                            data-curso="{{ asignacion.id_curso }}"
+                                            data-profesor="{{ asignacion.profesor_completo }}">
+                                            <td>
+                                                <strong>{{ asignacion.nombre_asignatura }}</strong>
+                                                {% if asignacion.descripcion_asignatura %}
+                                                <br><small class="text-muted">{{ asignacion.descripcion_asignatura
+                                                    }}</small>
+                                                {% endif %}
+                                            </td>
+                                            <td>
+                                                <span class="badge bg-primary">{{ asignacion.curso_completo_descriptivo
+                                                    }}</span>
+                                                <br><small class="text-muted">{{ asignacion.total_alumnos }}
+                                                    alumnos</small>
+                                            </td>
+                                            <td>
+                                                <strong>{{ asignacion.profesor_completo }}</strong>
+                                                <br><small class="text-muted">{{ asignacion.email_profesor }}</small>
+                                            </td>
+                                            <td>
+                                                <span class="badge bg-info">{{ asignacion.total_alumnos }}</span>
+                                            </td>
+                                            <td>
+                                                {% if asignacion.especialidad %}
+                                                <span class="badge bg-secondary">{{ asignacion.especialidad }}</span>
+                                                {% else %}
+                                                <span class="text-muted">-</span>
+                                                {% endif %}
+                                            </td>
+                                            <td>
+                                                <div class="btn-group" role="group">
+                                                    <a href="{{ url_for('asignatura.asignaciones_por_curso', id_curso=asignacion.id_curso) }}"
+                                                        class="btn btn-sm btn-outline-info" title="Ver curso">
+                                                        <i class="fas fa-eye"></i>
+                                                    </a>
+                                                    <button type="button" class="btn btn-sm btn-outline-danger"
+                                                        data-action="eliminar" data-id="{{ asignacion.id_asignacion }}"
+                                                        data-asignatura="{{ asignacion.nombre_asignatura }}"
+                                                        data-curso="{{ asignacion.curso_completo_descriptivo }}"
+                                                        data-profesor="{{ asignacion.profesor_completo }}"
+                                                        title="Eliminar">
+                                                        <i class="fas fa-trash"></i>
+                                                    </button>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                        {% endfor %}
+                                    </tbody>
+                                </table>
+                            </div>
+                            {% else %}
+                            <div class="text-center py-5">
+                                <i class="fas fa-sitemap fa-3x text-muted mb-3"></i>
+                                <h5 class="text-muted">No hay asignaciones registradas</h5>
+                                <p class="text-muted">Comienza asignando profesores a asignaturas por curso</p>
+                                <a href="{{ url_for('asignatura.agregar_asignacion') }}" class="btn btn-primary">
+                                    <i class="fas fa-plus"></i> Crear Primera Asignación
+                                </a>
+                            </div>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal de confirmación para eliminar -->
+<div class="modal fade" id="modalEliminar" tabindex="-1" aria-labelledby="modalEliminarLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="modalEliminarLabel">
+                    <i class="fas fa-exclamation-triangle text-warning"></i> Confirmar Eliminación
+                </h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <p>¿Estás seguro de que deseas eliminar esta asignación?</p>
+                <div class="card bg-light">
+                    <div class="card-body">
+                        <strong>Asignatura:</strong> <span id="asignatura-nombre"></span><br>
+                        <strong>Curso:</strong> <span id="curso-nombre"></span><br>
+                        <strong>Profesor:</strong> <span id="profesor-nombre"></span>
+                    </div>
+                </div>
+                <div class="alert alert-warning mt-3">
+                    <i class="fas fa-info-circle"></i>
+                    <strong>Nota:</strong> Esta acción no se puede deshacer.
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                <form id="form-eliminar" method="POST" style="display: inline;">
+                    <button type="submit" class="btn btn-danger">
+                        <i class="fas fa-trash"></i> Eliminar
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock %}

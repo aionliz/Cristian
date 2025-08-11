@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Debug Dropdowns</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+
+<body>
+    <div class="container mt-5">
+        <div class="row justify-content-center">
+            <div class="col-md-8">
+                <div class="card">
+                    <div class="card-header">
+                        <h3>🔍 Debug de Dropdowns - Gestión de Asignaciones</h3>
+                    </div>
+                    <div class="card-body">
+                        <form>
+                            <!-- Paso 1: Selección de Asignatura -->
+                            <div class="mb-4">
+                                <h5>📚 Paso 1: Seleccionar Asignatura</h5>
+                                <label for="asignatura_id" class="form-label">Asignatura:</label>
+                                <select class="form-select" id="asignatura_id" name="asignatura_id" required>
+                                    <option value="">Seleccione una asignatura...</option>
+                                    {% for asignatura in asignaturas %}
+                                    <option value="{{ asignatura.id_asignatura }}">
+                                        {{ asignatura.nombre }}
+                                    </option>
+                                    {% endfor %}
+                                </select>
+                                <div class="form-text">
+                                    Total de asignaturas: {{ asignaturas|length }}
+                                </div>
+                            </div>
+
+                            <!-- Paso 2: Selección de Curso -->
+                            <div class="mb-4">
+                                <h5>🎓 Paso 2: Seleccionar Curso</h5>
+                                <label for="curso_id" class="form-label">Curso:</label>
+                                <select class="form-select" id="curso_id" name="curso_id" required>
+                                    <option value="">Seleccione un curso...</option>
+                                    {% for curso in cursos %}
+                                    <option value="{{ curso.id_curso }}">
+                                        {{ curso.nombre_completo }}
+                                    </option>
+                                    {% endfor %}
+                                </select>
+                                <div class="form-text">
+                                    Total de cursos: {{ cursos|length }}
+                                </div>
+                            </div>
+
+                            <!-- Status de selección -->
+                            <div class="alert alert-info">
+                                <h6>📋 Estado de la selección:</h6>
+                                <p id="status">Esperando selecciones...</p>
+                            </div>
+
+                            <!-- Debug Info -->
+                            <div class="card mt-4">
+                                <div class="card-header">
+                                    <h6>🐛 Información de Debug</h6>
+                                </div>
+                                <div class="card-body">
+                                    <h6>Asignaturas disponibles:</h6>
+                                    <ul>
+                                        {% for asignatura in asignaturas %}
+                                        <li>ID: {{ asignatura.id_asignatura }} - {{ asignatura.nombre }}</li>
+                                        {% endfor %}
+                                    </ul>
+
+                                    <h6>Cursos disponibles:</h6>
+                                    <ul>
+                                        {% for curso in cursos %}
+                                        <li>ID: {{ curso.id_curso }} - {{ curso.nombre_completo }}</li>
+                                        {% endfor %}
+                                    </ul>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <!-- JavaScript movido a modules/debug.js -->
+    <!-- Debug de dropdowns configurado automáticamente --></body>
+
+</html>

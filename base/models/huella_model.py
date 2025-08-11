@@ -10,7 +10,7 @@ class HuellaModel:
     Modelo para gestionar las huellas dactilares de los alumnos
     Sistema integrado con DigitalPersona U.are.U 4500
     """
-    db = "colegio-AML"
+    db = "colegio_AML"
 
     def __init__(self, data):
         self.id_huella = data.get('id_huella')

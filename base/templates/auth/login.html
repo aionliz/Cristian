@@ -15,14 +15,15 @@
                     </div>
 
                     {% with messages = get_flashed_messages(with_categories=true) %}
-                        {% if messages %}
-                            {% for category, message in messages %}
-                                <div class="alert alert-{{ 'danger' if category == 'error' else category }} alert-dismissible fade show" role="alert">
-                                    {{ message }}
-                                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-                                </div>
-                            {% endfor %}
-                        {% endif %}
+                    {% if messages %}
+                    {% for category, message in messages %}
+                    <div class="alert alert-{{ 'danger' if category == 'error' else category }} alert-dismissible fade show"
+                        role="alert">
+                        {{ message }}
+                        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                    </div>
+                    {% endfor %}
+                    {% endif %}
                     {% endwith %}
 
                     <form method="POST">
@@ -31,11 +32,7 @@
                                 <i class="fas fa-envelope me-1"></i>
                                 Email
                             </label>
-                            <input type="email" 
-                                   class="form-control" 
-                                   id="email" 
-                                   name="email" 
-                                   required>
+                            <input type="email" class="form-control" id="email" name="email" required>
                         </div>
 
                         <div class="mb-3">
@@ -43,18 +40,11 @@
                                 <i class="fas fa-lock me-1"></i>
                                 Contraseña
                             </label>
-                            <input type="password" 
-                                   class="form-control" 
-                                   id="password" 
-                                   name="password" 
-                                   required>
+                            <input type="password" class="form-control" id="password" name="password" required>
                         </div>
 
                         <div class="mb-3 form-check">
-                            <input type="checkbox" 
-                                   class="form-check-input" 
-                                   id="remember_me" 
-                                   name="remember_me">
+                            <input type="checkbox" class="form-check-input" id="remember_me" name="remember_me">
                             <label class="form-check-label" for="remember_me">
                                 Recordarme
                             </label>
@@ -68,7 +58,7 @@
 
                     <div class="text-center mt-4">
                         <small class="text-muted">
-                            ¿Problemas para acceder? 
+                            ¿Problemas para acceder?
                             <a href="#" class="text-decoration-none">Contacta al administrador</a>
                         </small>
                     </div>
@@ -98,14 +88,14 @@
                         <strong>Administrador:</strong><br>
                         Email: admin@colegio.cl<br>
                         Contraseña: admin123<br><br>
-                        
+
                         <strong>Profesor:</strong><br>
                         Email: profesor@colegio.cl<br>
                         Contraseña: profesor123
                     </small>
                 </div>
             </div>
-            
+
             <!-- Alerta sobre nuevo sistema de huellas -->
             <div class="card mt-3 border-primary">
                 <div class="card-body">
@@ -133,32 +123,5 @@
         </div>
     </div>
 </div>
-{% endblock %}
 
-{% block scripts %}
-<script>
-document.addEventListener('DOMContentLoaded', function() {
-    // Auto-focus en el campo email
-    document.getElementById('email').focus();
-    
-    // Validación del formulario
-    const form = document.querySelector('form');
-    form.addEventListener('submit', function(e) {
-        const email = document.getElementById('email').value;
-        const password = document.getElementById('password').value;
-        
-        if (!Utils.isValidEmail(email)) {
-            e.preventDefault();
-            Utils.showError('Por favor ingrese un email válido');
-            return;
-        }
-        
-        if (password.length < 6) {
-            e.preventDefault();
-            Utils.showError('La contraseña debe tener al menos 6 caracteres');
-            return;
-        }
-    });
-});
-</script>
 {% endblock %}

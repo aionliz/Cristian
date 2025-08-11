@@ -1,0 +1,348 @@
+{% extends "base.html" %}
+{% block title %}Detalles del Profesor{% endblock %}
+
+{% block content %}
+<div class="page-header">
+    <div class="header-content">
+        <h1><i class="fas fa-user-tie"></i> {{ profesor.nombre_completo }}</h1>
+        <p class="page-description">Información completa del profesor</p>
+    </div>
+    <div class="header-actions">
+        <a href="{{ url_for('profesor.editar_profesor', id_profesor=profesor.id_profesor) }}" class="btn btn-warning">
+            <i class="fas fa-edit"></i> Editar
+        </a>
+        <a href="{{ url_for('profesor.gestionar_profesores') }}" class="btn btn-outline-secondary">
+            <i class="fas fa-arrow-left"></i> Volver
+        </a>
+    </div>
+</div>
+
+<div class="row">
+    <!-- Información Personal -->
+    <div class="col-lg-4">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="card-title mb-0">
+                    <i class="fas fa-user"></i> Información Personal
+                </h5>
+            </div>
+            <div class="card-body text-center">
+                <div class="avatar-lg mx-auto mb-3">
+                    <i class="fas fa-user-tie fa-4x text-primary"></i>
+                </div>
+                <h4>{{ profesor.nombre_completo }}</h4>
+                <p class="text-muted mb-3">ID: {{ profesor.id_profesor }}</p>
+
+                <div class="mb-3">
+                    {% if profesor.activo %}
+                    Activo
+                    {% else %}
+                    Inactivo
+                    {% endif %}
+                </div>
+
+                <div class="row text-center">
+                    <div class="col-4">
+                        <div class="border-end">
+                            <h5 class="text-primary mb-0">{{ stats.total_asignaturas }}</h5>
+                            <small class="text-muted">Asignaturas</small>
+                        </div>
+                    </div>
+                    <div class="col-4">
+                        <div class="border-end">
+                            <h5 class="text-success mb-0">{{ stats.total_cursos }}</h5>
+                            <small class="text-muted">Cursos</small>
+                        </div>
+                    </div>
+                    <div class="col-4">
+                        <h5 class="text-info mb-0">{{ stats.total_asignaciones }}</h5>
+                        <small class="text-muted">Asignaciones</small>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Datos de Contacto -->
+        <div class="card mt-4">
+            <div class="card-header">
+                <h5 class="card-title mb-0">
+                    <i class="fas fa-address-card"></i> Datos de Contacto
+                </h5>
+            </div>
+            <div class="card-body">
+                <div class="mb-3">
+                    <label class="form-label text-muted">Email:</label>
+                    <p class="mb-0">
+                        <a href="mailto:{{ profesor.email }}" class="text-decoration-none">
+                            <i class="fas fa-envelope"></i> {{ profesor.email }}
+                        </a>
+                    </p>
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label text-muted">Especialidad:</label>
+                    <p class="mb-0">
+                        {% if profesor.especialidad %}
+                        {{ profesor.especialidad }}
+                        {% else %}
+                        <span class="text-muted">Sin especialidad</span>
+                        {% endif %}
+                    </p>
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label text-muted">Asignatura Principal:</label>
+                    <p class="mb-0">
+                        {% if profesor.asignatura_nombre %}
+                        {{ profesor.asignatura_nombre }}
+                        {% else %}
+                        <span class="text-muted">Sin asignatura</span>
+                        {% endif %}
+                    </p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Información del Sistema -->
+        <div class="card mt-4">
+            <div class="card-header">
+                <h5 class="card-title mb-0">
+                    <i class="fas fa-cog"></i> Información del Sistema
+                </h5>
+            </div>
+            <div class="card-body">
+                <div class="mb-3">
+                    <label class="form-label text-muted">Fecha de registro:</label>
+                    <p class="mb-0">
+                        {{ profesor.created_at.strftime('%d de %B de %Y a las %H:%M') if profesor.created_at else 'No
+                        disponible' }}
+                    </p>
+                </div>
+
+                {% if profesor.updated_at %}
+                <div class="mb-3">
+                    <label class="form-label text-muted">Última actualización:</label>
+                    <p class="mb-0">
+                        {{ profesor.updated_at.strftime('%d de %B de %Y a las %H:%M') }}
+                    </p>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+
+    <!-- Asignaciones y Cursos -->
+    <div class="col-lg-8">
+        <!-- Asignaciones Actuales -->
+        <div class="card">
+            <div class="card-header d-flex justify-content-between align-items-center">
+                <h5>
+                    <i class="fas fa-clipboard-list"></i> Asignaciones Actuales
+                    {% if asignaciones %}
+                    ({{ asignaciones|length }})
+                    {% endif %}
+                </h5>
+                <a href="{{ url_for('asignatura.gestionar_asignaciones') }}?profesor_id={{ profesor.id_profesor }}"
+                    class="btn btn-sm btn-outline-primary">
+                    <i class="fas fa-plus"></i> Gestionar
+                </a>
+            </div>
+            <div class="card-body">
+                {% if asignaciones %}
+                <div class="table-responsive">
+                    <table class="table table-hover">
+                        <thead>
+                            <tr>
+                                <th>Asignatura</th>
+                                <th>Curso</th>
+                                <th>Año</th>
+                                <th>Estado</th>
+                                <th>Acciones</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for asignacion in asignaciones %}
+                            <tr>
+                                <td>
+                                    <div class="d-flex align-items-center">
+                                        <i class="fas fa-book text-primary me-2"></i>
+                                        <div>
+                                            <strong>{{ asignacion['asignatura_nombre'] }}</strong>
+                                            {% if asignacion.get('asignatura_descripcion') %}
+                                            <br><small class="text-muted">{{ asignacion['asignatura_descripcion'][:50]
+                                                }}{%
+                                                if asignacion['asignatura_descripcion']|length > 50 %}...{% endif
+                                                %}</small>
+                                            {% endif %}
+                                        </div>
+                                    </div>
+                                </td>
+                                <td>
+                                    {{ asignacion['curso_completo'] }}
+                                </td>
+                                <td>
+                                    {{ asignacion['año'] }}
+                                </td>
+                                <td>
+                                    {% if asignacion['activo'] %}
+                                    Activa
+                                    {% else %}
+                                    Inactiva
+                                    {% endif %}
+                                </td>
+                                <td>
+                                    <div class="btn-group" role="group">
+                                        <!-- <a href="{{ url_for('asignatura.detalle_asignacion', id_asignacion=asignacion['id_asignacion']) }}"
+                                            class="btn btn-sm btn-outline-info" title="Ver detalles">
+                                            <i class="fas fa-eye"></i>
+                                        </a> -->
+                                        <a href="{{ url_for('admin.detalle_curso', id_curso=asignacion['id_curso_fk']) }}"
+                                            class="btn btn-sm btn-outline-primary" title="Ver curso">
+                                            <i class="fas fa-graduation-cap"></i>
+                                        </a>
+                                    </div>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+                {% else %}
+                <div class="text-center py-5">
+                    <i class="fas fa-clipboard-list fa-3x text-muted mb-3"></i>
+                    <h5 class="text-muted">Sin asignaciones</h5>
+                    <p class="text-muted">Este profesor no tiene asignaciones actualmente.</p>
+                    <a href="{{ url_for('asignatura.gestionar_asignaciones') }}?profesor_id={{ profesor.id_profesor }}"
+                        class="btn btn-primary">
+                        <i class="fas fa-plus"></i> Crear Asignación
+                    </a>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+
+        <!-- Resumen por Asignatura -->
+        {% if asignaciones %}
+        <div class="card mt-4">
+            <div class="card-header">
+                <h5 class="card-title mb-0">
+                    <i class="fas fa-chart-pie"></i> Resumen por Asignatura
+                </h5>
+            </div>
+            <div class="card-body">
+                {% set asignaturas_dict = {} %}
+                {% for asignacion in asignaciones %}
+                {% if asignacion['asignatura_nombre'] not in asignaturas_dict %}
+                {% set _ = asignaturas_dict.update({asignacion['asignatura_nombre']: []}) %}
+                {% endif %}
+                {% set _ = asignaturas_dict[asignacion['asignatura_nombre']].append(asignacion) %}
+                {% endfor %}
+
+                <div class="row">
+                    {% for asignatura_nombre, asignaciones_asignatura in asignaturas_dict.items() %}
+                    <div class="col-md-6 mb-3">
+                        <div class="card border-left-primary">
+                            <div class="card-body">
+                                <h6 class="card-title">{{ asignatura_nombre }}</h6>
+                                <p class="card-text">
+                                    <i class="fas fa-graduation-cap text-primary"></i>
+                                    {{ asignaciones_asignatura|length }} curso{{ 's' if asignaciones_asignatura|length
+                                    != 1 else '' }}
+                                </p>
+                                <div class="mt-2">
+                                    {% for asignacion in asignaciones_asignatura %}
+                                    <span class="me-1 mb-1">{{ asignacion['curso_completo'] }}</span>
+                                    {% endfor %}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+        {% endif %}
+
+        <!-- Acciones Disponibles -->
+        <div class="card mt-4">
+            <div class="card-header">
+                <h5 class="card-title mb-0">
+                    <i class="fas fa-cogs"></i> Acciones Disponibles
+                </h5>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="d-grid gap-2">
+                            <a href="{{ url_for('profesor.editar_profesor', id_profesor=profesor.id_profesor) }}"
+                                class="btn btn-warning">
+                                <i class="fas fa-edit"></i> Editar Información
+                            </a>
+                            <a href="{{ url_for('asignatura.gestionar_asignaciones') }}?profesor_id={{ profesor.id_profesor }}"
+                                class="btn btn-primary">
+                                <i class="fas fa-plus"></i> Gestionar Asignaciones
+                            </a>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="d-grid gap-2">
+                            {% if profesor.activo %}
+                            <button type="button" class="btn btn-outline-danger btn-confirmar-desactivacion">
+                                <i class="fas fa-ban"></i> Desactivar Profesor
+                            </button>
+                            {% else %}
+                            <form method="POST"
+                                action="{{ url_for('profesor.activar_profesor', id_profesor=profesor.id_profesor) }}"
+                                style="display: inline;">
+                                <button type="submit" class="btn btn-success w-100">
+                                    <i class="fas fa-check"></i> Activar Profesor
+                                </button>
+                            </form>
+                            {% endif %}
+                            <a href="{{ url_for('profesor.gestionar_profesores') }}" class="btn btn-outline-secondary">
+                                <i class="fas fa-list"></i> Ver Todos los Profesores
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal de confirmación de desactivación -->
+<div class="modal fade" id="desactivarModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">
+                    <i class="fas fa-exclamation-triangle text-warning"></i> Confirmar Desactivación
+                </h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <p>¿Está seguro que desea desactivar al profesor <strong>{{ profesor.nombre_completo }}</strong>?</p>
+                {% if asignaciones %}
+                <div class="alert alert-warning">
+                    <i class="fas fa-exclamation-triangle"></i>
+                    <strong>Atención:</strong> Este profesor tiene {{ asignaciones|length }} asignación{{ 'es' if
+                    asignaciones|length != 1 else '' }} activa{{ 's' if asignaciones|length != 1 else '' }}.
+                    Al desactivarlo, sus asignaciones también se desactivarán.
+                </div>
+                {% endif %}
+                <p class="text-muted">Esta acción se puede revertir más tarde.</p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                <form method="POST"
+                    action="{{ url_for('profesor.eliminar_profesor', id_profesor=profesor.id_profesor) }}"
+                    style="display: inline;">
+                    <button type="submit" class="btn btn-danger">
+                        <i class="fas fa-ban"></i> Desactivar
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

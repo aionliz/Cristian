@@ -3,170 +3,7 @@
 {% block title %}Terminal de Asistencia - Huella Dactilar{% endblock %}
 
 {% block head %}
-<link href="{{ url_for('static', filename='css/dark-theme-enhanced.css') }}" rel="stylesheet">
-<style>
-    .terminal-container {
-        background: var(--gradient-hero);
-        min-height: 100vh;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        padding: 2rem;
-    }
-    
-    .terminal-card {
-        background: var(--gradient-card);
-        border: 2px solid var(--border-color);
-        border-radius: 20px;
-        padding: 3rem;
-        max-width: 600px;
-        width: 100%;
-        text-align: center;
-        box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
-    }
-    
-    .fingerprint-scanner {
-        width: 200px;
-        height: 200px;
-        margin: 2rem auto;
-        border-radius: 50%;
-        background: radial-gradient(circle, var(--accent-pastel) 0%, transparent 70%);
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        position: relative;
-        transition: all 0.3s ease;
-    }
-    
-    .fingerprint-scanner.scanning {
-        animation: scanPulse 2s infinite;
-        background: radial-gradient(circle, #90EE90 0%, transparent 70%);
-    }
-    
-    .fingerprint-scanner.success {
-        background: radial-gradient(circle, #90EE90 0%, transparent 70%);
-        animation: successPulse 1s ease-in-out;
-    }
-    
-    .fingerprint-scanner.error {
-        background: radial-gradient(circle, #FFB6C1 0%, transparent 70%);
-        animation: errorShake 0.5s ease-in-out;
-    }
-    
-    @keyframes scanPulse {
-        0%, 100% { transform: scale(1); opacity: 0.8; }
-        50% { transform: scale(1.1); opacity: 1; }
-    }
-    
-    @keyframes successPulse {
-        0% { transform: scale(1); }
-        50% { transform: scale(1.2); }
-        100% { transform: scale(1); }
-    }
-    
-    @keyframes errorShake {
-        0%, 100% { transform: translateX(0); }
-        25% { transform: translateX(-10px); }
-        75% { transform: translateX(10px); }
-    }
-    
-    .scanner-icon {
-        font-size: 6rem;
-        color: #1a1a1a;
-        opacity: 0.8;
-    }
-    
-    .status-message {
-        font-size: 1.5rem;
-        margin: 2rem 0;
-        min-height: 2rem;
-    }
-    
-    .student-info {
-        background: var(--gradient-section);
-        border-radius: 15px;
-        padding: 2rem;
-        margin: 2rem 0;
-        display: none;
-    }
-    
-    .student-photo {
-        width: 100px;
-        height: 100px;
-        border-radius: 50%;
-        background: var(--accent-pastel);
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        margin: 0 auto 1rem;
-        font-size: 2rem;
-        color: #1a1a1a;
-    }
-    
-    .attendance-status {
-        display: inline-block;
-        padding: 0.75rem 1.5rem;
-        border-radius: 25px;
-        font-weight: 600;
-        margin-top: 1rem;
-    }
-    
-    .status-presente {
-        background: rgba(144, 238, 144, 0.2);
-        color: #90EE90;
-        border: 2px solid #90EE90;
-    }
-    
-    .status-ya-presente {
-        background: rgba(255, 215, 0, 0.2);
-        color: #FFD700;
-        border: 2px solid #FFD700;
-    }
-    
-    .device-status-bar {
-        background: var(--gradient-section);
-        padding: 1rem;
-        border-radius: 10px;
-        margin-bottom: 2rem;
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-    }
-    
-    .course-info {
-        font-size: 1.2rem;
-        color: var(--text-accent);
-        margin-bottom: 2rem;
-    }
-    
-    .attendance-summary {
-        display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
-        gap: 1rem;
-        margin-top: 2rem;
-    }
-    
-    .summary-card {
-        background: var(--gradient-section);
-        padding: 1rem;
-        border-radius: 10px;
-        text-align: center;
-    }
-    
-    .summary-number {
-        font-size: 2rem;
-        font-weight: bold;
-        color: var(--accent-pastel);
-    }
-    
-    .auto-refresh {
-        position: absolute;
-        top: 1rem;
-        right: 1rem;
-        font-size: 0.9rem;
-        color: var(--text-accent);
-    }
-</style>
+<!-- Los estilos ya están incluidos en unified-styles.css desde base.html -->
 {% endblock %}
 
 {% block content %}
@@ -175,18 +12,18 @@
         <div class="auto-refresh">
             <i class="fas fa-sync-alt"></i> Auto-actualización activa
         </div>
-        
+
         <!-- Header -->
         <h1 class="gradient-text mb-4">
             <i class="fas fa-fingerprint"></i> Terminal de Asistencia
         </h1>
-        
+
         <!-- Course Info -->
         <div class="course-info">
             <strong>{{ curso_actual }}</strong><br>
             <small>{{ fecha_actual.strftime('%d/%m/%Y') }} - {{ hora_actual }}</small>
         </div>
-        
+
         <!-- Device Status -->
         <div class="device-status-bar">
             <div class="d-flex align-items-center">
@@ -195,17 +32,17 @@
             </div>
             <span class="status-registered" id="deviceStatus">Listo</span>
         </div>
-        
+
         <!-- Fingerprint Scanner -->
         <div class="fingerprint-scanner" id="fingerprintScanner">
             <i class="fas fa-fingerprint scanner-icon" id="scannerIcon"></i>
         </div>
-        
+
         <!-- Status Message -->
         <div class="status-message text-accent" id="statusMessage">
             Coloque su dedo en el lector para marcar asistencia
         </div>
-        
+
         <!-- Student Information (Hidden by default) -->
         <div class="student-info" id="studentInfo">
             <div class="student-photo" id="studentPhoto">
@@ -215,7 +52,7 @@
             <p class="text-accent" id="studentCourse"></p>
             <div class="attendance-status" id="attendanceStatus"></div>
         </div>
-        
+
         <!-- Attendance Summary -->
         <div class="attendance-summary" id="attendanceSummary">
             <div class="summary-card">
@@ -234,220 +71,4 @@
     </div>
 </div>
 
-<script>
-let isScanning = false;
-let scanTimeout = null;
-
-// Inicializar terminal
-document.addEventListener('DOMContentLoaded', function() {
-    initializeTerminal();
-    startAutoScan();
-    updateAttendanceSummary();
-    
-    // Actualizar cada 30 segundos
-    setInterval(updateAttendanceSummary, 30000);
-});
-
-// Inicializar terminal
-function initializeTerminal() {
-    checkDeviceStatus();
-    resetScanner();
-}
-
-// Iniciar escaneo automático
-function startAutoScan() {
-    if (isScanning) return;
-    
-    setInterval(async () => {
-        if (!isScanning) {
-            await checkForFingerprint();
-        }
-    }, 1000); // Verificar cada segundo
-}
-
-// Verificar huella dactilar
-async function checkForFingerprint() {
-    try {
-        const response = await fetch('/biometric/check_finger', { method: 'POST' });
-        
-        if (response.ok) {
-            const data = await response.json();
-            
-            if (data.finger_detected) {
-                await processFingerprint();
-            }
-        }
-    } catch (error) {
-        console.error('Error checking fingerprint:', error);
-    }
-}
-
-// Procesar huella dactilar
-async function processFingerprint() {
-    if (isScanning) return;
-    
-    isScanning = true;
-    setStatus('scanning', 'Escaneando huella dactilar...');
-    
-    try {
-        // Capturar huella
-        const captureResponse = await fetch('/biometric/capture', { method: 'POST' });
-        
-        if (!captureResponse.ok) {
-            throw new Error('Error al capturar huella');
-        }
-        
-        const captureData = await captureResponse.json();
-        
-        // Verificar huella
-        const verifyResponse = await fetch('/biometric/verify', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({
-                hash: captureData.hash,
-                template: captureData.template
-            })
-        });
-        
-        if (!verifyResponse.ok) {
-            throw new Error('Huella no reconocida');
-        }
-        
-        const verifyData = await verifyResponse.json();
-        
-        if (verifyData.verified) {
-            // Marcar asistencia
-            const attendanceResponse = await fetch('/biometric/mark_attendance', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({
-                    student_id: verifyData.student.id_alumno,
-                    fingerprint_id: verifyData.fingerprint_id
-                })
-            });
-            
-            const attendanceData = await attendanceResponse.json();
-            
-            if (attendanceData.success) {
-                showStudentSuccess(verifyData.student, attendanceData.already_present);
-            } else {
-                throw new Error(attendanceData.message || 'Error al marcar asistencia');
-            }
-        } else {
-            throw new Error('Huella dactilar no reconocida');
-        }
-        
-    } catch (error) {
-        console.error('Error:', error);
-        setStatus('error', error.message);
-        setTimeout(resetScanner, 3000);
-    }
-}
-
-// Mostrar éxito de estudiante
-function showStudentSuccess(student, alreadyPresent) {
-    setStatus('success', '¡Reconocido!');
-    
-    // Mostrar información del estudiante
-    document.getElementById('studentName').textContent = 
-        `${student.nombre} ${student.apellido_paterno} ${student.apellido_materno}`;
-    document.getElementById('studentCourse').textContent = student.curso || 'Curso no disponible';
-    
-    const attendanceStatus = document.getElementById('attendanceStatus');
-    if (alreadyPresent) {
-        attendanceStatus.textContent = 'Ya estaba presente';
-        attendanceStatus.className = 'attendance-status status-ya-presente';
-    } else {
-        attendanceStatus.textContent = 'Asistencia marcada';
-        attendanceStatus.className = 'attendance-status status-presente';
-    }
-    
-    document.getElementById('studentInfo').style.display = 'block';
-    
-    // Actualizar resumen
-    updateAttendanceSummary();
-    
-    // Resetear después de 5 segundos
-    setTimeout(() => {
-        document.getElementById('studentInfo').style.display = 'none';
-        resetScanner();
-    }, 5000);
-}
-
-// Establecer estado del escáner
-function setStatus(status, message) {
-    const scanner = document.getElementById('fingerprintScanner');
-    const statusMessage = document.getElementById('statusMessage');
-    
-    // Limpiar clases anteriores
-    scanner.classList.remove('scanning', 'success', 'error');
-    
-    // Agregar nueva clase
-    if (status !== 'idle') {
-        scanner.classList.add(status);
-    }
-    
-    statusMessage.textContent = message;
-    statusMessage.className = `status-message text-${status === 'error' ? 'danger' : status === 'success' ? 'success' : 'accent'}`;
-}
-
-// Resetear escáner
-function resetScanner() {
-    isScanning = false;
-    setStatus('idle', 'Coloque su dedo en el lector para marcar asistencia');
-}
-
-// Verificar estado del dispositivo
-async function checkDeviceStatus() {
-    try {
-        const response = await fetch('/biometric/device_status');
-        const data = await response.json();
-        
-        const indicator = document.getElementById('deviceIndicator');
-        const status = document.getElementById('deviceStatus');
-        
-        if (data.connected) {
-            indicator.className = 'device-indicator device-connected';
-            status.textContent = 'Listo';
-            status.className = 'status-registered';
-        } else {
-            indicator.className = 'device-indicator device-disconnected';
-            status.textContent = 'Desconectado';
-            status.className = 'status-pending';
-            setStatus('error', 'Lector desconectado - Contacte al administrador');
-        }
-    } catch (error) {
-        console.error('Error checking device status:', error);
-        setStatus('error', 'Error de conexión');
-    }
-}
-
-// Actualizar resumen de asistencia
-async function updateAttendanceSummary() {
-    try {
-        const response = await fetch('/biometric/attendance_summary');
-        const data = await response.json();
-        
-        document.getElementById('presentCount').textContent = data.presentes || 0;
-        document.getElementById('absentCount').textContent = data.ausentes || 0;
-        document.getElementById('totalCount').textContent = data.total || 0;
-        
-    } catch (error) {
-        console.error('Error updating attendance summary:', error);
-    }
-}
-
-// Manejar errores de conexión
-window.addEventListener('online', function() {
-    location.reload();
-});
-
-window.addEventListener('offline', function() {
-    setStatus('error', 'Sin conexión a internet');
-});
-</script>
 {% endblock %}

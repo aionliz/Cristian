@@ -28,12 +28,12 @@
                             <label for="curso" class="form-label">
                                 <i class="fas fa-school"></i> Curso
                             </label>
-                            <select class="form-select" id="curso" name="curso" onchange="this.form.submit()">
+                            <select class="form-select auto-submit" id="curso" name="curso">
                                 <option value="">Seleccione un curso...</option>
                                 {% for curso in cursos %}
-                                <option value="{{ curso.id_curso }}" 
-                                        {% if curso.id_curso|string == id_curso %}selected{% endif %}>
-                                    {{ curso.nombre }} - {{ curso.nivel }}
+                                <option value="{{ curso.id_curso }}" {% if curso.id_curso|string==id_curso %}selected{%
+                                    endif %}>
+                                    {{ curso.nombre_completo }}
                                 </option>
                                 {% endfor %}
                             </select>
@@ -42,16 +42,37 @@
                             <label for="fecha" class="form-label">
                                 <i class="fas fa-calendar"></i> Fecha
                             </label>
-                            <input type="date" class="form-control" id="fecha" name="fecha" 
-                                   value="{{ fecha }}" onchange="this.form.submit()">
+                            <input type="date" class="form-control auto-submit" id="fecha" name="fecha"
+                                value="{{ fecha }}">
                         </div>
                         <div class="col-md-4 d-flex align-items-end">
                             <button type="submit" class="btn btn-primary me-2">
                                 <i class="fas fa-search"></i> Buscar
                             </button>
                             {% if id_curso %}
-                            <button type="button" class="btn btn-success" onclick="mostrarModalMarcarTodos()">
-                                <i class="fas fa-check-double"></i> Marcar Todos
+                            <!-- Botones de marcación -->
+                            <div class="btn-group me-2" role="group">
+                                <button type="button" class="btn btn-success btn-marcar-todos">
+                                    <i class="fas fa-check-double"></i> Marcar Todos
+                                </button>
+                                <button type="button" class="btn btn-outline-success dropdown-toggle"
+                                    data-bs-toggle="dropdown">
+                                    <span class="sr-only">Toggle Dropdown</span>
+                                </button>
+                                <ul class="dropdown-menu">
+                                    <li><a class="dropdown-item btn-marcar-todos" href="#" data-estado="presente">
+                                            <i class="fas fa-check text-success"></i> Marcar Presentes
+                                        </a></li>
+                                    <li><a class="dropdown-item btn-marcar-todos" href="#" data-estado="ausente">
+                                            <i class="fas fa-times text-danger"></i> Marcar Ausentes
+                                        </a></li>
+                                </ul>
+                            </div>
+
+                            <!-- Botón de marcación biométrica -->
+                            <button type="button" class="btn btn-info btn-activar-biometrico"
+                                title="Activar sistema biométrico">
+                                <i class="fas fa-fingerprint"></i> Biométrico
                             </button>
                             {% endif %}
                         </div>
@@ -67,7 +88,8 @@
         <div class="col-md-3">
             <div class="card text-center border-0 shadow-sm">
                 <div class="card-body">
-                    <h3 class="text-success">{{ asistencias|selectattr("estado", "equalto", "presente")|list|length }}</h3>
+                    <h3 class="text-success">{{ asistencias|selectattr("estado", "equalto", "presente")|list|length }}
+                    </h3>
                     <p class="mb-0 text-muted">Presentes</p>
                 </div>
             </div>
@@ -75,7 +97,8 @@
         <div class="col-md-3">
             <div class="card text-center border-0 shadow-sm">
                 <div class="card-body">
-                    <h3 class="text-danger">{{ asistencias|selectattr("estado", "equalto", "ausente")|list|length }}</h3>
+                    <h3 class="text-danger">{{ asistencias|selectattr("estado", "equalto", "ausente")|list|length }}
+                    </h3>
                     <p class="mb-0 text-muted">Ausentes</p>
                 </div>
             </div>
@@ -83,7 +106,8 @@
         <div class="col-md-3">
             <div class="card text-center border-0 shadow-sm">
                 <div class="card-body">
-                    <h3 class="text-warning">{{ asistencias|selectattr("estado", "equalto", "tardanza")|list|length }}</h3>
+                    <h3 class="text-warning">{{ asistencias|selectattr("estado", "equalto", "tardanza")|list|length }}
+                    </h3>
                     <p class="mb-0 text-muted">Tardanzas</p>
                 </div>
             </div>
@@ -114,7 +138,6 @@
                         <table class="table table-hover mb-0">
                             <thead class="table-light">
                                 <tr>
-                                    <th>RUT</th>
                                     <th>Nombre Completo</th>
                                     <th>Estado</th>
                                     <th>Hora Llegada</th>
@@ -125,53 +148,50 @@
                             <tbody>
                                 {% for asistencia in asistencias %}
                                 <tr>
-                                    <td>{{ asistencia.rut }}</td>
                                     <td>
-                                        <strong>{{ asistencia.nombre }} {{ asistencia.apellido }}</strong>
+                                        <strong>{{ asistencia.nombre }} {{ asistencia.apellido_paterno }} {{
+                                            asistencia.apellido_materno }}</strong>
                                     </td>
                                     <td>
                                         {% if asistencia.estado == 'presente' %}
-                                            <span class="badge bg-success">
-                                                <i class="fas fa-check"></i> Presente
-                                            </span>
+                                        <span class="badge bg-success">
+                                            <i class="fas fa-check"></i> Presente
+                                        </span>
                                         {% elif asistencia.estado == 'ausente' %}
-                                            <span class="badge bg-danger">
-                                                <i class="fas fa-times"></i> Ausente
-                                            </span>
+                                        <span class="badge bg-danger">
+                                            <i class="fas fa-times"></i> Ausente
+                                        </span>
                                         {% elif asistencia.estado == 'tardanza' %}
-                                            <span class="badge bg-warning">
-                                                <i class="fas fa-clock"></i> Tardanza
-                                            </span>
+                                        <span class="badge bg-warning">
+                                            <i class="fas fa-clock"></i> Tardanza
+                                        </span>
                                         {% elif asistencia.estado == 'justificado' %}
-                                            <span class="badge bg-info">
-                                                <i class="fas fa-file-alt"></i> Justificado
-                                            </span>
+                                        <span class="badge bg-info">
+                                            <i class="fas fa-file-alt"></i> Justificado
+                                        </span>
                                         {% endif %}
                                     </td>
                                     <td>
-                                        {% if asistencia.hora_llegada %}
-                                            {{ asistencia.hora_llegada.strftime('%H:%M') }}
-                                        {% else %}
-                                            <span class="text-muted">-</span>
-                                        {% endif %}
+                                        {{ asistencia.hora_llegada|format_time if asistencia.hora_llegada else '-' }}
                                     </td>
                                     <td>
                                         {% if asistencia.observaciones %}
-                                            <span title="{{ asistencia.observaciones }}">
-                                                {{ asistencia.observaciones[:30] }}{% if asistencia.observaciones|length > 30 %}...{% endif %}
-                                            </span>
+                                        <span title="{{ asistencia.observaciones }}">
+                                            {{ asistencia.observaciones[:30] }}{% if asistencia.observaciones|length >
+                                            30 %}...{% endif %}
+                                        </span>
                                         {% else %}
-                                            <span class="text-muted">-</span>
+                                        <span class="text-muted">-</span>
                                         {% endif %}
                                     </td>
                                     <td>
                                         <div class="btn-group btn-group-sm" role="group">
-                                            <a href="{{ url_for('asistencia.editar_asistencia', id_asistencia=asistencia.id_asistencia) }}" 
-                                               class="btn btn-outline-primary" title="Editar">
+                                            <a href="{{ url_for('asistencia.editar_asistencia', id_asistencia=asistencia.id_asistencia) }}"
+                                                class="btn btn-outline-primary" title="Editar">
                                                 <i class="fas fa-edit"></i>
                                             </a>
-                                            <a href="{{ url_for('asistencia.detalle_alumno', id_alumno=asistencia.id_alumno) }}" 
-                                               class="btn btn-outline-info" title="Ver historial">
+                                            <a href="{{ url_for('asistencia.detalle_alumno', id_alumno=asistencia.id_alumno) }}"
+                                                class="btn btn-outline-info" title="Ver historial">
                                                 <i class="fas fa-history"></i>
                                             </a>
                                         </div>
@@ -203,7 +223,6 @@
                         <table class="table table-hover mb-0">
                             <thead class="table-light">
                                 <tr>
-                                    <th>RUT</th>
                                     <th>Nombre Completo</th>
                                     <th>Acciones</th>
                                 </tr>
@@ -211,15 +230,27 @@
                             <tbody>
                                 {% for alumno in alumnos_sin_asistencia %}
                                 <tr>
-                                    <td>{{ alumno.rut }}</td>
                                     <td>
-                                        <strong>{{ alumno.nombre }} {{ alumno.apellido }}</strong>
+                                        <strong>{{ alumno.nombre }} {{ alumno.apellido_paterno }} {{
+                                            alumno.apellido_materno }}</strong>
                                     </td>
                                     <td>
-                                        <button class="btn btn-sm btn-outline-primary" 
-                                                onclick="marcarAsistenciaRapida({{ alumno.id_alumno }}, '{{ alumno.nombre|escape }} {{ alumno.apellido|escape }}')">
-                                            <i class="fas fa-plus"></i> Marcar
-                                        </button>
+                                        <div class="btn-group btn-group-sm" role="group">
+                                            <!-- Marcación manual -->
+                                            <button class="btn btn-outline-primary" data-action="marcar-asistencia"
+                                                data-alumno-id="{{ alumno.id_alumno }}"
+                                                data-alumno-nombre="{{ alumno.nombre|escape }} {{ alumno.apellido_paterno|escape }} {{ alumno.apellido_materno|escape }}"
+                                                title="Marcar manualmente">
+                                                <i class="fas fa-plus"></i> Manual
+                                            </button>
+                                            <!-- Marcación biométrica -->
+                                            <button class="btn btn-outline-info btn-marcar-biometrico"
+                                                data-alumno-id="{{ alumno.id_alumno }}"
+                                                data-alumno-nombre="{{ alumno.nombre|escape }} {{ alumno.apellido_paterno|escape }} {{ alumno.apellido_materno|escape }}"
+                                                title="Marcar con huella dactilar">
+                                                <i class="fas fa-fingerprint"></i> Huella
+                                            </button>
+                                        </div>
                                     </td>
                                 </tr>
                                 {% endfor %}
@@ -248,113 +279,398 @@
 </div>
 
 <!-- Modal para marcar asistencia rápida -->
-<div class="modal fade" id="modalAsistenciaRapida" tabindex="-1">
+<div class="modal fade" id="modalAsistenciaRapida" tabindex="-1" style="display: none;">
     <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header">
                 <h5 class="modal-title">
                     <i class="fas fa-user-check"></i> Marcar Asistencia
                 </h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar">✕</button>
             </div>
             <div class="modal-body">
                 <form id="formAsistenciaRapida">
                     <input type="hidden" id="rapid_id_alumno" name="id_alumno">
                     <input type="hidden" id="rapid_fecha" name="fecha" value="{{ fecha }}">
-                    
+
                     <div class="mb-3">
-                        <strong>Alumno:</strong> <span id="rapid_nombre_alumno"></span>
+                        <strong>Alumno:</strong> <span id="rapid_nombre_alumno">-</span>
                     </div>
-                    
+
                     <div class="mb-3">
                         <label for="rapid_estado" class="form-label">Estado</label>
                         <select class="form-select" id="rapid_estado" name="estado" required>
-                            <option value="presente">Presente</option>
+                            <option value="presente" selected>Presente</option>
                             <option value="ausente">Ausente</option>
                             <option value="tardanza">Tardanza</option>
                             <option value="justificado">Justificado</option>
                         </select>
                     </div>
-                    
+
                     <div class="mb-3">
                         <label for="rapid_hora_llegada" class="form-label">Hora de Llegada</label>
                         <input type="time" class="form-control" id="rapid_hora_llegada" name="hora_llegada">
                     </div>
-                    
+
                     <div class="mb-3">
                         <label for="rapid_observaciones" class="form-label">Observaciones</label>
-                        <textarea class="form-control" id="rapid_observaciones" name="observaciones" rows="2"></textarea>
+                        <textarea class="form-control" id="rapid_observaciones" name="observaciones" rows="2"
+                            placeholder="Observaciones adicionales..."></textarea>
                     </div>
                 </form>
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
-                <button type="button" class="btn btn-success" onclick="guardarAsistenciaRapida()">
+                <button type="button" class="btn btn-success btn-guardar-asistencia-rapida">
                     <i class="fas fa-save"></i> Guardar
                 </button>
             </div>
         </div>
     </div>
 </div>
-{% endblock %}
 
-{% block scripts %}
+<!-- Estilo básico para modal si Bootstrap no está disponible -->
+<style>
+    /* Modal base */
+    .modal {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background-color: rgba(0, 0, 0, 0.5);
+        z-index: 1050;
+        display: none;
+    }
+
+    .modal.show {
+        display: block !important;
+    }
+
+    .modal-dialog {
+        position: relative;
+        margin: 5% auto;
+        max-width: 500px;
+        width: 90%;
+    }
+
+    .modal-content {
+        background-color: white;
+        border: 1px solid #ccc;
+        border-radius: 8px;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+        animation: modalSlideIn 0.3s ease;
+    }
+
+    @keyframes modalSlideIn {
+        from {
+            opacity: 0;
+            transform: translateY(-30px);
+        }
+
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    /* Modal header */
+    .modal-header {
+        padding: 1rem;
+        border-bottom: 1px solid #dee2e6;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        background-color: #f8f9fa;
+        border-radius: 8px 8px 0 0;
+    }
+
+    .modal-title {
+        margin: 0;
+        font-size: 1.25rem;
+        font-weight: 500;
+        color: #495057;
+    }
+
+    .btn-close {
+        background: none;
+        border: none;
+        font-size: 1.5rem;
+        cursor: pointer;
+        padding: 0.25rem;
+        color: #6c757d;
+        width: 30px;
+        height: 30px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 4px;
+    }
+
+    .btn-close:hover {
+        background-color: #e9ecef;
+        color: #000;
+    }
+
+    /* Modal body */
+    .modal-body {
+        padding: 1.5rem;
+        max-height: 60vh;
+        overflow-y: auto;
+    }
+
+    /* Modal footer */
+    .modal-footer {
+        padding: 1rem;
+        border-top: 1px solid #dee2e6;
+        display: flex;
+        justify-content: flex-end;
+        gap: 0.5rem;
+        background-color: #f8f9fa;
+        border-radius: 0 0 8px 8px;
+    }
+
+    /* Form controls */
+    .form-label {
+        font-weight: 600;
+        margin-bottom: 0.5rem;
+        display: block;
+        color: #495057;
+    }
+
+    .form-control,
+    .form-select {
+        width: 100%;
+        padding: 0.75rem;
+        border: 1px solid #ced4da;
+        border-radius: 6px;
+        margin-bottom: 0.5rem;
+        font-size: 1rem;
+        transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
+    }
+
+    .form-control:focus,
+    .form-select:focus {
+        border-color: #80bdff;
+        outline: 0;
+        box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);
+    }
+
+    /* Buttons */
+    .btn {
+        padding: 0.75rem 1.5rem;
+        border: 1px solid transparent;
+        border-radius: 6px;
+        cursor: pointer;
+        text-decoration: none;
+        display: inline-block;
+        font-weight: 500;
+        text-align: center;
+        transition: all 0.15s ease-in-out;
+        font-size: 1rem;
+    }
+
+    .btn-success {
+        background-color: #28a745;
+        border-color: #28a745;
+        color: white;
+    }
+
+    .btn-success:hover {
+        background-color: #218838;
+        border-color: #1e7e34;
+    }
+
+    .btn-secondary {
+        background-color: #6c757d;
+        border-color: #6c757d;
+        color: white;
+    }
+
+    .btn-secondary:hover {
+        background-color: #5a6268;
+        border-color: #545b62;
+    }
+
+    .btn:disabled {
+        opacity: 0.65;
+        cursor: not-allowed;
+    }
+
+    /* Form groups */
+    .mb-3 {
+        margin-bottom: 1rem;
+    }
+
+    /* Body lock */
+    .modal-open {
+        overflow: hidden;
+    }
+
+    /* Responsive */
+    @media (max-width: 576px) {
+        .modal-dialog {
+            margin: 2% auto;
+            width: 95%;
+        }
+
+        .modal-header,
+        .modal-body,
+        .modal-footer {
+            padding: 1rem;
+        }
+    }
+
+    /* Backdrop */
+    .modal-backdrop {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background-color: rgba(0, 0, 0, 0.5);
+        z-index: 1040;
+    }
+
+    .modal-backdrop.show {
+        opacity: 1;
+    }
+</style>
 <script>
-function marcarAsistenciaRapida(idAlumno, nombreAlumno) {
-    $('#rapid_id_alumno').val(idAlumno);
-    $('#rapid_nombre_alumno').text(nombreAlumno);
+// Sistema de marcación simplificado y robusto
+document.addEventListener('DOMContentLoaded', function() {
+    console.log('🚀 Sistema de marcación v2.0 iniciado');
     
-    // Establecer hora actual
-    const now = new Date();
-    const timeString = now.getHours().toString().padStart(2, '0') + ':' + 
-                      now.getMinutes().toString().padStart(2, '0');
-    $('#rapid_hora_llegada').val(timeString);
+    let modal = null;
     
-    $('#modalAsistenciaRapida').modal('show');
-}
-
-function guardarAsistenciaRapida() {
-    const formData = new FormData($('#formAsistenciaRapida')[0]);
+    // Función principal para mostrar modal
+    function showModal(alumnoId, alumnoNombre) {
+        console.log('📝 Abriendo modal para:', alumnoNombre, 'ID:', alumnoId);
+        
+        modal = document.getElementById('modalAsistenciaRapida');
+        if (!modal) {
+            alert('Error: Modal no encontrado');
+            return;
+        }
+        
+        // Llenar formulario
+        const form = document.getElementById('formAsistenciaRapida');
+        if (form) {
+            form.querySelector('#rapid_id_alumno').value = alumnoId;
+            form.querySelector('#rapid_nombre_alumno').textContent = alumnoNombre;
+            
+            // Hora actual
+            const now = new Date();
+            const time = now.getHours().toString().padStart(2, '0') + ':' + 
+                        now.getMinutes().toString().padStart(2, '0');
+            form.querySelector('#rapid_hora_llegada').value = time;
+        }
+        
+        // Mostrar modal
+        modal.style.display = 'block';
+        modal.classList.add('show');
+        document.body.style.overflow = 'hidden';
+        
+        console.log('✅ Modal abierto');
+    }
     
-    $.ajax({
-        url: '/asistencia/marcar',
-        method: 'POST',
-        data: formData,
-        processData: false,
-        contentType: false,
-        success: function(response) {
-            $('#modalAsistenciaRapida').modal('hide');
-            mostrarNotificacion('Asistencia marcada correctamente', 'success');
-            // Recargar la página para ver los cambios
-            setTimeout(() => location.reload(), 1000);
-        },
-        error: function(xhr) {
-            mostrarNotificacion('Error al marcar asistencia', 'error');
+    // Función para cerrar modal
+    function closeModal() {
+        console.log('🔒 Cerrando modal');
+        if (modal) {
+            modal.style.display = 'none';
+            modal.classList.remove('show');
+            document.body.style.overflow = '';
+            
+            // Reset form
+            const form = document.getElementById('formAsistenciaRapida');
+            if (form) form.reset();
+        }
+    }
+    
+    // Función para guardar
+    function saveData() {
+        console.log('💾 Guardando datos...');
+        
+        const form = document.getElementById('formAsistenciaRapida');
+        if (!form) {
+            alert('Error: Formulario no encontrado');
+            return;
+        }
+        
+        const formData = new FormData(form);
+        const saveBtn = document.querySelector('.btn-guardar-asistencia-rapida');
+        
+        // UI feedback
+        if (saveBtn) {
+            saveBtn.disabled = true;
+            saveBtn.textContent = 'Guardando...';
+        }
+        
+        // Enviar
+        fetch('/asistencia/marcar', {
+            method: 'POST',
+            body: formData
+        })
+        .then(response => {
+            console.log('📡 Respuesta:', response.status);
+            if (response.ok || response.status === 302) {
+                alert('✅ Guardado correctamente');
+                closeModal();
+                window.location.reload();
+            } else {
+                alert('❌ Error al guardar');
+            }
+        })
+        .catch(error => {
+            console.error('🚨 Error:', error);
+            alert('❌ Error de conexión');
+        })
+        .finally(() => {
+            if (saveBtn) {
+                saveBtn.disabled = false;
+                saveBtn.textContent = 'Guardar';
+            }
+        });
+    }
+    
+    // Event listeners
+    document.addEventListener('click', function(e) {
+        // Botón marcar manual
+        const markBtn = e.target.closest('[data-action="marcar-asistencia"]');
+        if (markBtn) {
+            e.preventDefault();
+            const id = markBtn.getAttribute('data-alumno-id');
+            const name = markBtn.getAttribute('data-alumno-nombre');
+            console.log('🖱️ Click marcar:', name, id);
+            showModal(id, name);
+            return;
+        }
+        
+        // Botón guardar
+        if (e.target.classList.contains('btn-guardar-asistencia-rapida')) {
+            e.preventDefault();
+            saveData();
+            return;
+        }
+        
+        // Botón cerrar
+        if (e.target.classList.contains('btn-close') || 
+            e.target.textContent.trim() === 'Cancelar') {
+            e.preventDefault();
+            closeModal();
+            return;
+        }
+        
+        // Click fuera del modal
+        if (e.target === modal) {
+            closeModal();
+            return;
         }
     });
-}
-
-function mostrarModalMarcarTodos() {
-    // Implementar funcionalidad para marcar asistencia masiva
-    alert('Funcionalidad en desarrollo: Marcar asistencia para todo el curso');
-}
-
-function mostrarNotificacion(mensaje, tipo) {
-    const alertClass = tipo === 'success' ? 'alert-success' : 'alert-danger';
-    const icon = tipo === 'success' ? 'fas fa-check-circle' : 'fas fa-exclamation-triangle';
     
-    const alert = $(`
-        <div class="alert ${alertClass} alert-dismissible fade show" role="alert">
-            <i class="${icon}"></i> ${mensaje}
-            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-        </div>
-    `);
-    
-    $('.container').prepend(alert);
-    
-    setTimeout(function() {
-        alert.fadeOut();
-    }, 5000);
-}
+    console.log('✅ Event listeners configurados');
+});
 </script>
+
 {% endblock %}

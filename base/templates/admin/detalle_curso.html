@@ -1,0 +1,198 @@
+{% extends 'base.html' %}
+
+{% block title %}Detalle Curso {{ curso.nombre_completo }} - Sistema de Asistencia{% endblock %}
+
+{% block content %}
+<div class="main-content">
+    <div class="container-fluid">
+        <!-- Header -->
+        <div class="row mb-4">
+            <div class="col-12">
+                <div class="d-flex justify-content-between align-items-center">
+                    <div>
+                        <h2 class="mb-0">📚 Curso {{ curso.nombre_completo }}</h2>
+                        <p class="text-muted">{{ curso.descripcion or 'Detalle del curso y sus estudiantes' }}</p>
+                    </div>
+                    <div>
+                        <a href="{{ url_for('admin.gestionar_cursos') }}" class="btn btn-outline-secondary me-2">
+                            <i class="fas fa-arrow-left"></i> Volver
+                        </a>
+                        <a href="{{ url_for('asistencia.listar_por_curso', curso=curso.id_curso) }}"
+                            class="btn btn-primary">
+                            <i class="fas fa-calendar-check"></i> Ver Asistencia
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Información del curso -->
+        <div class="row mb-4">
+            <div class="col-md-8">
+                <div class="card">
+                    <div class="card-header bg-primary text-white">
+                        <h5 class="mb-0">
+                            <i class="fas fa-info-circle"></i> Información del Curso
+                        </h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-md-6">
+                                <p><strong>Curso:</strong> {{ curso.nombre_completo }}</p>
+                                <p><strong>Nivel:</strong> {{ curso.nivel_texto }}</p>
+                                <p><strong>Letra:</strong> {{ curso.letra }}</p>
+                            </div>
+                            <div class="col-md-6">
+                                <p><strong>Total Estudiantes:</strong> {{ alumnos|length }}</p>
+                                <p><strong>Estado:</strong>
+                                    <span class="badge bg-success">Activo</span>
+                                </p>
+                                <p><strong>Creado:</strong> {{ curso.created_at.strftime('%d/%m/%Y') if curso.created_at
+                                    else '-' }}</p>
+                            </div>
+                        </div>
+                        {% if curso.descripcion %}
+                        <hr>
+                        <p><strong>Descripción:</strong></p>
+                        <p class="text-muted">{{ curso.descripcion }}</p>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <!-- Estadísticas rápidas -->
+                <div class="card">
+                    <div class="card-header bg-info text-white">
+                        <h6 class="mb-0">
+                            <i class="fas fa-chart-bar"></i> Estadísticas
+                        </h6>
+                    </div>
+                    <div class="card-body">
+                        <div class="d-flex justify-content-between mb-2">
+                            <span>Total Estudiantes:</span>
+                            <strong>{{ alumnos|length }}</strong>
+                        </div>
+                        <div class="d-flex justify-content-between mb-2">
+                            <span>Estudiantes Activos:</span>
+                            <strong>{{ alumnos|selectattr("activo")|list|length }}</strong>
+                        </div>
+                        <div class="d-flex justify-content-between mb-2">
+                            <span>Con Huella Registrada:</span>
+                            <strong>{{ alumnos|selectattr("huella_dactilar")|list|length }}</strong>
+                        </div>
+                        <hr>
+                        <div class="d-grid">
+                            <a href="{{ url_for('admin.gestionar_alumnos') }}?curso={{ curso.id_curso }}"
+                                class="btn btn-outline-primary btn-sm">
+                                <i class="fas fa-user-plus"></i> Agregar Estudiante
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Lista de estudiantes -->
+        <div class="row">
+            <div class="col-12">
+                <div class="card">
+                    <div class="card-header">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <h5 class="mb-0">
+                                <i class="fas fa-users"></i> Estudiantes del Curso
+                            </h5>
+                            <div class="input-group" style="max-width: 300px;">
+                                <input type="text" class="form-control" id="buscar-estudiante"
+                                    placeholder="Buscar estudiante...">
+                                <span class="input-group-text"><i class="fas fa-search"></i></span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        {% if alumnos %}
+                        <div class="table-responsive">
+                            <table class="table table-hover" id="tabla-estudiantes">
+                                <thead class="table-light">
+                                    <tr>
+                                        <th>Nombre Completo</th>
+                                        <th>Email</th>
+                                        <th>Teléfono</th>
+                                        <th>Huella</th>
+                                        <th>Estado</th>
+                                        <th>Acciones</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for alumno in alumnos %}
+                                    <tr data-nombre="{{ alumno.nombre }} {{ alumno.apellido_paterno }}">
+                                        <td>
+                                            <strong>{{ alumno.nombre }} {{ alumno.apellido_paterno }}</strong>
+                                            {% if alumno.apellido_materno %}
+                                            {{ alumno.apellido_materno }}
+                                            {% endif %}
+                                        </td>
+                                        <td>{{ alumno.email or '-' }}</td>
+                                        <td>{{ alumno.telefono or '-' }}</td>
+                                        <td>
+                                            {% if alumno.huella_dactilar %}
+                                            <span class="badge bg-success">
+                                                <i class="fas fa-fingerprint"></i> Registrada
+                                            </span>
+                                            {% else %}
+                                            <span class="badge bg-warning">
+                                                <i class="fas fa-exclamation-triangle"></i> Pendiente
+                                            </span>
+                                            {% endif %}
+                                        </td>
+                                        <td>
+                                            {% if alumno.activo %}
+                                            <span class="badge bg-success">Activo</span>
+                                            {% else %}
+                                            <span class="badge bg-secondary">Inactivo</span>
+                                            {% endif %}
+                                        </td>
+                                        <td>
+                                            <div class="btn-group" role="group">
+                                                <!-- Ver asistencia -->
+                                                <a href="{{ url_for('asistencia.detalle_alumno', id_alumno=alumno.id_alumno) }}"
+                                                    class="btn btn-sm btn-outline-info" title="Ver asistencia">
+                                                    <i class="fas fa-calendar-alt"></i>
+                                                </a>
+
+                                                <!-- Registrar huella (solo si no tiene) -->
+                                                {% if not alumno.huella_dactilar %}
+                                                <a href="{{ url_for('biometric.admin_panel') }}#alumno-{{ alumno.id_alumno }}"
+                                                    class="btn btn-sm btn-outline-warning" title="Registrar huella">
+                                                    <i class="fas fa-fingerprint"></i>
+                                                </a>
+                                                {% endif %}
+
+                                                <!-- Editar estudiante -->
+                                                <button type="button" class="btn btn-sm btn-outline-primary"
+                                                    title="Editar" onclick="editarEstudiante('{{ alumno.id_alumno }}')">
+                                                    <i class="fas fa-edit"></i>
+                                                </button>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                        {% else %}
+                        <div class="text-center py-5">
+                            <i class="fas fa-user-slash fa-3x text-muted mb-3"></i>
+                            <h5 class="text-muted">No hay estudiantes en este curso</h5>
+                            <p class="text-muted">Agregue estudiantes para comenzar a gestionar la asistencia</p>
+                            <a href="{{ url_for('admin.gestionar_alumnos') }}" class="btn btn-primary">
+                                <i class="fas fa-user-plus"></i> Agregar Primer Estudiante
+                            </a>
+                        </div>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

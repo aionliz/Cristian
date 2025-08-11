@@ -3,32 +3,22 @@
     <div class="container">
         <!-- Logo y nombre -->
         <a class="navbar-brand d-flex align-items-center" href="{{ url_for('index') }}">
-            <img src="{{ url_for('static', filename='img/logo.png') }}" 
-                 alt="Logo" 
-                 width="40" 
-                 height="40" 
-                 class="me-2">
+            <img src="{{ url_for('static', filename='img/logo.png') }}" alt="Logo" width="40" height="40" class="me-2">
             <span class="fw-bold">Sistema de Asistencia</span>
         </a>
-        
+
         <!-- Botón para móviles -->
-        <button class="navbar-toggler" 
-                type="button" 
-                data-bs-toggle="collapse" 
-                data-bs-target="#navbarNav">
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
             <span class="navbar-toggler-icon"></span>
         </button>
-        
+
         <!-- Menú de navegación -->
         <div class="collapse navbar-collapse" id="navbarNav">
             <ul class="navbar-nav me-auto">
                 <!-- Asistencia -->
                 <li class="nav-item dropdown">
-                    <a class="nav-link dropdown-toggle" 
-                       href="#" 
-                       id="asistenciaDropdown" 
-                       role="button" 
-                       data-bs-toggle="dropdown">
+                    <a class="nav-link dropdown-toggle" href="#" id="asistenciaDropdown" role="button"
+                        data-bs-toggle="dropdown">
                         <i class="fas fa-calendar-check me-1"></i>
                         Asistencia
                     </a>
@@ -51,7 +41,9 @@
                                 Por Curso
                             </a>
                         </li>
-                        <li><hr class="dropdown-divider"></li>
+                        <li>
+                            <hr class="dropdown-divider">
+                        </li>
                         <li>
                             <a class="dropdown-item" href="{{ url_for('asistencia.reporte_mensual') }}">
                                 <i class="fas fa-chart-bar me-2"></i>
@@ -60,14 +52,11 @@
                         </li>
                     </ul>
                 </li>
-                
+
                 <!-- Huellas Dactilares -->
                 <li class="nav-item dropdown">
-                    <a class="nav-link dropdown-toggle" 
-                       href="#" 
-                       id="huellasDropdown" 
-                       role="button" 
-                       data-bs-toggle="dropdown">
+                    <a class="nav-link dropdown-toggle" href="#" id="huellasDropdown" role="button"
+                        data-bs-toggle="dropdown">
                         <i class="fas fa-fingerprint me-1"></i>
                         Sistema Biométrico
                     </a>
@@ -82,7 +71,9 @@
                                 Panel de Administración
                             </a>
                         </li>
-                        <li><hr class="dropdown-divider"></li>
+                        <li>
+                            <hr class="dropdown-divider">
+                        </li>
                         <li class="dropdown-header text-success">
                             <i class="fas fa-chalkboard-teacher me-2"></i>
                             Profesor
@@ -93,7 +84,9 @@
                                 Terminal de Asistencia
                             </a>
                         </li>
-                        <li><hr class="dropdown-divider"></li>
+                        <li>
+                            <hr class="dropdown-divider">
+                        </li>
                         <li class="dropdown-header text-info">
                             <i class="fas fa-tools me-2"></i>
                             Sistema Legacy
@@ -110,174 +103,205 @@
                                 Registrar Huella (Antiguo)
                             </a>
                         </li>
-                                Registrar Mi Huella
+                        Registrar Mi Huella
+                        </a>
+                </li>
+                <li>
+                    <a class="dropdown-item" href="{{ url_for('huellas_profesor.listar') }}">
+                        <i class="fas fa-list me-2"></i>
+                        Mis Huellas
+                    </a>
+                </li>
+                <li>
+                    <hr class="dropdown-divider">
+                </li>
+                <li>
+                    <a class="dropdown-item" href="{{ url_for('huellas.estadisticas') }}">
+                        <i class="fas fa-chart-pie me-2"></i>
+                        Estadísticas
+                    </a>
+                </li>
+            </ul>
+            </li>
+
+            <!-- Estudiantes -->
+            <li class="nav-item">
+                <a class="nav-link"
+                    href="{{ url_for('students.student_list') if 'students.student_list' in url_for_values else '#' }}">
+                    <i class="fas fa-user-graduate me-1"></i>
+                    Estudiantes
+                </a>
+            </li>
+
+            <!-- Gestión Académica -->
+            <li class="nav-item dropdown">
+                <a class="nav-link dropdown-toggle" href="#" id="gestionDropdown" role="button"
+                    data-bs-toggle="dropdown">
+                    <i class="fas fa-cogs me-1"></i>
+                    Gestión
+                </a>
+                <ul class="dropdown-menu">
+                    <li class="dropdown-header text-primary">
+                        <i class="fas fa-chalkboard-teacher me-2"></i>
+                        Personal Docente
+                    </li>
+                    <li>
+                        <a class="dropdown-item" href="{{ url_for('profesor.gestionar_profesores') }}">
+                            <i class="fas fa-users me-2"></i>
+                            Gestionar Profesores
+                        </a>
+                    </li>
+                    <li>
+                        <hr class="dropdown-divider">
+                    </li>
+                    <li class="dropdown-header text-success">
+                        <i class="fas fa-book me-2"></i>
+                        Currículo
+                    </li>
+                    <li>
+                        <a class="dropdown-item" href="{{ url_for('asignaturas.gestionar_asignaturas') }}">
+                            <i class="fas fa-book-open me-2"></i>
+                            Gestionar Asignaturas
+                        </a>
+                    </li>
+                    <li>
+                        <a class="dropdown-item" href="{{ url_for('cursos.gestionar_cursos') }}">
+                            <i class="fas fa-graduation-cap me-2"></i>
+                            Gestionar Cursos
+                        </a>
+                    </li>
+                    <li>
+                        <hr class="dropdown-divider">
+                    </li>
+                    <li class="dropdown-header text-info">
+                        <i class="fas fa-clipboard-list me-2"></i>
+                        Asignaciones
+                    </li>
+                    <li>
+                        <a class="dropdown-item"
+                            href="{{ url_for('asignatura.gestionar_asignaciones') if 'asignatura.gestionar_asignaciones' in url_for_values else '#' }}">
+                            <i class="fas fa-tasks me-2"></i>
+                            Gestionar Asignaciones
+                        </a>
+                    </li>
+                </ul>
+            </li>
+            </ul>
+
+            <!-- Menú de usuario -->
+            <ul class="navbar-nav">
+                {% if session.user_id %}
+                <!-- Notificaciones -->
+                <li class="nav-item dropdown">
+                    <a class="nav-link position-relative" href="#" id="notificacionesDropdown" role="button"
+                        data-bs-toggle="dropdown">
+                        <i class="fas fa-bell"></i>
+                        <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
+                            3
+                            <span class="visually-hidden">notificaciones sin leer</span>
+                        </span>
+                    </a>
+                    <ul class="dropdown-menu dropdown-menu-end dropdown-menu-custom">
+                        <li class="dropdown-header">
+                            <i class="fas fa-bell me-2"></i>
+                            Notificaciones
+                        </li>
+                        <li>
+                            <hr class="dropdown-divider">
+                        </li>
+                        <!-- Las notificaciones reales se cargarán dinámicamente -->
+                        <li>
+                            <a class="dropdown-item" href="#">
+                                <div class="d-flex">
+                                    <div class="flex-shrink-0">
+                                        <i class="fas fa-chart-line text-info"></i>
+                                    </div>
+                                    <div class="flex-grow-1 ms-2">
+                                        <div class="fw-bold">Reporte semanal</div>
+                                        <div class="small text-muted">
+                                            95% de asistencia promedio
+                                        </div>
+                                    </div>
+                                </div>
                             </a>
                         </li>
                         <li>
-                            <a class="dropdown-item" href="{{ url_for('huellas_profesor.listar') }}">
-                                <i class="fas fa-list me-2"></i>
-                                Mis Huellas
-                            </a>
+                            <hr class="dropdown-divider">
                         </li>
-                        <li><hr class="dropdown-divider"></li>
                         <li>
-                            <a class="dropdown-item" href="{{ url_for('huellas.estadisticas') }}">
-                                <i class="fas fa-chart-pie me-2"></i>
-                                Estadísticas
+                            <a class="dropdown-item text-center" href="#">
+                                Ver todas las notificaciones
                             </a>
                         </li>
                     </ul>
                 </li>
-                
-                <!-- Estudiantes -->
+
+                <!-- Usuario -->
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle d-flex align-items-center" href="#" id="usuarioDropdown"
+                        role="button" data-bs-toggle="dropdown">
+                        <div class="rounded-circle bg-light text-primary d-flex align-items-center justify-content-center me-2"
+                            class="rounded-circle avatar-small">
+                            <i class="fas fa-user"></i>
+                        </div>
+                        <span class="d-none d-md-inline">
+                            {{ session.get('user_name', 'Usuario') }}
+                        </span>
+                    </a>
+                    <ul class="dropdown-menu dropdown-menu-end">
+                        <li class="dropdown-header">
+                            <div class="d-flex align-items-center">
+                                <div class="rounded-circle bg-primary text-white d-flex align-items-center justify-content-center me-2"
+                                    class="rounded-circle avatar-medium">
+                                    <i class="fas fa-user"></i>
+                                </div>
+                                <div>
+                                    <div class="fw-bold">{{ session.get('user_name', 'Usuario') }}</div>
+                                    <div class="small text-muted">{{ session.get('user_rol', 'Rol') }}</div>
+                                </div>
+                            </div>
+                        </li>
+                        <li>
+                            <hr class="dropdown-divider">
+                        </li>
+                        <li>
+                            <a class="dropdown-item" href="#">
+                                <i class="fas fa-user-cog me-2"></i>
+                                Mi Perfil
+                            </a>
+                        </li>
+                        <li>
+                            <a class="dropdown-item" href="#">
+                                <i class="fas fa-cog me-2"></i>
+                                Configuración
+                            </a>
+                        </li>
+                        <li>
+                            <a class="dropdown-item" href="#">
+                                <i class="fas fa-question-circle me-2"></i>
+                                Ayuda
+                            </a>
+                        </li>
+                        <li>
+                            <hr class="dropdown-divider">
+                        </li>
+                        <li>
+                            <a class="dropdown-item text-danger"
+                                href="{{ url_for('auth.logout') if 'auth.logout' in url_for_values else '#' }}">
+                                <i class="fas fa-sign-out-alt me-2"></i>
+                                Cerrar Sesión
+                            </a>
+                        </li>
+                    </ul>
+                </li>
+                {% else %}
+                <!-- Sin sesión -->
                 <li class="nav-item">
-                    <a class="nav-link" href="{{ url_for('students.student_list') if 'students.student_list' in url_for_values else '#' }}">
-                        <i class="fas fa-user-graduate me-1"></i>
-                        Estudiantes
+                    <a class="nav-link" href="{{ url_for('auth.login') if 'auth.login' in url_for_values else '#' }}">
+                        <i class="fas fa-sign-in-alt me-1"></i>
+                        Iniciar Sesión
                     </a>
                 </li>
-            </ul>
-            
-            <!-- Menú de usuario -->
-            <ul class="navbar-nav">
-                {% if session.user_id %}
-                    <!-- Notificaciones -->
-                    <li class="nav-item dropdown">
-                        <a class="nav-link position-relative" 
-                           href="#" 
-                           id="notificacionesDropdown"
-                           role="button" 
-                           data-bs-toggle="dropdown">
-                            <i class="fas fa-bell"></i>
-                            <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
-                                3
-                                <span class="visually-hidden">notificaciones sin leer</span>
-                            </span>
-                        </a>
-                        <ul class="dropdown-menu dropdown-menu-end dropdown-menu-custom">
-                            <li class="dropdown-header">
-                                <i class="fas fa-bell me-2"></i>
-                                Notificaciones
-                            </li>
-                            <li><hr class="dropdown-divider"></li>
-                            <li>
-                                <a class="dropdown-item" href="#">
-                                    <div class="d-flex">
-                                        <div class="flex-shrink-0">
-                                            <i class="fas fa-exclamation-triangle text-warning"></i>
-                                        </div>
-                                        <div class="flex-grow-1 ms-2">
-                                            <div class="fw-bold">Calidad de huella baja</div>
-                                            <div class="small text-muted">
-                                                Juan Pérez - Huella índice derecho
-                                            </div>
-                                        </div>
-                                    </div>
-                                </a>
-                            </li>
-                            <li>
-                                <a class="dropdown-item" href="#">
-                                    <div class="d-flex">
-                                        <div class="flex-shrink-0">
-                                            <i class="fas fa-user-plus text-success"></i>
-                                        </div>
-                                        <div class="flex-grow-1 ms-2">
-                                            <div class="fw-bold">Nueva huella registrada</div>
-                                            <div class="small text-muted">
-                                                María González - Índice izquierdo
-                                            </div>
-                                        </div>
-                                    </div>
-                                </a>
-                            </li>
-                            <li>
-                                <a class="dropdown-item" href="#">
-                                    <div class="d-flex">
-                                        <div class="flex-shrink-0">
-                                            <i class="fas fa-chart-line text-info"></i>
-                                        </div>
-                                        <div class="flex-grow-1 ms-2">
-                                            <div class="fw-bold">Reporte semanal</div>
-                                            <div class="small text-muted">
-                                                95% de asistencia promedio
-                                            </div>
-                                        </div>
-                                    </div>
-                                </a>
-                            </li>
-                            <li><hr class="dropdown-divider"></li>
-                            <li>
-                                <a class="dropdown-item text-center" href="#">
-                                    Ver todas las notificaciones
-                                </a>
-                            </li>
-                        </ul>
-                    </li>
-                    
-                    <!-- Usuario -->
-                    <li class="nav-item dropdown">
-                        <a class="nav-link dropdown-toggle d-flex align-items-center" 
-                           href="#" 
-                           id="usuarioDropdown" 
-                           role="button" 
-                           data-bs-toggle="dropdown">
-                            <div class="rounded-circle bg-light text-primary d-flex align-items-center justify-content-center me-2" 
-                                 class="rounded-circle avatar-small">
-                                <i class="fas fa-user"></i>
-                            </div>
-                            <span class="d-none d-md-inline">
-                                {{ session.get('user_name', 'Usuario') }}
-                            </span>
-                        </a>
-                        <ul class="dropdown-menu dropdown-menu-end">
-                            <li class="dropdown-header">
-                                <div class="d-flex align-items-center">
-                                    <div class="rounded-circle bg-primary text-white d-flex align-items-center justify-content-center me-2" 
-                                         class="rounded-circle avatar-medium">
-                                        <i class="fas fa-user"></i>
-                                    </div>
-                                    <div>
-                                        <div class="fw-bold">{{ session.get('user_name', 'Usuario') }}</div>
-                                        <div class="small text-muted">{{ session.get('user_rol', 'Rol') }}</div>
-                                    </div>
-                                </div>
-                            </li>
-                            <li><hr class="dropdown-divider"></li>
-                            <li>
-                                <a class="dropdown-item" href="#">
-                                    <i class="fas fa-user-cog me-2"></i>
-                                    Mi Perfil
-                                </a>
-                            </li>
-                            <li>
-                                <a class="dropdown-item" href="#">
-                                    <i class="fas fa-cog me-2"></i>
-                                    Configuración
-                                </a>
-                            </li>
-                            <li>
-                                <a class="dropdown-item" href="#">
-                                    <i class="fas fa-question-circle me-2"></i>
-                                    Ayuda
-                                </a>
-                            </li>
-                            <li><hr class="dropdown-divider"></li>
-                            <li>
-                                <a class="dropdown-item text-danger" href="{{ url_for('auth.logout') if 'auth.logout' in url_for_values else '#' }}">
-                                    <i class="fas fa-sign-out-alt me-2"></i>
-                                    Cerrar Sesión
-                                </a>
-                            </li>
-                        </ul>
-                    </li>
-                {% else %}
-                    <!-- Sin sesión -->
-                    <li class="nav-item">
-                        <a class="nav-link" href="{{ url_for('auth.login') if 'auth.login' in url_for_values else '#' }}">
-                            <i class="fas fa-sign-in-alt me-1"></i>
-                            Iniciar Sesión
-                        </a>
-                    </li>
                 {% endif %}
             </ul>
         </div>
@@ -310,40 +334,4 @@
     </div>
 </div>
 
-<script>
-// Actualizar fecha y hora en tiempo real
-function actualizarFechaHora() {
-    const ahora = new Date();
-    const opciones = {
-        weekday: 'long',
-        year: 'numeric',
-        month: 'long',
-        day: 'numeric',
-        hour: '2-digit',
-        minute: '2-digit',
-        second: '2-digit',
-        timeZone: 'America/Santiago'
-    };
-    
-    const fechaHora = ahora.toLocaleDateString('es-CL', opciones);
-    document.getElementById('current-datetime').textContent = fechaHora;
-}
-
-// Actualizar cada segundo
-if (document.getElementById('current-datetime')) {
-    actualizarFechaHora();
-    setInterval(actualizarFechaHora, 1000);
-}
-
-// Marcar elemento activo en la navegación
-document.addEventListener('DOMContentLoaded', function() {
-    const currentPath = window.location.pathname;
-    const navLinks = document.querySelectorAll('.navbar-nav .nav-link');
-    
-    navLinks.forEach(link => {
-        if (link.getAttribute('href') === currentPath) {
-            link.classList.add('active');
-        }
-    });
-});
-</script>
+{% endblock %}

@@ -1,0 +1,132 @@
+{% extends 'base.html' %}
+
+{% block title %}Editar Asignatura - Colegio AML{% endblock %}
+
+{% block content %}
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-md-8 mx-auto">
+            <!-- Header -->
+            <div class="card border-0 shadow-sm mb-4">
+                <div class="card-body">
+                    <div class="row align-items-center">
+                        <div class="col-md-8">
+                            <h4 class="mb-1">
+                                <i class="fas fa-edit"></i> Editar Asignatura
+                            </h4>
+                            <p class="text-muted mb-0">Modificar información de: <strong>{{ asignatura.nombre
+                                    }}</strong></p>
+                        </div>
+                        <div class="col-md-4 text-end">
+                            <a href="{{ url_for('asignatura.gestionar_asignaturas') }}"
+                                class="btn btn-outline-secondary">
+                                <i class="fas fa-arrow-left"></i> Volver
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Formulario -->
+            <div class="row">
+                <div class="col-12">
+                    <div class="card">
+                        <div class="card-header">
+                            <h5 class="card-title mb-0">
+                                <i class="fas fa-book"></i> Información de la Asignatura
+                            </h5>
+                        </div>
+                        <div class="card-body">
+                            <form method="POST">
+                                <div class="row">
+                                    <div class="col-md-12">
+                                        <div class="mb-3">
+                                            <label for="nombre" class="form-label">
+                                                <i class="fas fa-text-width"></i> Nombre de la Asignatura *
+                                            </label>
+                                            <input type="text" class="form-control" id="nombre" name="nombre"
+                                                value="{{ request.form.nombre if request.form else asignatura.nombre }}"
+                                                placeholder="Ej: Matemáticas, Historia, Ciencias..." required
+                                                maxlength="100">
+                                            <div class="form-text">
+                                                Ingresa el nombre completo de la asignatura (mínimo 3 caracteres)
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="row">
+                                    <div class="col-md-12">
+                                        <div class="mb-3">
+                                            <label for="descripcion" class="form-label">
+                                                <i class="fas fa-align-left"></i> Descripción
+                                            </label>
+                                            <textarea class="form-control" id="descripcion" name="descripcion" rows="3"
+                                                placeholder="Descripción opcional de la asignatura...">{{ request.form.descripcion if request.form else asignatura.descripcion }}</textarea>
+                                            <div class="form-text">
+                                                Puedes agregar una descripción detallada de la asignatura (opcional)
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Información adicional -->
+                                <div class="alert alert-warning">
+                                    <h6><i class="fas fa-exclamation-triangle"></i> Antes de editar considera:</h6>
+                                    <ul class="mb-0">
+                                        <li>Cambiar el nombre afectará cómo se muestra en todo el sistema</li>
+                                        <li>Los profesores asociados mantendrán su relación con esta asignatura</li>
+                                        <li>Asegúrate de que el nuevo nombre sea único</li>
+                                    </ul>
+                                </div>
+
+                                <!-- Información estadística -->
+                                <div class="card bg-light mb-3">
+                                    <div class="card-body">
+                                        <h6 class="card-title">
+                                            <i class="fas fa-chart-bar"></i> Estadísticas Actuales
+                                        </h6>
+                                        <div class="row text-center">
+                                            <div class="col-md-6">
+                                                <div class="stat-item">
+                                                    <h5 class="text-primary mb-0">{{ total_profesores or 0 }}</h5>
+                                                    <small class="text-muted">Profesor{{ 'es' if (total_profesores or 0)
+                                                        != 1 else '' }} asignado{{ 's' if (total_profesores or 0) != 1
+                                                        else '' }}</small>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-6">
+                                                <div class="stat-item">
+                                                    <h5 class="text-success mb-0">{{
+                                                        asignatura.created_at.strftime('%d/%m/%Y') if
+                                                        asignatura.created_at else 'N/A' }}</h5>
+                                                    <small class="text-muted">Fecha de creación</small>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="row">
+                                    <div class="col-12">
+                                        <div class="d-flex justify-content-between">
+                                            <a href="{{ url_for('asignatura.gestionar_asignaturas') }}"
+                                                class="btn btn-outline-secondary">
+                                                <i class="fas fa-times"></i> Cancelar
+                                            </a>
+                                            <button type="submit" class="btn btn-primary">
+                                                <i class="fas fa-save"></i> Guardar Cambios
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock %}

@@ -1,0 +1,84 @@
+/* ========================================
+   ESTILOS ESPECÍFICOS PARA FORMULARIO DE PROFESOR
+   ======================================== */
+
+/* Mejorar la visualización de los dropdowns de asignaciones */
+.profesor-asignaturas-select,
+.profesor-cursos-select {
+    font-size: 14px !important;
+    line-height: 1.4 !important;
+    border: 2px solid var(--pastel-gray-300) !important;
+    background-color: var(--pastel-gray-50) !important;
+    color: var(--pastel-gray-700) !important;
+    transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out !important;
+}
+
+.profesor-asignaturas-select:focus,
+.profesor-cursos-select:focus {
+    border-color: var(--pastel-blue) !important;
+    box-shadow: 0 0 0 0.25rem rgba(135, 206, 235, 0.25) !important;
+    outline: 0 !important;
+}
+
+/* Asegurar que las opciones se muestren completas */
+.profesor-asignaturas-select option,
+.profesor-cursos-select option {
+    padding: 8px 12px !important;
+    white-space: normal !important;
+    word-wrap: break-word !important;
+    min-height: 30px !important;
+    line-height: 1.4 !important;
+    background-color: var(--pastel-gray-50) !important;
+    color: var(--pastel-gray-700) !important;
+}
+
+/* Destacar opciones seleccionadas */
+.profesor-asignaturas-select option:checked,
+.profesor-cursos-select option:checked {
+    background-color: var(--pastel-blue) !important;
+    color: var(--pastel-blue-text) !important;
+    font-weight: 500 !important;
+}
+
+/* Estilos para los indicadores de estado */
+#asignaturas-status,
+#cursos-status {
+    border: 1px solid var(--pastel-gray-300);
+    background-color: var(--pastel-gray-50);
+    transition: all 0.3s ease;
+}
+
+#asignaturas-status:has(.text-success),
+#cursos-status:has(.text-success) {
+    border-color: var(--pastel-green);
+    background-color: var(--pastel-green-light);
+}
+
+/* Mejorar las instrucciones */
+.alert-success ol li {
+    margin-bottom: 8px;
+}
+
+.alert-success kbd {
+    background-color: var(--pastel-gray-600);
+    color: var(--pastel-gray-50);
+    padding: 2px 6px;
+    border-radius: 3px;
+    font-size: 12px;
+}
+
+/* Asegurar que el dropdown sea lo suficientemente alto */
+.profesor-asignaturas-select[multiple],
+.profesor-cursos-select[multiple] {
+    min-height: 120px !important;
+    max-height: 200px !important;
+    overflow-y: auto !important;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    .profesor-asignaturas-select,
+    .profesor-cursos-select {
+        min-height: 100px !important;
+    }
+}

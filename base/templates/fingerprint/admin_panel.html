@@ -3,111 +3,7 @@
 {% block title %}Panel de Administración - Huellas Dactilares{% endblock %}
 
 {% block head %}
-<link href="{{ url_for('static', filename='css/dark-theme-enhanced.css') }}" rel="stylesheet">
-<style>
-    .fingerprint-card {
-        background: var(--gradient-card);
-        border: 1px solid var(--border-color);
-        border-radius: 15px;
-        padding: 2rem;
-        margin-bottom: 1.5rem;
-        transition: all 0.3s ease;
-    }
-    
-    .fingerprint-card:hover {
-        transform: translateY(-5px);
-        box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
-    }
-    
-    .student-card {
-        background: var(--gradient-section);
-        border-radius: 12px;
-        padding: 1.5rem;
-        margin-bottom: 1rem;
-        border-left: 4px solid var(--accent-pastel);
-    }
-    
-    .fingerprint-status {
-        display: inline-block;
-        padding: 0.5rem 1rem;
-        border-radius: 20px;
-        font-size: 0.85rem;
-        font-weight: 600;
-    }
-    
-    .status-registered {
-        background: rgba(144, 238, 144, 0.2);
-        color: #90EE90;
-        border: 1px solid #90EE90;
-    }
-    
-    .status-pending {
-        background: rgba(255, 182, 193, 0.2);
-        color: #FFB6C1;
-        border: 1px solid #FFB6C1;
-    }
-    
-    .btn-fingerprint {
-        background: linear-gradient(135deg, var(--accent-pastel), var(--secondary-pastel));
-        border: none;
-        border-radius: 25px;
-        padding: 0.75rem 1.5rem;
-        color: #1a1a1a;
-        font-weight: 600;
-        transition: all 0.3s ease;
-    }
-    
-    .btn-fingerprint:hover {
-        transform: translateY(-2px);
-        box-shadow: 0 8px 20px rgba(232, 244, 248, 0.3);
-    }
-    
-    .device-status {
-        display: flex;
-        align-items: center;
-        gap: 0.5rem;
-        margin-bottom: 2rem;
-    }
-    
-    .device-indicator {
-        width: 12px;
-        height: 12px;
-        border-radius: 50%;
-        animation: pulse 2s infinite;
-    }
-    
-    .device-connected {
-        background: #90EE90;
-    }
-    
-    .device-disconnected {
-        background: #FFB6C1;
-    }
-    
-    @keyframes pulse {
-        0% { opacity: 1; }
-        50% { opacity: 0.5; }
-        100% { opacity: 1; }
-    }
-    
-    .capture-modal {
-        background: rgba(0, 0, 0, 0.8);
-        backdrop-filter: blur(10px);
-    }
-    
-    .modal-content {
-        background: var(--gradient-card);
-        border: 1px solid var(--border-color);
-        border-radius: 15px;
-    }
-    
-    .fingerprint-icon {
-        font-size: 4rem;
-        color: var(--accent-pastel);
-        text-align: center;
-        margin: 2rem 0;
-    }
-</style>
+<!-- Los estilos ya están incluidos en unified-styles.css desde base.html -->
 {% endblock %}
 
 {% block content %}
@@ -166,8 +62,8 @@
                 <i class="fas fa-users"></i> Lista de Alumnos
             </h3>
             <div class="input-group" style="max-width: 300px;">
-                <input type="text" class="form-control bg-dark border-secondary text-light" 
-                       placeholder="Buscar alumno..." id="searchStudent">
+                <input type="text" class="form-control bg-dark border-secondary text-light"
+                    placeholder="Buscar alumno..." id="searchStudent">
                 <button class="btn btn-outline-secondary" type="button">
                     <i class="fas fa-search"></i>
                 </button>
@@ -184,38 +80,36 @@
                     </div>
                     <div class="col-md-3">
                         {% if student.tiene_huella %}
-                            <span class="fingerprint-status status-registered">
-                                <i class="fas fa-check-circle"></i> Registrada
-                            </span>
+                        <span class="fingerprint-status status-registered">
+                            <i class="fas fa-check-circle"></i> Registrada
+                        </span>
                         {% else %}
-                            <span class="fingerprint-status status-pending">
-                                <i class="fas fa-clock"></i> Pendiente
-                            </span>
+                        <span class="fingerprint-status status-pending">
+                            <i class="fas fa-clock"></i> Pendiente
+                        </span>
                         {% endif %}
                     </div>
                     <div class="col-md-3">
                         {% if student.tiene_huella %}
-                            <small class="text-accent">
-                                Dedo: {{ student.dedo | title }}<br>
-                                Calidad: {{ student.calidad }}%
-                            </small>
+                        <small class="text-accent">
+                            Dedo: {{ student.dedo | title }}<br>
+                            Calidad: {{ student.calidad }}%
+                        </small>
                         {% endif %}
                     </div>
                     <div class="col-md-2 text-end">
                         {% if student.tiene_huella %}
-                            <button class="btn btn-sm btn-outline-warning me-2" 
-                                    data-student-id="{{ student.id_alumno }}"
-                                    data-student-name="{{ student.nombre }} {{ student.apellido_paterno }}"
-                                    onclick="updateFingerprint(this.dataset.studentId, this.dataset.studentName)">
-                                <i class="fas fa-sync"></i> Actualizar
-                            </button>
+                        <button class="btn btn-sm btn-outline-warning me-2" data-student-id="{{ student.id_alumno }}"
+                            data-student-name="{{ student.nombre }} {{ student.apellido_paterno }}"
+                            onclick="updateFingerprint(this.dataset.studentId, this.dataset.studentName)">
+                            <i class="fas fa-sync"></i> Actualizar
+                        </button>
                         {% else %}
-                            <button class="btn btn-fingerprint btn-sm" 
-                                    data-student-id="{{ student.id_alumno }}"
-                                    data-student-name="{{ student.nombre }} {{ student.apellido_paterno }}"
-                                    onclick="registerFingerprint(this.dataset.studentId, this.dataset.studentName)">
-                                <i class="fas fa-fingerprint"></i> Registrar
-                            </button>
+                        <button class="btn btn-fingerprint btn-sm" data-student-id="{{ student.id_alumno }}"
+                            data-student-name="{{ student.nombre }} {{ student.apellido_paterno }}"
+                            onclick="registerFingerprint(this.dataset.studentId, this.dataset.studentName)">
+                            <i class="fas fa-fingerprint"></i> Registrar
+                        </button>
                         {% endif %}
                     </div>
                 </div>
@@ -237,11 +131,11 @@
             </div>
             <div class="modal-body text-center">
                 <h6 class="text-light mb-3" id="studentName"></h6>
-                
+
                 <div class="fingerprint-icon">
                     <i class="fas fa-fingerprint" id="fingerprintIcon"></i>
                 </div>
-                
+
                 <div id="captureStatus">
                     <p class="text-accent mb-3">Coloque el dedo en el lector de huellas</p>
                     <div class="mb-3">
@@ -260,15 +154,15 @@
                         </select>
                     </div>
                 </div>
-                
+
                 <div id="captureProgress" style="display: none;">
                     <div class="progress mb-3">
-                        <div class="progress-bar progress-bar-striped progress-bar-animated" 
-                             role="progressbar" style="width: 0%"></div>
+                        <div class="progress-bar progress-bar-striped progress-bar-animated" role="progressbar"
+                            style="width: 0%"></div>
                     </div>
                     <p class="text-accent" id="progressText">Capturando huella...</p>
                 </div>
-                
+
                 <div id="captureResult" style="display: none;"></div>
             </div>
             <div class="modal-footer border-top border-secondary">
@@ -281,164 +175,4 @@
     </div>
 </div>
 
-<script>
-let currentStudentId = null;
-let isCapturing = false;
-
-// Función para registrar huella
-function registerFingerprint(studentId, studentName) {
-    currentStudentId = studentId;
-    document.getElementById('studentName').textContent = `Alumno: ${studentName}`;
-    resetModal();
-    new bootstrap.Modal(document.getElementById('captureModal')).show();
-}
-
-// Función para actualizar huella
-function updateFingerprint(studentId, studentName) {
-    if (confirm('¿Está seguro de que desea actualizar la huella de este alumno?')) {
-        // Similar a registerFingerprint pero con diferente endpoint
-        registerFingerprint(studentId, studentName);
-    }
-}
-
-// Resetear modal
-function resetModal() {
-    document.getElementById('captureStatus').style.display = 'block';
-    document.getElementById('captureProgress').style.display = 'none';
-    document.getElementById('captureResult').style.display = 'none';
-    document.getElementById('fingerprintIcon').className = 'fas fa-fingerprint';
-    document.getElementById('startCapture').disabled = false;
-    isCapturing = false;
-}
-
-// Iniciar captura
-document.getElementById('startCapture').addEventListener('click', function() {
-    if (isCapturing) return;
-    
-    const fingerType = document.getElementById('fingerType').value;
-    startFingerprintCapture(currentStudentId, fingerType);
-});
-
-// Función de captura de huella
-async function startFingerprintCapture(studentId, fingerType) {
-    isCapturing = true;
-    document.getElementById('startCapture').disabled = true;
-    document.getElementById('captureStatus').style.display = 'none';
-    document.getElementById('captureProgress').style.display = 'block';
-    
-    try {
-        // Paso 1: Inicializar dispositivo
-        updateProgress(20, 'Inicializando lector de huellas...');
-        await fetch('/biometric/init_device', { method: 'POST' });
-        
-        // Paso 2: Capturar huella
-        updateProgress(50, 'Esperando huella dactilar...');
-        const captureResponse = await fetch('/biometric/capture', { method: 'POST' });
-        
-        if (!captureResponse.ok) {
-            throw new Error('Error en la captura de huella');
-        }
-        
-        const captureData = await captureResponse.json();
-        
-        // Paso 3: Registrar en base de datos
-        updateProgress(80, 'Procesando y guardando huella...');
-        const registerResponse = await fetch('/biometric/register', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({
-                student_id: studentId,
-                finger_type: fingerType,
-                template: captureData.template,
-                hash: captureData.hash,
-                quality: captureData.quality
-            })
-        });
-        
-        if (!registerResponse.ok) {
-            throw new Error('Error al registrar la huella');
-        }
-        
-        // Éxito
-        updateProgress(100, '¡Huella registrada exitosamente!');
-        setTimeout(() => {
-            showResult(true, 'Huella dactilar registrada correctamente');
-            setTimeout(() => {
-                location.reload(); // Recargar para actualizar la lista
-            }, 2000);
-        }, 1000);
-        
-    } catch (error) {
-        console.error('Error:', error);
-        showResult(false, error.message);
-    }
-}
-
-// Actualizar progreso
-function updateProgress(percentage, text) {
-    document.querySelector('.progress-bar').style.width = percentage + '%';
-    document.getElementById('progressText').textContent = text;
-}
-
-// Mostrar resultado
-function showResult(success, message) {
-    document.getElementById('captureProgress').style.display = 'none';
-    document.getElementById('captureResult').style.display = 'block';
-    
-    const resultDiv = document.getElementById('captureResult');
-    resultDiv.innerHTML = `
-        <div class="alert ${success ? 'alert-success' : 'alert-danger'}" role="alert">
-            <i class="fas ${success ? 'fa-check-circle' : 'fa-exclamation-circle'}"></i>
-            ${message}
-        </div>
-    `;
-    
-    isCapturing = false;
-}
-
-// Búsqueda de estudiantes
-document.getElementById('searchStudent').addEventListener('input', function(e) {
-    const searchTerm = e.target.value.toLowerCase();
-    const students = document.querySelectorAll('[data-student-name]');
-    
-    students.forEach(student => {
-        const name = student.getAttribute('data-student-name').toLowerCase();
-        if (name.includes(searchTerm)) {
-            student.style.display = 'block';
-        } else {
-            student.style.display = 'none';
-        }
-    });
-});
-
-// Verificar estado del dispositivo al cargar
-document.addEventListener('DOMContentLoaded', function() {
-    checkDeviceStatus();
-    setInterval(checkDeviceStatus, 5000); // Verificar cada 5 segundos
-});
-
-async function checkDeviceStatus() {
-    try {
-        const response = await fetch('/biometric/device_status');
-        const data = await response.json();
-        
-        const indicator = document.getElementById('deviceIndicator');
-        const status = document.getElementById('deviceStatus');
-        
-        if (data.connected) {
-            indicator.className = 'device-indicator device-connected';
-            status.textContent = 'Conectado';
-            status.className = 'status-registered';
-        } else {
-            indicator.className = 'device-indicator device-disconnected';
-            status.textContent = 'Desconectado';
-            status.className = 'status-pending';
-        }
-    } catch (error) {
-        console.error('Error checking device status:', error);
-    }
-}
-</script>
 {% endblock %}

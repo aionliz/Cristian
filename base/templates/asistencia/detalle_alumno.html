@@ -31,20 +31,20 @@
                     <div class="row">
                         <div class="col-md-6">
                             <p><strong>Nombre:</strong> {{ alumno.nombre_completo() }}</p>
-                            <p><strong>RUT:</strong> {{ alumno.rut }}</p>
                             {% if alumno.email %}
                             <p><strong>Email:</strong> {{ alumno.email }}</p>
                             {% endif %}
                         </div>
                         <div class="col-md-6">
-                            {% if hasattr(alumno, 'nombre_curso') %}
+                            {% if alumno.nombre_curso %}
                             <p><strong>Curso:</strong> {{ alumno.nombre_curso }}</p>
                             {% endif %}
                             {% if alumno.telefono %}
                             <p><strong>Teléfono:</strong> {{ alumno.telefono }}</p>
                             {% endif %}
-                            {% if hasattr(alumno, 'nombre_apoderado') %}
-                            <p><strong>Apoderado:</strong> {{ alumno.nombre_apoderado }} {{ alumno.apellido_apoderado }}</p>
+                            {% if alumno.nombre_apoderado %}
+                            <p><strong>Apoderado:</strong> {{ alumno.nombre_apoderado }} {{ alumno.apellido_apoderado }}
+                            </p>
                             {% endif %}
                         </div>
                     </div>
@@ -109,13 +109,13 @@
                     <form method="GET" class="row g-3">
                         <div class="col-md-4">
                             <label for="fecha_inicio" class="form-label">Fecha Inicio</label>
-                            <input type="date" class="form-control" id="fecha_inicio" name="fecha_inicio" 
-                                   value="{{ fecha_inicio }}">
+                            <input type="date" class="form-control" id="fecha_inicio" name="fecha_inicio"
+                                value="{{ fecha_inicio }}">
                         </div>
                         <div class="col-md-4">
                             <label for="fecha_fin" class="form-label">Fecha Fin</label>
-                            <input type="date" class="form-control" id="fecha_fin" name="fecha_fin" 
-                                   value="{{ fecha_fin }}">
+                            <input type="date" class="form-control" id="fecha_fin" name="fecha_fin"
+                                value="{{ fecha_fin }}">
                         </div>
                         <div class="col-md-4 d-flex align-items-end">
                             <button type="submit" class="btn btn-primary">
@@ -163,49 +163,50 @@
                                     </td>
                                     <td>
                                         {% if registro.estado == 'presente' %}
-                                            <span class="badge bg-success">
-                                                <i class="fas fa-check"></i> Presente
-                                            </span>
+                                        <span class="badge bg-success">
+                                            <i class="fas fa-check"></i> Presente
+                                        </span>
                                         {% elif registro.estado == 'ausente' %}
-                                            <span class="badge bg-danger">
-                                                <i class="fas fa-times"></i> Ausente
-                                            </span>
+                                        <span class="badge bg-danger">
+                                            <i class="fas fa-times"></i> Ausente
+                                        </span>
                                         {% elif registro.estado == 'tardanza' %}
-                                            <span class="badge bg-warning">
-                                                <i class="fas fa-clock"></i> Tardanza
-                                            </span>
+                                        <span class="badge bg-warning">
+                                            <i class="fas fa-clock"></i> Tardanza
+                                        </span>
                                         {% elif registro.estado == 'justificado' %}
-                                            <span class="badge bg-info">
-                                                <i class="fas fa-file-alt"></i> Justificado
-                                            </span>
+                                        <span class="badge bg-info">
+                                            <i class="fas fa-file-alt"></i> Justificado
+                                        </span>
                                         {% endif %}
                                     </td>
                                     <td>
                                         {% if registro.hora_llegada %}
-                                            {{ registro.hora_llegada.strftime('%H:%M') }}
+                                        {{ registro.hora_llegada|format_time }}
                                         {% else %}
-                                            <span class="text-muted">-</span>
+                                        <span class="text-muted">-</span>
                                         {% endif %}
                                     </td>
                                     <td>
                                         {% if registro.observaciones %}
-                                            <span title="{{ registro.observaciones }}">
-                                                {{ registro.observaciones[:50] }}{% if registro.observaciones|length > 50 %}...{% endif %}
-                                            </span>
+                                        <span title="{{ registro.observaciones }}">
+                                            {{ registro.observaciones[:50] }}{% if registro.observaciones|length > 50
+                                            %}...{% endif %}
+                                        </span>
                                         {% else %}
-                                            <span class="text-muted">-</span>
+                                        <span class="text-muted">-</span>
                                         {% endif %}
                                     </td>
                                     <td>
                                         {% if registro.id_profesor %}
-                                            <span class="text-muted">Profesor</span>
+                                        <span class="text-muted">Profesor</span>
                                         {% else %}
-                                            <span class="text-muted">-</span>
+                                        <span class="text-muted">-</span>
                                         {% endif %}
                                     </td>
                                     <td>
-                                        <a href="{{ url_for('asistencia.editar_asistencia', id_asistencia=registro.id_asistencia) }}" 
-                                           class="btn btn-sm btn-outline-primary" title="Editar">
+                                        <a href="{{ url_for('asistencia.editar_asistencia', id_asistencia=registro.id_asistencia) }}"
+                                            class="btn btn-sm btn-outline-primary" title="Editar">
                                             <i class="fas fa-edit"></i>
                                         </a>
                                     </td>

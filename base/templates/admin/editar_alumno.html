@@ -1,0 +1,135 @@
+{% extends 'base.html' %}
+
+{% block title %}Editar Alumno - Sistem <div class="col-md-6">
+    <label for="fecha_nacimiento" class="form-label">Fecha de Nacimiento</label>
+    <input type="date" class="form-control" id="fecha_nacimiento" name="fecha_nacimiento"
+        value="{{ alumno.fecha_nacimiento.strftime('%Y-%m-%d') if alumno.fecha_nacimiento else '' }}">
+</div>
+<div class="col-md-6">
+    <label for="fecha_ingreso" class="form-label">Fecha de Ingreso</label>
+    <input type="date" class="form-control" id="fecha_ingreso" name="fecha_ingreso"
+        value="{{ alumno.fecha_ingreso.strftime('%Y-%m-%d') if alumno.fecha_ingreso else '' }}">
+</div>Asistencia{% endblock %}
+
+{% block content %}
+<div class="main-content">
+    <div class="container-fluid">
+        <!-- Header -->
+        <div class="row mb-4">
+            <div class="col-12">
+                <div class="d-flex justify-content-between align-items-center">
+                    <div>
+                        <h2 class="mb-0">✏️ Editar Alumno</h2>
+                        <p class="text-muted">Modifica la información del estudiante</p>
+                    </div>
+                    <a href="{{ url_for('admin.gestionar_alumnos') }}" class="btn btn-outline-secondary">
+                        <i class="fas fa-arrow-left"></i> Volver a Lista
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Formulario -->
+        <div class="row justify-content-center">
+            <div class="col-md-8">
+                <div class="card">
+                    <div class="card-header">
+                        <h5 class="card-title mb-0">
+                            <i class="fas fa-user-edit"></i> Información del Alumno
+                        </h5>
+                    </div>
+                    <div class="card-body">
+                        {% if alumno %}
+                        <form method="POST">
+                            <div class="row">
+                                <div class="col-md-6 mb-3">
+                                    <label for="nombre" class="form-label">Nombre <span
+                                            class="text-danger">*</span></label>
+                                    <input type="text" class="form-control" id="nombre" name="nombre"
+                                        value="{{ alumno.nombre }}" required maxlength="100">
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    <label for="apellido" class="form-label">Apellido Paterno <span
+                                            class="text-danger">*</span></label>
+                                    <input type="text" class="form-control" id="apellido" name="apellido"
+                                        value="{{ alumno.apellido_paterno }}" required maxlength="100">
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    <label for="apellido_materno" class="form-label">Apellido Materno</label>
+                                    <input type="text" class="form-control" id="apellido_materno"
+                                        name="apellido_materno" value="{{ alumno.apellido_materno or '' }}"
+                                        maxlength="100">
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    <label for="id_curso" class="form-label">Curso <span
+                                            class="text-danger">*</span></label>
+                                    <select class="form-select" id="id_curso" name="id_curso" required>
+                                        <option value="">Seleccionar curso</option>
+                                        {% for curso in cursos %}
+                                        <option value="{{ curso.id_curso }}" {% if curso.id_curso==alumno.id_curso_fk
+                                            %}selected{% endif %}>
+                                            {{ curso.nombre_completo }}
+                                        </option>
+                                        {% endfor %}
+                                    </select>
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    <label for="email" class="form-label">Email</label>
+                                    <input type="email" class="form-control" id="email" name="email"
+                                        value="{{ alumno.email or '' }}" maxlength="150">
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    <label for="telefono" class="form-label">Teléfono</label>
+                                    <input type="tel" class="form-control" id="telefono" name="telefono"
+                                        value="{{ alumno.telefono or '' }}" maxlength="15"
+                                        placeholder="+56 9 1234 5678">
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    <label for="fecha_nacimiento" class="form-label">Fecha de Nacimiento</label>
+                                    <input type="date" class="form-control" id="fecha_nacimiento"
+                                        name="fecha_nacimiento"
+                                        value="{{ alumno.fecha_nacimiento.strftime('%Y-%m-%d') if alumno.fecha_nacimiento else '' }}">
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    <label for="fecha_ingreso" class="form-label">Fecha de Ingreso</label>
+                                    <input type="date" class="form-control" id="fecha_ingreso" name="fecha_ingreso"
+                                        value="{{ alumno.fecha_ingreso.strftime('%Y-%m-%d') if alumno.fecha_ingreso else '' }}">
+                                </div>
+                                <div class="col-12 mb-3">
+                                    <label for="direccion" class="form-label">Dirección</label>
+                                    <textarea class="form-control" id="direccion" name="direccion" rows="2"
+                                        maxlength="255">{{ alumno.direccion or '' }}</textarea>
+                                </div>
+                            </div>
+
+                            <div class="d-flex justify-content-between">
+                                <div>
+                                    <a href="{{ url_for('admin.eliminar_alumno', id=alumno.id_alumno) }}"
+                                        class="btn btn-danger"
+                                        data-confirm="¿Estás seguro de que deseas eliminar a {{ alumno.nombre }} {{ alumno.apellido_paterno }}?">
+                                        <i class="fas fa-trash"></i> Eliminar Alumno
+                                    </a>
+                                </div>
+                                <div>
+                                    <a href="{{ url_for('admin.gestionar_alumnos') }}" class="btn btn-secondary me-2">
+                                        <i class="fas fa-times"></i> Cancelar
+                                    </a>
+                                    <button type="submit" class="btn btn-primary">
+                                        <i class="fas fa-save"></i> Guardar Cambios
+                                    </button>
+                                </div>
+                            </div>
+                        </form>
+                        {% else %}
+                        <div class="alert alert-warning">
+                            <i class="fas fa-exclamation-triangle"></i>
+                            Alumno no encontrado.
+                        </div>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
