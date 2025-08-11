@@ -27,7 +27,7 @@ class AsistenciaModel:
         self.id_profesor = data.get('id_profesor')
         self.created_at = data.get('created_at')
         self.updated_at = data.get('updated_at')
-        
+
         # Campos de alumno (cuando se incluyen en JOIN)
         self.nombre = data.get('nombre')
         self.apellido_paterno = data.get('apellido_paterno')

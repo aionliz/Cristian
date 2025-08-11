@@ -537,140 +537,140 @@
     }
 </style>
 <script>
-// Sistema de marcación simplificado y robusto
-document.addEventListener('DOMContentLoaded', function() {
-    console.log('🚀 Sistema de marcación v2.0 iniciado');
-    
-    let modal = null;
-    
-    // Función principal para mostrar modal
-    function showModal(alumnoId, alumnoNombre) {
-        console.log('📝 Abriendo modal para:', alumnoNombre, 'ID:', alumnoId);
-        
-        modal = document.getElementById('modalAsistenciaRapida');
-        if (!modal) {
-            alert('Error: Modal no encontrado');
-            return;
-        }
-        
-        // Llenar formulario
-        const form = document.getElementById('formAsistenciaRapida');
-        if (form) {
-            form.querySelector('#rapid_id_alumno').value = alumnoId;
-            form.querySelector('#rapid_nombre_alumno').textContent = alumnoNombre;
-            
-            // Hora actual
-            const now = new Date();
-            const time = now.getHours().toString().padStart(2, '0') + ':' + 
-                        now.getMinutes().toString().padStart(2, '0');
-            form.querySelector('#rapid_hora_llegada').value = time;
-        }
-        
-        // Mostrar modal
-        modal.style.display = 'block';
-        modal.classList.add('show');
-        document.body.style.overflow = 'hidden';
-        
-        console.log('✅ Modal abierto');
-    }
-    
-    // Función para cerrar modal
-    function closeModal() {
-        console.log('🔒 Cerrando modal');
-        if (modal) {
-            modal.style.display = 'none';
-            modal.classList.remove('show');
-            document.body.style.overflow = '';
-            
-            // Reset form
-            const form = document.getElementById('formAsistenciaRapida');
-            if (form) form.reset();
-        }
-    }
-    
-    // Función para guardar
-    function saveData() {
-        console.log('💾 Guardando datos...');
-        
-        const form = document.getElementById('formAsistenciaRapida');
-        if (!form) {
-            alert('Error: Formulario no encontrado');
-            return;
-        }
-        
-        const formData = new FormData(form);
-        const saveBtn = document.querySelector('.btn-guardar-asistencia-rapida');
-        
-        // UI feedback
-        if (saveBtn) {
-            saveBtn.disabled = true;
-            saveBtn.textContent = 'Guardando...';
-        }
-        
-        // Enviar
-        fetch('/asistencia/marcar', {
-            method: 'POST',
-            body: formData
-        })
-        .then(response => {
-            console.log('📡 Respuesta:', response.status);
-            if (response.ok || response.status === 302) {
-                alert('✅ Guardado correctamente');
-                closeModal();
-                window.location.reload();
-            } else {
-                alert('❌ Error al guardar');
+    // Sistema de marcación simplificado y robusto
+    document.addEventListener('DOMContentLoaded', function () {
+        console.log('🚀 Sistema de marcación v2.0 iniciado');
+
+        let modal = null;
+
+        // Función principal para mostrar modal
+        function showModal(alumnoId, alumnoNombre) {
+            console.log('📝 Abriendo modal para:', alumnoNombre, 'ID:', alumnoId);
+
+            modal = document.getElementById('modalAsistenciaRapida');
+            if (!modal) {
+                alert('Error: Modal no encontrado');
+                return;
             }
-        })
-        .catch(error => {
-            console.error('🚨 Error:', error);
-            alert('❌ Error de conexión');
-        })
-        .finally(() => {
+
+            // Llenar formulario
+            const form = document.getElementById('formAsistenciaRapida');
+            if (form) {
+                form.querySelector('#rapid_id_alumno').value = alumnoId;
+                form.querySelector('#rapid_nombre_alumno').textContent = alumnoNombre;
+
+                // Hora actual
+                const now = new Date();
+                const time = now.getHours().toString().padStart(2, '0') + ':' +
+                    now.getMinutes().toString().padStart(2, '0');
+                form.querySelector('#rapid_hora_llegada').value = time;
+            }
+
+            // Mostrar modal
+            modal.style.display = 'block';
+            modal.classList.add('show');
+            document.body.style.overflow = 'hidden';
+
+            console.log('✅ Modal abierto');
+        }
+
+        // Función para cerrar modal
+        function closeModal() {
+            console.log('🔒 Cerrando modal');
+            if (modal) {
+                modal.style.display = 'none';
+                modal.classList.remove('show');
+                document.body.style.overflow = '';
+
+                // Reset form
+                const form = document.getElementById('formAsistenciaRapida');
+                if (form) form.reset();
+            }
+        }
+
+        // Función para guardar
+        function saveData() {
+            console.log('💾 Guardando datos...');
+
+            const form = document.getElementById('formAsistenciaRapida');
+            if (!form) {
+                alert('Error: Formulario no encontrado');
+                return;
+            }
+
+            const formData = new FormData(form);
+            const saveBtn = document.querySelector('.btn-guardar-asistencia-rapida');
+
+            // UI feedback
             if (saveBtn) {
-                saveBtn.disabled = false;
-                saveBtn.textContent = 'Guardar';
+                saveBtn.disabled = true;
+                saveBtn.textContent = 'Guardando...';
+            }
+
+            // Enviar
+            fetch('/asistencia/marcar', {
+                method: 'POST',
+                body: formData
+            })
+                .then(response => {
+                    console.log('📡 Respuesta:', response.status);
+                    if (response.ok || response.status === 302) {
+                        alert('✅ Guardado correctamente');
+                        closeModal();
+                        window.location.reload();
+                    } else {
+                        alert('❌ Error al guardar');
+                    }
+                })
+                .catch(error => {
+                    console.error('🚨 Error:', error);
+                    alert('❌ Error de conexión');
+                })
+                .finally(() => {
+                    if (saveBtn) {
+                        saveBtn.disabled = false;
+                        saveBtn.textContent = 'Guardar';
+                    }
+                });
+        }
+
+        // Event listeners
+        document.addEventListener('click', function (e) {
+            // Botón marcar manual
+            const markBtn = e.target.closest('[data-action="marcar-asistencia"]');
+            if (markBtn) {
+                e.preventDefault();
+                const id = markBtn.getAttribute('data-alumno-id');
+                const name = markBtn.getAttribute('data-alumno-nombre');
+                console.log('🖱️ Click marcar:', name, id);
+                showModal(id, name);
+                return;
+            }
+
+            // Botón guardar
+            if (e.target.classList.contains('btn-guardar-asistencia-rapida')) {
+                e.preventDefault();
+                saveData();
+                return;
+            }
+
+            // Botón cerrar
+            if (e.target.classList.contains('btn-close') ||
+                e.target.textContent.trim() === 'Cancelar') {
+                e.preventDefault();
+                closeModal();
+                return;
+            }
+
+            // Click fuera del modal
+            if (e.target === modal) {
+                closeModal();
+                return;
             }
         });
-    }
-    
-    // Event listeners
-    document.addEventListener('click', function(e) {
-        // Botón marcar manual
-        const markBtn = e.target.closest('[data-action="marcar-asistencia"]');
-        if (markBtn) {
-            e.preventDefault();
-            const id = markBtn.getAttribute('data-alumno-id');
-            const name = markBtn.getAttribute('data-alumno-nombre');
-            console.log('🖱️ Click marcar:', name, id);
-            showModal(id, name);
-            return;
-        }
-        
-        // Botón guardar
-        if (e.target.classList.contains('btn-guardar-asistencia-rapida')) {
-            e.preventDefault();
-            saveData();
-            return;
-        }
-        
-        // Botón cerrar
-        if (e.target.classList.contains('btn-close') || 
-            e.target.textContent.trim() === 'Cancelar') {
-            e.preventDefault();
-            closeModal();
-            return;
-        }
-        
-        // Click fuera del modal
-        if (e.target === modal) {
-            closeModal();
-            return;
-        }
+
+        console.log('✅ Event listeners configurados');
     });
-    
-    console.log('✅ Event listeners configurados');
-});
 </script>
 
 {% endblock %}
