@@ -11,8 +11,8 @@ class MySQLConnection:
         # Configuración de la conexión, se pueden ajustar el usuario, la contraseña y otros parámetros según sea necesario
         connection = pymysql.connect(host='localhost',  # Nombre del host (servidor)
                                     user='root',       # Nombre de usuario de la base de datos
-                                    password='tazmania2316',  # Contraseña del usuario de la base de datos
-                                    db='colegio_AML',             # Nombre de la base de datos
+                                    password='',  # Contraseña del usuario de la base de datos
+                                    db='colegio_aml',             # Nombre de la base de datos
                                     charset='utf8mb4',  # Codificación de caracteres
                                     # Los resultados se devuelven como diccionarios
                                     cursorclass=pymysql.cursors.DictCursor,

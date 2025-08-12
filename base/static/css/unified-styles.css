@@ -128,6 +128,32 @@ body {
     z-index: 1;
 }
 
+/* Estilo unificado: márgenes consistentes en ambos lados */
+.container.mt-4 {
+    max-width: 1200px;
+    margin-left: auto;
+    margin-right: auto;
+    padding-left: 2rem;
+    padding-right: 2rem;
+}
+
+/* Responsive: ajustar márgenes en pantallas pequeñas */
+@media (max-width: 768px) {
+    .container.mt-4 {
+        padding-left: 1rem;
+        padding-right: 1rem;
+    }
+}
+
+/* Responsive: más espacio en pantallas muy grandes */
+@media (min-width: 1400px) {
+    .container.mt-4 {
+        max-width: 1400px;
+        padding-left: 3rem;
+        padding-right: 3rem;
+    }
+}
+
 .main-content {
     padding-top: 40px;
 }

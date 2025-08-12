@@ -6,428 +6,445 @@
 {% endblock %}
 
 {% block content %}
-<div class="page-header">
-    <div class="header-content">
-        <h1><i class="fas fa-user-edit"></i> Editar Profesor</h1>
-        <p class="page-description">Modifique los datos del profesor {{ profesor.nombre_completo }}</p>
+<div class="container mt-4">
+    <div class="page-header">
+        <div class="header-content">
+            <h1><i class="fas fa-user-edit"></i> Editar Profesor</h1>
+            <p class="page-description">Modifique los datos del profesor {{ profesor.nombre_completo }}</p>
+        </div>
+        <div class="header-actions">
+            <a href="{{ url_for('profesor.detalle_profesor', id_profesor=profesor.id_profesor) }}"
+                class="btn btn-outline-info">
+                <i class="fas fa-eye"></i> Ver Detalles
+            </a>
+            <a href="{{ url_for('profesor.gestionar_profesores') }}" class="btn btn-outline-secondary">
+                <i class="fas fa-arrow-left"></i> Volver
+            </a>
+        </div>
     </div>
-    <div class="header-actions">
-        <a href="{{ url_for('profesor.detalle_profesor', id_profesor=profesor.id_profesor) }}"
-            class="btn btn-outline-info">
-            <i class="fas fa-eye"></i> Ver Detalles
-        </a>
-        <a href="{{ url_for('profesor.gestionar_profesores') }}" class="btn btn-outline-secondary">
-            <i class="fas fa-arrow-left"></i> Volver
-        </a>
-    </div>
-</div>
 
-<div class="row">
-    <div class="col-lg-8">
-        <div class="card">
-            <div class="card-header">
-                <h5 class="card-title mb-0">
-                    <i class="fas fa-user-edit"></i> Información del Profesor
-                </h5>
-            </div>
-            <div class="card-body">
-                <form method="POST" novalidate>
-                    <div class="row">
-                        <div class="col-md-6">
-                            <div class="mb-3">
-                                <label for="nombre" class="form-label">
-                                    Nombre <span class="text-danger">*</span>
-                                </label>
-                                <input type="text" class="form-control {% if 'nombre' in errors %}is-invalid{% endif %}"
-                                    id="nombre" name="nombre" value="{{ request.form.get('nombre', profesor.nombre) }}"
-                                    placeholder="Ingrese el nombre" required>
-                                {% if 'nombre' in errors %}
-                                <div class="invalid-feedback">
-                                    {{ errors['nombre'] }}
+    <div class="row">
+        <div class="col-lg-8">
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="card-title mb-0">
+                        <i class="fas fa-user-edit"></i> Información del Profesor
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <form method="POST" novalidate>
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label for="nombre" class="form-label">
+                                        Nombre <span class="text-danger">*</span>
+                                    </label>
+                                    <input type="text"
+                                        class="form-control {% if 'nombre' in errors %}is-invalid{% endif %}"
+                                        id="nombre" name="nombre"
+                                        value="{{ request.form.get('nombre', profesor.nombre) }}"
+                                        placeholder="Ingrese el nombre" required>
+                                    {% if 'nombre' in errors %}
+                                    <div class="invalid-feedback">
+                                        {{ errors['nombre'] }}
+                                    </div>
+                                    {% endif %}
                                 </div>
-                                {% endif %}
                             </div>
-                        </div>
-                        <div class="col-md-6">
-                            <div class="mb-3">
-                                <label for="apellido" class="form-label">
-                                    Apellido <span class="text-danger">*</span>
-                                </label>
-                                <input type="text"
-                                    class="form-control {% if 'apellido' in errors %}is-invalid{% endif %}"
-                                    id="apellido" name="apellido"
-                                    value="{{ request.form.get('apellido', profesor.apellido) }}"
-                                    placeholder="Ingrese el apellido" required>
-                                {% if 'apellido' in errors %}
-                                <div class="invalid-feedback">
-                                    {{ errors['apellido'] }}
-                                </div>
-                                {% endif %}
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="row">
-                        <div class="col-md-6">
-                            <div class="mb-3">
-                                <label for="email" class="form-label">
-                                    Email <span class="text-danger">*</span>
-                                </label>
-                                <input type="email" class="form-control {% if 'email' in errors %}is-invalid{% endif %}"
-                                    id="email" name="email" value="{{ request.form.get('email', profesor.email) }}"
-                                    placeholder="ejemplo@correo.com" required>
-                                {% if 'email' in errors %}
-                                <div class="invalid-feedback">
-                                    {{ errors['email'] }}
-                                </div>
-                                {% endif %}
-                                <div class="form-text">
-                                    {% if request.form.get('email', profesor.email) != profesor.email %}
-                                    <i class="fas fa-exclamation-triangle text-warning"></i>
-                                    Se cambiará el email de <strong>{{ profesor.email }}</strong> a <strong>{{
-                                        request.form.get('email') }}</strong>
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label for="apellido" class="form-label">
+                                        Apellido <span class="text-danger">*</span>
+                                    </label>
+                                    <input type="text"
+                                        class="form-control {% if 'apellido' in errors %}is-invalid{% endif %}"
+                                        id="apellido" name="apellido"
+                                        value="{{ request.form.get('apellido', profesor.apellido) }}"
+                                        placeholder="Ingrese el apellido" required>
+                                    {% if 'apellido' in errors %}
+                                    <div class="invalid-feedback">
+                                        {{ errors['apellido'] }}
+                                    </div>
                                     {% endif %}
                                 </div>
                             </div>
                         </div>
-                        <div class="col-md-6">
-                            <div class="mb-3">
-                                <label for="especialidad" class="form-label">
-                                    Especialidad
-                                </label>
-                                <input type="text" class="form-control" id="especialidad" name="especialidad"
-                                    value="{{ request.form.get('especialidad', profesor.especialidad or '') }}"
-                                    placeholder="Ej: Matemáticas, Ciencias, etc.">
-                            </div>
-                        </div>
-                    </div>
 
-                    <div class="row">
-                        <div class="col-md-6">
-                            <div class="mb-3">
-                                <label for="id_asignatura_fk" class="form-label">
-                                    Asignatura Principal
-                                </label>
-                                <select class="form-select" id="id_asignatura_fk" name="id_asignatura_fk">
-                                    <option value="">Seleccionar asignatura...</option>
-                                    {% for asignatura in asignaturas %}
-                                    <option value="{{ asignatura.id_asignatura }}" {{ 'selected' if
-                                        (request.form.get('id_asignatura_fk') or
-                                        profesor.id_asignatura_fk)|string==asignatura.id_asignatura|string }}>
-                                        {{ asignatura.nombre }}
-                                    </option>
-                                    {% endfor %}
-                                </select>
-                                <div class="form-text">Asignatura en la que se especializa principalmente</div>
-                            </div>
-                        </div>
-                        <div class="col-md-6">
-                            <div class="mb-3">
-                                <label for="activo" class="form-label">Estado</label>
-                                <select class="form-select" id="activo" name="activo">
-                                    <option value="1" {{ 'selected' if (request.form.get('activo') or
-                                        profesor.activo)|string=='1' }}>
-                                        Activo
-                                    </option>
-                                    <option value="0" {{ 'selected' if (request.form.get('activo') or
-                                        profesor.activo)|string=='0' }}>
-                                        Inactivo
-                                    </option>
-                                </select>
-                                {% if not profesor.activo %}
-                                <div class="form-text text-warning">
-                                    <i class="fas fa-exclamation-triangle"></i>
-                                    Este profesor está actualmente inactivo
-                                </div>
-                                {% endif %}
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Sección de Asignaciones MEJORADA -->
-                    <div class="row">
-                        <div class="col-12">
-                            <div class="card border-primary mb-3">
-                                <div class="card-header bg-primary text-white">
-                                    <h6 class="card-title mb-0">
-                                        <i class="fas fa-clipboard-list"></i> Gestionar Asignaciones
-                                    </h6>
-                                </div>
-                                <div class="card-body">
-                                    <div class="alert alert-success mb-3">
-                                        <h6><i class="fas fa-info-circle"></i> ¿Cómo crear asignaciones?</h6>
-                                        <ol class="mb-2">
-                                            <li><strong>Selecciona asignaturas:</strong> Mantén presionado
-                                                <kbd>Ctrl</kbd> (Windows) o <kbd>Cmd</kbd> (Mac) para seleccionar
-                                                múltiples asignaturas
-                                            </li>
-                                            <li><strong>Selecciona cursos:</strong> Mantén presionado <kbd>Ctrl</kbd>
-                                                (Windows) o <kbd>Cmd</kbd> (Mac) para seleccionar múltiples cursos</li>
-                                            <li><strong>Guarda los cambios:</strong> Haz clic en "Guardar Cambios" para
-                                                aplicar las asignaciones</li>
-                                        </ol>
-                                        <p class="mb-0 text-info">
-                                            <i class="fas fa-lightbulb"></i> <strong>Tip:</strong> Puedes seleccionar
-                                            múltiples elementos en cada lista manteniendo presionada la tecla de
-                                            control.
-                                        </p>
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label for="email" class="form-label">
+                                        Email <span class="text-danger">*</span>
+                                    </label>
+                                    <input type="email"
+                                        class="form-control {% if 'email' in errors %}is-invalid{% endif %}" id="email"
+                                        name="email" value="{{ request.form.get('email', profesor.email) }}"
+                                        placeholder="ejemplo@correo.com" required>
+                                    {% if 'email' in errors %}
+                                    <div class="invalid-feedback">
+                                        {{ errors['email'] }}
                                     </div>
-                                    <div class="row">
-                                        <div class="col-md-6">
-                                            <div class="mb-3">
-                                                <label for="asignaturas_agregar" class="form-label">
-                                                    <i class="fas fa-book"></i> <strong>1. Seleccionar
-                                                        Asignaturas</strong>
-                                                </label>
-                                                <select class="form-select profesor-asignaturas-select"
-                                                    id="asignaturas_agregar" name="asignaturas_agregar[]" multiple
-                                                    size="4" style="min-height: 120px;">
-                                                    {% for asignatura in asignaturas %}
-                                                    <option value="{{ asignatura.id_asignatura }}"
-                                                        title="{{ asignatura.nombre }}">
-                                                        {{ asignatura.nombre }}
-                                                    </option>
-                                                    {% endfor %}
-                                                </select>
-                                                <div class="form-text">
-                                                    <i class="fas fa-hand-pointer"></i>
-                                                    Mantén <kbd>Ctrl</kbd>/<kbd>Cmd</kbd> presionado para seleccionar
-                                                    múltiples
-                                                </div>
-                                                <div id="asignaturas-status" class="mt-2 p-2 bg-light rounded">
-                                                    <small class="text-muted">Ninguna asignatura seleccionada</small>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <div class="col-md-6">
-                                            <div class="mb-3">
-                                                <label for="cursos_agregar" class="form-label">
-                                                    <i class="fas fa-graduation-cap"></i> <strong>2. Seleccionar
-                                                        Cursos</strong>
-                                                </label>
-                                                <select class="form-select profesor-cursos-select" id="cursos_agregar"
-                                                    name="cursos_agregar[]" multiple size="4"
-                                                    style="min-height: 120px;">
-                                                    {% for curso in cursos %}
-                                                    <option value="{{ curso.id_curso }}"
-                                                        title="Curso: {{ curso.nombre_completo }} ({{ curso.nivel_texto }}, Letra {{ curso.letra }})">
-                                                        {{ curso.nombre_completo }}
-                                                    </option>
-                                                    {% endfor %}
-                                                </select>
-                                                <div class="form-text">
-                                                    <i class="fas fa-hand-pointer"></i>
-                                                    Mantén <kbd>Ctrl</kbd>/<kbd>Cmd</kbd> presionado para seleccionar
-                                                    múltiples
-                                                </div>
-                                                <div id="cursos-status" class="mt-2 p-2 bg-light rounded">
-                                                    <small class="text-muted">Ningún curso seleccionado</small>
-                                                </div>
-
-                                                <!-- Debug info para cursos -->
-                                                {% if cursos|length > 0 %}
-                                                <div class="mt-2 p-2 bg-info text-white rounded">
-                                                    <small><strong>Info:</strong> Mostrando {{ cursos|length }} curso(s)
-                                                        disponible(s)</small>
-                                                    {% for curso in cursos %}
-                                                    <br><small>• "{{ curso.nombre_completo }}" (ID: {{ curso.id_curso
-                                                        }})</small>
-                                                    {% endfor %}
-                                                </div>
-                                                {% endif %}
-                                            </div>
-                                        </div>
-                                    </div>
-
-                                    <div class="row">
-                                        <div class="col-12">
-                                            <div class="alert alert-info">
-                                                <i class="fas fa-lightbulb"></i>
-                                                <strong>Sugerencia:</strong> Para gestionar asignaciones existentes,
-                                                visita la
-                                                <a href="{{ url_for('asignatura.gestionar_asignaciones') }}?profesor_id={{ profesor.id_profesor }}"
-                                                    class="alert-link">página de gestión de asignaciones</a>.
-                                            </div>
-                                        </div>
+                                    {% endif %}
+                                    <div class="form-text">
+                                        {% if request.form.get('email', profesor.email) != profesor.email %}
+                                        <i class="fas fa-exclamation-triangle text-warning"></i>
+                                        Se cambiará el email de <strong>{{ profesor.email }}</strong> a <strong>{{
+                                            request.form.get('email') }}</strong>
+                                        {% endif %}
                                     </div>
                                 </div>
                             </div>
-                        </div>
-                    </div>
-
-                    <div class="row">
-                        <div class="col-12">
-                            <div class="alert alert-info">
-                                <i class="fas fa-info-circle"></i>
-                                <strong>Información:</strong> Los campos marcados con <span class="text-danger">*</span>
-                                son obligatorios.
-                                Los cambios se aplicarán inmediatamente.
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label for="especialidad" class="form-label">
+                                        Especialidad
+                                    </label>
+                                    <input type="text" class="form-control" id="especialidad" name="especialidad"
+                                        value="{{ request.form.get('especialidad', profesor.especialidad or '') }}"
+                                        placeholder="Ej: Matemáticas, Ciencias, etc.">
+                                </div>
                             </div>
                         </div>
-                    </div>
 
-                    <div class="d-flex justify-content-between">
-                        <a href="{{ url_for('profesor.detalle_profesor', id_profesor=profesor.id_profesor) }}"
-                            class="btn btn-secondary">
-                            <i class="fas fa-times"></i> Cancelar
-                        </a>
-                        <button type="submit" class="btn btn-primary">
-                            <i class="fas fa-save"></i> Guardar Cambios
-                        </button>
-                    </div>
-                </form>
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label for="id_asignatura_fk" class="form-label">
+                                        Asignatura Principal
+                                    </label>
+                                    <select class="form-select" id="id_asignatura_fk" name="id_asignatura_fk">
+                                        <option value="">Seleccionar asignatura...</option>
+                                        {% for asignatura in asignaturas %}
+                                        <option value="{{ asignatura.id_asignatura }}" {{ 'selected' if
+                                            (request.form.get('id_asignatura_fk') or
+                                            profesor.id_asignatura_fk)|string==asignatura.id_asignatura|string }}>
+                                            {{ asignatura.nombre }}
+                                        </option>
+                                        {% endfor %}
+                                    </select>
+                                    <div class="form-text">Asignatura en la que se especializa principalmente</div>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label for="activo" class="form-label">Estado</label>
+                                    <select class="form-select" id="activo" name="activo">
+                                        <option value="1" {{ 'selected' if (request.form.get('activo') or
+                                            profesor.activo)|string=='1' }}>
+                                            Activo
+                                        </option>
+                                        <option value="0" {{ 'selected' if (request.form.get('activo') or
+                                            profesor.activo)|string=='0' }}>
+                                            Inactivo
+                                        </option>
+                                    </select>
+                                    {% if not profesor.activo %}
+                                    <div class="form-text text-warning">
+                                        <i class="fas fa-exclamation-triangle"></i>
+                                        Este profesor está actualmente inactivo
+                                    </div>
+                                    {% endif %}
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Sección de Asignaciones MEJORADA -->
+                        <div class="row">
+                            <div class="col-12">
+                                <div class="card border-primary mb-3">
+                                    <div class="card-header bg-primary text-white">
+                                        <h6 class="card-title mb-0">
+                                            <i class="fas fa-clipboard-list"></i> Gestionar Asignaciones
+                                        </h6>
+                                    </div>
+                                    <div class="card-body">
+                                        <div class="alert alert-success mb-3">
+                                            <h6><i class="fas fa-info-circle"></i> ¿Cómo crear asignaciones?</h6>
+                                            <ol class="mb-2">
+                                                <li><strong>Selecciona asignaturas:</strong> Mantén presionado
+                                                    <kbd>Ctrl</kbd> (Windows) o <kbd>Cmd</kbd> (Mac) para seleccionar
+                                                    múltiples asignaturas
+                                                </li>
+                                                <li><strong>Selecciona cursos:</strong> Mantén presionado
+                                                    <kbd>Ctrl</kbd>
+                                                    (Windows) o <kbd>Cmd</kbd> (Mac) para seleccionar múltiples cursos
+                                                </li>
+                                                <li><strong>Guarda los cambios:</strong> Haz clic en "Guardar Cambios"
+                                                    para
+                                                    aplicar las asignaciones</li>
+                                            </ol>
+                                            <p class="mb-0 text-info">
+                                                <i class="fas fa-lightbulb"></i> <strong>Tip:</strong> Puedes
+                                                seleccionar
+                                                múltiples elementos en cada lista manteniendo presionada la tecla de
+                                                control.
+                                            </p>
+                                        </div>
+                                        <div class="row">
+                                            <div class="col-md-6">
+                                                <div class="mb-3">
+                                                    <label for="asignaturas_agregar" class="form-label">
+                                                        <i class="fas fa-book"></i> <strong>1. Seleccionar
+                                                            Asignaturas</strong>
+                                                    </label>
+                                                    <select class="form-select profesor-asignaturas-select"
+                                                        id="asignaturas_agregar" name="asignaturas_agregar[]" multiple
+                                                        size="4" style="min-height: 120px;">
+                                                        {% for asignatura in asignaturas %}
+                                                        <option value="{{ asignatura.id_asignatura }}"
+                                                            title="{{ asignatura.nombre }}">
+                                                            {{ asignatura.nombre }}
+                                                        </option>
+                                                        {% endfor %}
+                                                    </select>
+                                                    <div class="form-text">
+                                                        <i class="fas fa-hand-pointer"></i>
+                                                        Mantén <kbd>Ctrl</kbd>/<kbd>Cmd</kbd> presionado para
+                                                        seleccionar
+                                                        múltiples
+                                                    </div>
+                                                    <div id="asignaturas-status" class="mt-2 p-2 bg-light rounded">
+                                                        <small class="text-muted">Ninguna asignatura
+                                                            seleccionada</small>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-6">
+                                                <div class="mb-3">
+                                                    <label for="cursos_agregar" class="form-label">
+                                                        <i class="fas fa-graduation-cap"></i> <strong>2. Seleccionar
+                                                            Cursos</strong>
+                                                    </label>
+                                                    <select class="form-select profesor-cursos-select"
+                                                        id="cursos_agregar" name="cursos_agregar[]" multiple size="4"
+                                                        style="min-height: 120px;">
+                                                        {% for curso in cursos %}
+                                                        <option value="{{ curso.id_curso }}"
+                                                            title="Curso: {{ curso.nombre_completo }} ({{ curso.nivel_texto }}, Letra {{ curso.letra }})">
+                                                            {{ curso.nombre_completo }}
+                                                        </option>
+                                                        {% endfor %}
+                                                    </select>
+                                                    <div class="form-text">
+                                                        <i class="fas fa-hand-pointer"></i>
+                                                        Mantén <kbd>Ctrl</kbd>/<kbd>Cmd</kbd> presionado para
+                                                        seleccionar
+                                                        múltiples
+                                                    </div>
+                                                    <div id="cursos-status" class="mt-2 p-2 bg-light rounded">
+                                                        <small class="text-muted">Ningún curso seleccionado</small>
+                                                    </div>
+
+                                                    <!-- Debug info para cursos -->
+                                                    {% if cursos|length > 0 %}
+                                                    <div class="mt-2 p-2 bg-info text-white rounded">
+                                                        <small><strong>Info:</strong> Mostrando {{ cursos|length }}
+                                                            curso(s)
+                                                            disponible(s)</small>
+                                                        {% for curso in cursos %}
+                                                        <br><small>• "{{ curso.nombre_completo }}" (ID: {{
+                                                            curso.id_curso
+                                                            }})</small>
+                                                        {% endfor %}
+                                                    </div>
+                                                    {% endif %}
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <div class="row">
+                                            <div class="col-12">
+                                                <div class="alert alert-info">
+                                                    <i class="fas fa-lightbulb"></i>
+                                                    <strong>Sugerencia:</strong> Para gestionar asignaciones existentes,
+                                                    visita la
+                                                    <a href="{{ url_for('asignatura.gestionar_asignaciones') }}?profesor_id={{ profesor.id_profesor }}"
+                                                        class="alert-link">página de gestión de asignaciones</a>.
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-12">
+                                <div class="alert alert-info">
+                                    <i class="fas fa-info-circle"></i>
+                                    <strong>Información:</strong> Los campos marcados con <span
+                                        class="text-danger">*</span>
+                                    son obligatorios.
+                                    Los cambios se aplicarán inmediatamente.
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="d-flex justify-content-between">
+                            <a href="{{ url_for('profesor.detalle_profesor', id_profesor=profesor.id_profesor) }}"
+                                class="btn btn-secondary">
+                                <i class="fas fa-times"></i> Cancelar
+                            </a>
+                            <button type="submit" class="btn btn-primary">
+                                <i class="fas fa-save"></i> Guardar Cambios
+                            </button>
+                        </div>
+                    </form>
+                </div>
             </div>
         </div>
-    </div>
 
-    <div class="col-lg-4">
-        <!-- Información Actual -->
-        <div class="card">
-            <div class="card-header">
-                <h5 class="card-title mb-0">
-                    <i class="fas fa-info-circle"></i> Información Actual
-                </h5>
-            </div>
-            <div class="card-body">
-                <div class="d-flex align-items-center mb-3">
-                    <div class="avatar me-3">
-                        <i class="fas fa-user-tie fa-2x text-primary"></i>
-                    </div>
-                    <div>
-                        <h6 class="mb-0">{{ profesor.nombre_completo }}</h6>
-                        <small class="text-muted">ID: {{ profesor.id_profesor }}</small>
-                    </div>
+        <div class="col-lg-4">
+            <!-- Información Actual -->
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="card-title mb-0">
+                        <i class="fas fa-info-circle"></i> Información Actual
+                    </h5>
                 </div>
-
-                <div class="mb-3">
-                    <label class="form-label text-muted">Email:</label>
-                    <p class="mb-0">{{ profesor.email }}</p>
-                </div>
-
-                <div class="mb-3">
-                    <label class="form-label text-muted">Especialidad:</label>
-                    <p class="mb-0">{{ profesor.especialidad or 'Sin especialidad' }}</p>
-                </div>
-
-                <div class="mb-3">
-                    <label class="form-label text-muted">Asignatura Principal:</label>
-                    <p class="mb-0">
-                        {% if profesor.asignatura_nombre %}
-                        <span class="badge bg-info">{{ profesor.asignatura_nombre }}</span>
-                        {% else %}
-                        Sin asignatura
-                        {% endif %}
-                    </p>
-                </div>
-
-                <div class="mb-3">
-                    <label class="form-label text-muted">Estado:</label>
-                    <p class="mb-0">
-                        {% if profesor.activo %}
-                        <span class="badge bg-success">Activo</span>
-                        {% else %}
-                        <span class="badge bg-danger">Inactivo</span>
-                        {% endif %}
-                    </p>
-                </div>
-
-                <div class="mb-3">
-                    <label class="form-label text-muted">Registrado:</label>
-                    <p class="mb-0">{{ profesor.created_at.strftime('%d/%m/%Y %H:%M') if profesor.created_at else 'No
-                        disponible' }}</p>
-                </div>
-
-                {% if profesor.updated_at %}
-                <div class="mb-3">
-                    <label class="form-label text-muted">Última actualización:</label>
-                    <p class="mb-0">{{ profesor.updated_at.strftime('%d/%m/%Y %H:%M') }}</p>
-                </div>
-                {% endif %}
-            </div>
-        </div>
-
-        <!-- Estadísticas del Profesor -->
-        {% if stats %}
-        <div class="card mt-3">
-            <div class="card-header">
-                <h5 class="card-title mb-0">
-                    <i class="fas fa-chart-bar"></i> Estadísticas
-                </h5>
-            </div>
-            <div class="card-body">
-                <div class="row text-center">
-                    <div class="col-4">
-                        <div class="border-end">
-                            <h4 class="text-primary mb-0">{{ stats.total_asignaturas }}</h4>
-                            <small class="text-muted">Asignaturas</small>
+                <div class="card-body">
+                    <div class="d-flex align-items-center mb-3">
+                        <div class="avatar me-3">
+                            <i class="fas fa-user-tie fa-2x text-primary"></i>
+                        </div>
+                        <div>
+                            <h6 class="mb-0">{{ profesor.nombre_completo }}</h6>
+                            <small class="text-muted">ID: {{ profesor.id_profesor }}</small>
                         </div>
                     </div>
-                    <div class="col-4">
-                        <div class="border-end">
-                            <h4 class="text-success mb-0">{{ stats.total_cursos }}</h4>
-                            <small class="text-muted">Cursos</small>
-                        </div>
-                    </div>
-                    <div class="col-4">
-                        <h4 class="text-info mb-0">{{ stats.total_asignaciones }}</h4>
-                        <small class="text-muted">Asignaciones</small>
-                    </div>
-                </div>
-            </div>
-        </div>
-        {% endif %}
 
-        <!-- Acciones Rápidas -->
-        <div class="card mt-3">
-            <div class="card-header">
-                <h5 class="card-title mb-0">
-                    <i class="fas fa-lightning-bolt"></i> Acciones Rápidas
-                </h5>
-            </div>
-            <div class="card-body">
-                <div class="d-grid gap-2">
-                    <a href="{{ url_for('profesor.detalle_profesor', id_profesor=profesor.id_profesor) }}"
-                        class="btn btn-outline-info btn-sm">
-                        <i class="fas fa-eye"></i> Ver Detalles Completos
-                    </a>
-                    <a href="{{ url_for('asignatura.gestionar_asignaciones') }}?profesor_id={{ profesor.id_profesor }}"
-                        class="btn btn-outline-primary btn-sm">
-                        <i class="fas fa-clipboard-list"></i> Ver Asignaciones
-                    </a>
-                    {% if profesor.activo %}
-                    <button type="button" class="btn btn-outline-danger btn-sm btn-confirmar-desactivacion">
-                        <i class="fas fa-ban"></i> Desactivar Profesor
-                    </button>
+                    <div class="mb-3">
+                        <label class="form-label text-muted">Email:</label>
+                        <p class="mb-0">{{ profesor.email }}</p>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label text-muted">Especialidad:</label>
+                        <p class="mb-0">{{ profesor.especialidad or 'Sin especialidad' }}</p>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label text-muted">Asignatura Principal:</label>
+                        <p class="mb-0">
+                            {% if profesor.asignatura_nombre %}
+                            <span class="badge bg-info">{{ profesor.asignatura_nombre }}</span>
+                            {% else %}
+                            Sin asignatura
+                            {% endif %}
+                        </p>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label text-muted">Estado:</label>
+                        <p class="mb-0">
+                            {% if profesor.activo %}
+                            <span class="badge bg-success">Activo</span>
+                            {% else %}
+                            <span class="badge bg-danger">Inactivo</span>
+                            {% endif %}
+                        </p>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label text-muted">Registrado:</label>
+                        <p class="mb-0">{{ profesor.created_at.strftime('%d/%m/%Y %H:%M') if profesor.created_at else
+                            'No
+                            disponible' }}</p>
+                    </div>
+
+                    {% if profesor.updated_at %}
+                    <div class="mb-3">
+                        <label class="form-label text-muted">Última actualización:</label>
+                        <p class="mb-0">{{ profesor.updated_at.strftime('%d/%m/%Y %H:%M') }}</p>
+                    </div>
                     {% endif %}
                 </div>
             </div>
+
+            <!-- Estadísticas del Profesor -->
+            {% if stats %}
+            <div class="card mt-3">
+                <div class="card-header">
+                    <h5 class="card-title mb-0">
+                        <i class="fas fa-chart-bar"></i> Estadísticas
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <div class="row text-center">
+                        <div class="col-4">
+                            <div class="border-end">
+                                <h4 class="text-primary mb-0">{{ stats.total_asignaturas }}</h4>
+                                <small class="text-muted">Asignaturas</small>
+                            </div>
+                        </div>
+                        <div class="col-4">
+                            <div class="border-end">
+                                <h4 class="text-success mb-0">{{ stats.total_cursos }}</h4>
+                                <small class="text-muted">Cursos</small>
+                            </div>
+                        </div>
+                        <div class="col-4">
+                            <h4 class="text-info mb-0">{{ stats.total_asignaciones }}</h4>
+                            <small class="text-muted">Asignaciones</small>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {% endif %}
+
+            <!-- Acciones Rápidas -->
+            <div class="card mt-3">
+                <div class="card-header">
+                    <h5 class="card-title mb-0">
+                        <i class="fas fa-lightning-bolt"></i> Acciones Rápidas
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <div class="d-grid gap-2">
+                        <a href="{{ url_for('profesor.detalle_profesor', id_profesor=profesor.id_profesor) }}"
+                            class="btn btn-outline-info btn-sm">
+                            <i class="fas fa-eye"></i> Ver Detalles Completos
+                        </a>
+                        <a href="{{ url_for('asignatura.gestionar_asignaciones') }}?profesor_id={{ profesor.id_profesor }}"
+                            class="btn btn-outline-primary btn-sm">
+                            <i class="fas fa-clipboard-list"></i> Ver Asignaciones
+                        </a>
+                        {% if profesor.activo %}
+                        <button type="button" class="btn btn-outline-danger btn-sm btn-confirmar-desactivacion">
+                            <i class="fas fa-ban"></i> Desactivar Profesor
+                        </button>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
-</div>
 
-<!-- Modal de confirmación de desactivación -->
-<div class="modal fade" id="desactivarModal" tabindex="-1">
-    <div class="modal-dialog">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title">
-                    <i class="fas fa-exclamation-triangle text-warning"></i> Confirmar Desactivación
-                </h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-            </div>
-            <div class="modal-body">
-                <p>¿Está seguro que desea desactivar al profesor <strong>{{ profesor.nombre_completo }}</strong>?</p>
-                <p class="text-muted">Esta acción se puede revertir más tarde.</p>
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
-                <form method="POST"
-                    action="{{ url_for('profesor.eliminar_profesor', id_profesor=profesor.id_profesor) }}"
-                    style="display: inline;">
-                    <button type="submit" class="btn btn-danger">
-                        <i class="fas fa-ban"></i> Desactivar
-                    </button>
-                </form>
+    <!-- Modal de confirmación de desactivación -->
+    <div class="modal fade" id="desactivarModal" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">
+                        <i class="fas fa-exclamation-triangle text-warning"></i> Confirmar Desactivación
+                    </h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <p>¿Está seguro que desea desactivar al profesor <strong>{{ profesor.nombre_completo }}</strong>?
+                    </p>
+                    <p class="text-muted">Esta acción se puede revertir más tarde.</p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                    <form method="POST"
+                        action="{{ url_for('profesor.eliminar_profesor', id_profesor=profesor.id_profesor) }}"
+                        style="display: inline;">
+                        <button type="submit" class="btn btn-danger">
+                            <i class="fas fa-ban"></i> Desactivar
+                        </button>
+                    </form>
+                </div>
             </div>
         </div>
     </div>

@@ -3,181 +3,180 @@
 {% block title %}Gestionar Alumnos - Sistema de Asistencia{% endblock %}
 
 {% block content %}
-<div class="main-content">
-    <div class="container-fluid">
-        <!-- Header -->
-        <div class="row mb-4">
-            <div class="col-12">
-                <div class="d-flex justify-content-between align-items-center">
-                    <div>
-                        <h2 class="mb-0">👥 Gestionar Alumnos</h2>
-                        <p class="text-muted">Administra la información de los estudiantes</p>
+<div class="container mt-4">
+    <!-- Header -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="d-flex justify-content-between align-items-center">
+                <div>
+                    <h2 class="mb-0">👥 Gestionar Alumnos</h2>
+                    <p class="text-muted">Administra la información de los estudiantes</p>
+                </div>
+                <a href="{{ url_for('admin.agregar_alumno') }}" class="btn btn-primary">
+                    <i class="fas fa-plus"></i> Nuevo Alumno
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Filtros y búsqueda -->
+    <div class="row mb-4">
+        <div class="col-md-6">
+            <div class="position-relative">
+                <div class="input-group">
+                    <span class="input-group-text"><i class="fas fa-search"></i></span>
+                    <input type="text" class="form-control search-input" id="buscar-alumno"
+                        placeholder="Buscar por nombre, apellido o email..." autocomplete="off">
+                    <button type="button" class="limpiar-busqueda" id="limpiar-busqueda" style="display: none;"
+                        title="Limpiar búsqueda">
+                        <i class="fas fa-times"></i>
+                    </button>
+                </div>
+                <span class="contador-resultados" id="contador-resultados" style="display: none;">
+                    0 resultados
+                </span>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <select class="form-select" id="filtro-curso">
+                <option value="">Todos los cursos</option>
+                <!-- Los cursos se cargarán dinámicamente -->
+            </select>
+        </div>
+        <div class="col-md-3">
+            <select class="form-select" id="filtro-estado">
+                <option value="">Todos los estados</option>
+                <option value="activo">Activos</option>
+                <option value="inactivo">Inactivos</option>
+            </select>
+        </div>
+    </div>
+
+    <!-- Estadísticas -->
+    <div class="row mb-4">
+        <div class="col-md-3">
+            <div class="card stat-card">
+                <div class="card-body text-center">
+                    <div class="stat-icon bg-primary">
+                        <i class="fas fa-users"></i>
                     </div>
-                    <a href="{{ url_for('admin.agregar_alumno') }}" class="btn btn-primary">
-                        <i class="fas fa-plus"></i> Nuevo Alumno
-                    </a>
+                    <h3 class="stat-number text-primary" id="total-alumnos">{{ alumnos|length }}</h3>
+                    <p class="stat-label">Total Alumnos</p>
                 </div>
             </div>
         </div>
-
-        <!-- Filtros y búsqueda -->
-        <div class="row mb-4">
-            <div class="col-md-6">
-                <div class="position-relative">
-                    <div class="input-group">
-                        <span class="input-group-text"><i class="fas fa-search"></i></span>
-                        <input type="text" class="form-control search-input" id="buscar-alumno"
-                            placeholder="Buscar por nombre, apellido o email..." autocomplete="off">
-                        <button type="button" class="limpiar-busqueda" id="limpiar-busqueda" style="display: none;"
-                            title="Limpiar búsqueda">
-                            <i class="fas fa-times"></i>
-                        </button>
+        <div class="col-md-3">
+            <div class="card stat-card">
+                <div class="card-body text-center">
+                    <div class="stat-icon bg-success">
+                        <i class="fas fa-user-check"></i>
                     </div>
-                    <span class="contador-resultados" id="contador-resultados" style="display: none;">
-                        0 resultados
-                    </span>
-                </div>
-            </div>
-            <div class="col-md-3">
-                <select class="form-select" id="filtro-curso">
-                    <option value="">Todos los cursos</option>
-                    <!-- Los cursos se cargarán dinámicamente -->
-                </select>
-            </div>
-            <div class="col-md-3">
-                <select class="form-select" id="filtro-estado">
-                    <option value="">Todos los estados</option>
-                    <option value="activo">Activos</option>
-                    <option value="inactivo">Inactivos</option>
-                </select>
-            </div>
-        </div>
-
-        <!-- Estadísticas -->
-        <div class="row mb-4">
-            <div class="col-md-3">
-                <div class="card stat-card">
-                    <div class="card-body text-center">
-                        <div class="stat-icon bg-primary">
-                            <i class="fas fa-users"></i>
-                        </div>
-                        <h3 class="stat-number text-primary" id="total-alumnos">{{ alumnos|length }}</h3>
-                        <p class="stat-label">Total Alumnos</p>
-                    </div>
-                </div>
-            </div>
-            <div class="col-md-3">
-                <div class="card stat-card">
-                    <div class="card-body text-center">
-                        <div class="stat-icon bg-success">
-                            <i class="fas fa-user-check"></i>
-                        </div>
-                        <h3 class="stat-number text-success" id="alumnos-activos">{{ alumnos|length }}</h3>
-                        <p class="stat-label">Activos</p>
-                    </div>
-                </div>
-            </div>
-            <div class="col-md-3">
-                <div class="card stat-card">
-                    <div class="card-body text-center">
-                        <div class="stat-icon bg-warning">
-                            <i class="fas fa-user-times"></i>
-                        </div>
-                        <h3 class="stat-number text-warning" id="alumnos-inactivos">0</h3>
-                        <p class="stat-label">Inactivos</p>
-                    </div>
-                </div>
-            </div>
-            <div class="col-md-3">
-                <div class="card stat-card">
-                    <div class="card-body text-center">
-                        <div class="stat-icon bg-info">
-                            <i class="fas fa-user-plus"></i>
-                        </div>
-                        <h3 class="stat-number text-info" id="nuevos-mes">0</h3>
-                        <p class="stat-label">Nuevos este mes</p>
-                    </div>
+                    <h3 class="stat-number text-success" id="alumnos-activos">{{ alumnos|length }}</h3>
+                    <p class="stat-label">Activos</p>
                 </div>
             </div>
         </div>
-
-        <!-- Tabla de alumnos -->
-        <div class="row">
-            <div class="col-12">
-                <div class="card">
-                    <div class="card-header">
-                        <h5 class="card-title mb-0">
-                            <i class="fas fa-table"></i> Lista de Alumnos
-                        </h5>
+        <div class="col-md-3">
+            <div class="card stat-card">
+                <div class="card-body text-center">
+                    <div class="stat-icon bg-warning">
+                        <i class="fas fa-user-times"></i>
                     </div>
-                    <div class="card-body">
-                        <div class="table-responsive">
-                            <table class="table table-hover" id="tabla-alumnos">
-                                <thead class="table-dark">
-                                    <tr>
-                                        <th>Nombre</th>
-                                        <th>Email</th>
-                                        <th>Teléfono</th>
-                                        <th>Curso</th>
-                                        <th>Fecha Ingreso</th>
-                                        <th>Estado</th>
-                                        <th>Acciones</th>
-                                    </tr>
-                                </thead>
-                                <tbody id="tbody-alumnos">
-                                    {% for alumno in alumnos %}
-                                    <tr data-id="{{ alumno.id_alumno }}">
-                                        <td>{{ alumno.nombre }} {{ alumno.apellido_paterno }} {{ alumno.apellido_materno
-                                            or '' }}</td>
-                                        <td>{{ alumno.email or '-' }}</td>
-                                        <td>{{ alumno.telefono or '-' }}</td>
-                                        <td>
-                                            {% if alumno.curso_nivel and alumno.curso_letra %}
-                                            {% set niveles_map = {
-                                            '1': '1° Básico', '2': '2° Básico', '3': '3° Básico', '4': '4° Básico',
-                                            '5': '5° Básico', '6': '6° Básico', '7': '7° Básico', '8': '8° Básico',
-                                            '9': '1° Medio', '10': '2° Medio', '11': '3° Medio', '12': '4° Medio'
-                                            } %}
-                                            {{ niveles_map.get(alumno.curso_nivel|string, (alumno.curso_nivel|string) +
-                                            '°') }}
-                                            {{ alumno.curso_letra }}
-                                            {% else %}
-                                            Sin curso
-                                            {% endif %}
-                                        </td>
-                                        <td>{{ alumno.fecha_ingreso.strftime('%d/%m/%Y') if alumno.fecha_ingreso else
-                                            'No registrada' }}</td>
-                                        <td>{{ alumno.fecha_ingreso.strftime('%d/%m/%Y') if alumno.fecha_ingreso else
-                                            '-' }}</td>
-                                        <td>
-                                            <span class="badge bg-success">Activo</span>
-                                        </td>
-                                        <td>
-                                            <div class="btn-group" role="group">
-                                                <a href="{{ url_for('admin.editar_alumno', id=alumno.id_alumno) }}"
-                                                    class="btn btn-sm btn-outline-primary" title="Editar">
-                                                    <i class="fas fa-edit"></i>
-                                                </a>
-                                                <a href="{{ url_for('asistencia.detalle_alumno', id_alumno=alumno.id_alumno) }}"
-                                                    class="btn btn-sm btn-outline-info" title="Ver detalles">
-                                                    <i class="fas fa-eye"></i>
-                                                </a>
-                                                <a href="{{ url_for('admin.eliminar_alumno', id=alumno.id_alumno) }}"
-                                                    class="btn btn-sm btn-outline-danger" title="Eliminar"
-                                                    data-confirm="¿Estás seguro de que deseas eliminar a {{ alumno.nombre }} {{ alumno.apellido_paterno }}?">
-                                                    <i class="fas fa-trash"></i>
-                                                </a>
-                                            </div>
-                                        </td>
-                                    </tr>
-                                    {% endfor %}
-                                </tbody>
-                            </table>
-                        </div>
+                    <h3 class="stat-number text-warning" id="alumnos-inactivos">0</h3>
+                    <p class="stat-label">Inactivos</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card stat-card">
+                <div class="card-body text-center">
+                    <div class="stat-icon bg-info">
+                        <i class="fas fa-user-plus"></i>
+                    </div>
+                    <h3 class="stat-number text-info" id="nuevos-mes">0</h3>
+                    <p class="stat-label">Nuevos este mes</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Tabla de alumnos -->
+    <div class="row">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="card-title mb-0">
+                        <i class="fas fa-table"></i> Lista de Alumnos
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table class="table table-hover" id="tabla-alumnos">
+                            <thead class="table-dark">
+                                <tr>
+                                    <th>Nombre</th>
+                                    <th>Email</th>
+                                    <th>Teléfono</th>
+                                    <th>Curso</th>
+                                    <th>Fecha Ingreso</th>
+                                    <th>Estado</th>
+                                    <th>Acciones</th>
+                                </tr>
+                            </thead>
+                            <tbody id="tbody-alumnos">
+                                {% for alumno in alumnos %}
+                                <tr data-id="{{ alumno.id_alumno }}">
+                                    <td>{{ alumno.nombre }} {{ alumno.apellido_paterno }} {{ alumno.apellido_materno
+                                        or '' }}</td>
+                                    <td>{{ alumno.email or '-' }}</td>
+                                    <td>{{ alumno.telefono or '-' }}</td>
+                                    <td>
+                                        {% if alumno.curso_nivel and alumno.curso_letra %}
+                                        {% set niveles_map = {
+                                        '1': '1° Básico', '2': '2° Básico', '3': '3° Básico', '4': '4° Básico',
+                                        '5': '5° Básico', '6': '6° Básico', '7': '7° Básico', '8': '8° Básico',
+                                        '9': '1° Medio', '10': '2° Medio', '11': '3° Medio', '12': '4° Medio'
+                                        } %}
+                                        {{ niveles_map.get(alumno.curso_nivel|string, (alumno.curso_nivel|string) +
+                                        '°') }}
+                                        {{ alumno.curso_letra }}
+                                        {% else %}
+                                        Sin curso
+                                        {% endif %}
+                                    </td>
+                                    <td>{{ alumno.fecha_ingreso.strftime('%d/%m/%Y') if alumno.fecha_ingreso else
+                                        'No registrada' }}</td>
+                                    <td>{{ alumno.fecha_ingreso.strftime('%d/%m/%Y') if alumno.fecha_ingreso else
+                                        '-' }}</td>
+                                    <td>
+                                        <span class="badge bg-success">Activo</span>
+                                    </td>
+                                    <td>
+                                        <div class="btn-group" role="group">
+                                            <a href="{{ url_for('admin.editar_alumno', id=alumno.id_alumno) }}"
+                                                class="btn btn-sm btn-outline-primary" title="Editar">
+                                                <i class="fas fa-edit"></i>
+                                            </a>
+                                            <a href="{{ url_for('asistencia.detalle_alumno', id_alumno=alumno.id_alumno) }}"
+                                                class="btn btn-sm btn-outline-info" title="Ver detalles">
+                                                <i class="fas fa-eye"></i>
+                                            </a>
+                                            <a href="{{ url_for('admin.eliminar_alumno', id=alumno.id_alumno) }}"
+                                                class="btn btn-sm btn-outline-danger" title="Eliminar"
+                                                data-confirm="¿Estás seguro de que deseas eliminar a {{ alumno.nombre }} {{ alumno.apellido_paterno }}?">
+                                                <i class="fas fa-trash"></i>
+                                            </a>
+                                        </div>
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
                     </div>
                 </div>
             </div>
         </div>
     </div>
+</div>
 </div>
 {% endblock %}

@@ -36,14 +36,14 @@ def login():
         password = request.form.get('password')
 
         # Simulación de autenticación
-        if email == 'admin@colegio.cl' and password == 'admin123':
-            session['user_id'] = 1
+        if email == 'admin@colegio-aml.cl' and password == 'admin123':
+            session['user_id'] = 46
             session['user_email'] = email
             session['user_role'] = 'admin'
             flash('Inicio de sesión exitoso', 'success')
             return redirect(url_for('asistencia.index'))
-        elif email == 'profesor@colegio.cl' and password == 'profesor123':
-            session['user_id'] = 2
+        elif email == 'juan.perez@colegio-aml.cl' and password == 'profesor123':
+            session['user_id'] = 47
             session['user_email'] = email
             session['user_role'] = 'profesor'
             flash('Inicio de sesión exitoso', 'success')

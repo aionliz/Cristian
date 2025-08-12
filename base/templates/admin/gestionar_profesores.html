@@ -2,252 +2,254 @@
 {% block title %}Gestionar Profesores{% endblock %}
 
 {% block content %}
-<div class="page-header">
-    <div class="header-content">
-        <h1><i class="fas fa-chalkboard-teacher"></i> Gestión de Profesores</h1>
-        <p class="page-description">Administra los profesores del sistema</p>
+<div class="container mt-4">
+    <div class="page-header">
+        <div class="header-content">
+            <h1><i class="fas fa-chalkboard-teacher"></i> Gestión de Profesores</h1>
+            <p class="page-description">Administra los profesores del sistema</p>
+        </div>
+        <div class="header-actions">
+            <a href="{{ url_for('profesor.agregar_profesor') }}" class="btn btn-primary">
+                <i class="fas fa-plus"></i> Nuevo Profesor
+            </a>
+        </div>
     </div>
-    <div class="header-actions">
-        <a href="{{ url_for('profesor.agregar_profesor') }}" class="btn btn-primary">
-            <i class="fas fa-plus"></i> Nuevo Profesor
-        </a>
-    </div>
-</div>
 
-<!-- Filtros -->
-<div class="card mb-4">
-    <div class="card-body">
-        <form method="GET" class="d-flex gap-3 align-items-end">
-            <div class="flex-grow-1">
-                <label for="busqueda" class="form-label">Buscar por nombre o email</label>
-                <input type="text" class="form-control" id="busqueda" name="busqueda"
-                    placeholder="Escriba para buscar..." value="{{ request.args.get('busqueda', '') }}">
-            </div>
-            <div>
-                <label for="asignatura_id" class="form-label">Asignatura</label>
-                <select class="form-select" id="asignatura_id" name="asignatura_id">
-                    <option value="">Todas las asignaturas</option>
-                    {% for asignatura in asignaturas %}
-                    <option value="{{ asignatura.id_asignatura }}" {{ 'selected' if
-                        request.args.get('asignatura_id')==asignatura.id_asignatura|string }}>
-                        {{ asignatura.nombre }}
-                    </option>
-                    {% endfor %}
-                </select>
-            </div>
-            <div>
-                <button type="submit" class="btn btn-outline-primary">
-                    <i class="fas fa-search"></i> Filtrar
-                </button>
-                <a href="{{ url_for('profesor.gestionar_profesores') }}" class="btn btn-outline-secondary">
-                    <i class="fas fa-times"></i> Limpiar
-                </a>
-            </div>
-        </form>
-    </div>
-</div>
-
-<!-- Estadísticas -->
-<div class="row mb-4">
-    <div class="col-md-3">
-        <div class="card bg-primary text-white">
-            <div class="card-body">
-                <div class="d-flex justify-content-between">
-                    <div>
-                        <h5 class="card-title">Total Profesores</h5>
-                        <h2 class="mb-0">{{ total_profesores }}</h2>
-                    </div>
-                    <div class="align-self-center">
-                        <i class="fas fa-users fa-2x"></i>
-                    </div>
+    <!-- Filtros -->
+    <div class="card mb-4">
+        <div class="card-body">
+            <form method="GET" class="d-flex gap-3 align-items-end">
+                <div class="flex-grow-1">
+                    <label for="busqueda" class="form-label">Buscar por nombre o email</label>
+                    <input type="text" class="form-control" id="busqueda" name="busqueda"
+                        placeholder="Escriba para buscar..." value="{{ request.args.get('busqueda', '') }}">
                 </div>
-            </div>
-        </div>
-    </div>
-    <div class="col-md-3">
-        <div class="card bg-success text-white">
-            <div class="card-body">
-                <div class="d-flex justify-content-between">
-                    <div>
-                        <h5 class="card-title">Activos</h5>
-                        <h2 class="mb-0">{{ total_activos }}</h2>
-                    </div>
-                    <div class="align-self-center">
-                        <i class="fas fa-check-circle fa-2x"></i>
-                    </div>
+                <div>
+                    <label for="asignatura_id" class="form-label">Asignatura</label>
+                    <select class="form-select" id="asignatura_id" name="asignatura_id">
+                        <option value="">Todas las asignaturas</option>
+                        {% for asignatura in asignaturas %}
+                        <option value="{{ asignatura.id_asignatura }}" {{ 'selected' if
+                            request.args.get('asignatura_id')==asignatura.id_asignatura|string }}>
+                            {{ asignatura.nombre }}
+                        </option>
+                        {% endfor %}
+                    </select>
                 </div>
-            </div>
-        </div>
-    </div>
-    <div class="col-md-3">
-        <div class="card bg-info text-white">
-            <div class="card-body">
-                <div class="d-flex justify-content-between">
-                    <div>
-                        <h5 class="card-title">Con Asignaciones</h5>
-                        <h2 class="mb-0">{{ total_con_asignaciones }}</h2>
-                    </div>
-                    <div class="align-self-center">
-                        <i class="fas fa-clipboard-list fa-2x"></i>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-    <div class="col-md-3">
-        <div class="card bg-warning text-white">
-            <div class="card-body">
-                <div class="d-flex justify-content-between">
-                    <div>
-                        <h5 class="card-title">Sin Asignaciones</h5>
-                        <h2 class="mb-0">{{ total_sin_asignaciones }}</h2>
-                    </div>
-                    <div class="align-self-center">
-                        <i class="fas fa-exclamation-triangle fa-2x"></i>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-</div>
-
-<!-- Tabla de Profesores -->
-<div class="card">
-    <div class="card-header">
-        <h5 class="card-title mb-0">
-            <i class="fas fa-list"></i> Lista de Profesores
-            {% if profesores %}
-            <small class="text-muted">({{ profesores|length }} profesor{{ 'es' if profesores|length != 1 else ''
-                }})</small>
-            {% endif %}
-        </h5>
-    </div>
-    <div class="card-body">
-        {% if profesores %}
-        <div class="table-responsive">
-            <table class="table table-hover">
-                <thead>
-                    <tr>
-                        <th>Nombre Completo</th>
-                        <th>Email</th>
-                        <th>Especialidad</th>
-                        <th>Asignatura Principal</th>
-                        <th>Asignaciones</th>
-                        <th>Estado</th>
-                        <th>Acciones</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {% for profesor in profesores %}
-                    <tr>
-                        <td>
-                            <div class="d-flex align-items-center">
-                                <div class="avatar me-2">
-                                    <i class="fas fa-user-tie fa-lg text-primary"></i>
-                                </div>
-                                <div>
-                                    <strong>{{ profesor.nombre_completo }}</strong>
-                                </div>
-                            </div>
-                        </td>
-                        <td>
-                            <a href="mailto:{{ profesor.email }}" class="text-decoration-none">
-                                {{ profesor.email }}
-                            </a>
-                        </td>
-                        <td>
-                            {% if profesor.especialidad %}
-                            {{ profesor.especialidad }}
-                            {% else %}
-                            <span class="text-muted">Sin especialidad</span>
-                            {% endif %}
-                        </td>
-                        <td>
-                            {% if profesor.asignatura_nombre %}
-                            {{ profesor.asignatura_nombre }}
-                            {% else %}
-                            <span class="text-muted">Sin asignatura</span>
-                            {% endif %}
-                        </td>
-                        <td>
-                            {{ profesor.total_asignaciones }}
-                        </td>
-                        <td>
-                            {% if profesor.activo %}
-                            Activo
-                            {% else %}
-                            Inactivo
-                            {% endif %}
-                        </td>
-                        <td>
-                            <div class="btn-group" role="group">
-                                <a href="{{ url_for('profesor.detalle_profesor', id_profesor=profesor.id_profesor) }}"
-                                    class="btn btn-sm btn-outline-info" title="Ver detalles">
-                                    <i class="fas fa-eye"></i>
-                                </a>
-                                <a href="{{ url_for('profesor.editar_profesor', id_profesor=profesor.id_profesor) }}"
-                                    class="btn btn-sm btn-outline-warning" title="Editar">
-                                    <i class="fas fa-edit"></i>
-                                </a>
-                                {% if profesor.activo %}
-                                <button type="button" class="btn btn-sm btn-outline-danger" data-action="desactivar"
-                                    data-id="{{ profesor.id_profesor }}" data-nombre="{{ profesor.nombre_completo }}"
-                                    title="Desactivar">
-                                    <i class="fas fa-ban"></i>
-                                </button>
-                                {% endif %}
-                            </div>
-                        </td>
-                    </tr>
-                    {% endfor %}
-                </tbody>
-            </table>
-        </div>
-        {% else %}
-        <div class="text-center py-5">
-            <i class="fas fa-chalkboard-teacher fa-3x text-muted mb-3"></i>
-            <h5 class="text-muted">No se encontraron profesores</h5>
-            <p class="text-muted">
-                {% if request.args.get('busqueda') or request.args.get('asignatura_id') %}
-                No hay profesores que coincidan con los filtros aplicados.
-                <br>
-                <a href="{{ url_for('profesor.gestionar_profesores') }}" class="btn btn-outline-primary mt-2">
-                    <i class="fas fa-times"></i> Limpiar filtros
-                </a>
-                {% else %}
-                Comience agregando un nuevo profesor al sistema.
-                <br>
-                <a href="{{ url_for('profesor.agregar_profesor') }}" class="btn btn-primary mt-2">
-                    <i class="fas fa-plus"></i> Agregar Profesor
-                </a>
-                {% endif %}
-            </p>
-        </div>
-        {% endif %}
-    </div>
-</div>
-
-<!-- Modal de confirmación de eliminación -->
-<div class="modal fade" id="eliminarModal" tabindex="-1">
-    <div class="modal-dialog">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title">
-                    <i class="fas fa-exclamation-triangle text-warning"></i> Confirmar Desactivación
-                </h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-            </div>
-            <div class="modal-body">
-                <p>¿Está seguro que desea desactivar al profesor <strong id="nombreProfesor"></strong>?</p>
-                <p class="text-muted">Esta acción se puede revertir más tarde.</p>
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
-                <form id="eliminarForm" method="POST" style="display: inline;">
-                    <button type="submit" class="btn btn-danger">
-                        <i class="fas fa-ban"></i> Desactivar
+                <div>
+                    <button type="submit" class="btn btn-outline-primary">
+                        <i class="fas fa-search"></i> Filtrar
                     </button>
-                </form>
+                    <a href="{{ url_for('profesor.gestionar_profesores') }}" class="btn btn-outline-secondary">
+                        <i class="fas fa-times"></i> Limpiar
+                    </a>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Estadísticas -->
+    <div class="row mb-4">
+        <div class="col-md-3">
+            <div class="card bg-primary text-white">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between">
+                        <div>
+                            <h5 class="card-title">Total Profesores</h5>
+                            <h2 class="mb-0">{{ total_profesores }}</h2>
+                        </div>
+                        <div class="align-self-center">
+                            <i class="fas fa-users fa-2x"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card bg-success text-white">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between">
+                        <div>
+                            <h5 class="card-title">Activos</h5>
+                            <h2 class="mb-0">{{ total_activos }}</h2>
+                        </div>
+                        <div class="align-self-center">
+                            <i class="fas fa-check-circle fa-2x"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card bg-info text-white">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between">
+                        <div>
+                            <h5 class="card-title">Con Asignaciones</h5>
+                            <h2 class="mb-0">{{ total_con_asignaciones }}</h2>
+                        </div>
+                        <div class="align-self-center">
+                            <i class="fas fa-clipboard-list fa-2x"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card bg-warning text-white">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between">
+                        <div>
+                            <h5 class="card-title">Sin Asignaciones</h5>
+                            <h2 class="mb-0">{{ total_sin_asignaciones }}</h2>
+                        </div>
+                        <div class="align-self-center">
+                            <i class="fas fa-exclamation-triangle fa-2x"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Tabla de Profesores -->
+    <div class="card">
+        <div class="card-header">
+            <h5 class="card-title mb-0">
+                <i class="fas fa-list"></i> Lista de Profesores
+                {% if profesores %}
+                <small class="text-muted">({{ profesores|length }} profesor{{ 'es' if profesores|length != 1 else ''
+                    }})</small>
+                {% endif %}
+            </h5>
+        </div>
+        <div class="card-body">
+            {% if profesores %}
+            <div class="table-responsive">
+                <table class="table table-hover">
+                    <thead>
+                        <tr>
+                            <th>Nombre Completo</th>
+                            <th>Email</th>
+                            <th>Especialidad</th>
+                            <th>Asignatura Principal</th>
+                            <th>Asignaciones</th>
+                            <th>Estado</th>
+                            <th>Acciones</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for profesor in profesores %}
+                        <tr>
+                            <td>
+                                <div class="d-flex align-items-center">
+                                    <div class="avatar me-2">
+                                        <i class="fas fa-user-tie fa-lg text-primary"></i>
+                                    </div>
+                                    <div>
+                                        <strong>{{ profesor.nombre_completo }}</strong>
+                                    </div>
+                                </div>
+                            </td>
+                            <td>
+                                <a href="mailto:{{ profesor.email }}" class="text-decoration-none">
+                                    {{ profesor.email }}
+                                </a>
+                            </td>
+                            <td>
+                                {% if profesor.especialidad %}
+                                {{ profesor.especialidad }}
+                                {% else %}
+                                <span class="text-muted">Sin especialidad</span>
+                                {% endif %}
+                            </td>
+                            <td>
+                                {% if profesor.asignatura_nombre %}
+                                {{ profesor.asignatura_nombre }}
+                                {% else %}
+                                <span class="text-muted">Sin asignatura</span>
+                                {% endif %}
+                            </td>
+                            <td>
+                                {{ profesor.total_asignaciones }}
+                            </td>
+                            <td>
+                                {% if profesor.activo %}
+                                Activo
+                                {% else %}
+                                Inactivo
+                                {% endif %}
+                            </td>
+                            <td>
+                                <div class="btn-group" role="group">
+                                    <a href="{{ url_for('profesor.detalle_profesor', id_profesor=profesor.id_profesor) }}"
+                                        class="btn btn-sm btn-outline-info" title="Ver detalles">
+                                        <i class="fas fa-eye"></i>
+                                    </a>
+                                    <a href="{{ url_for('profesor.editar_profesor', id_profesor=profesor.id_profesor) }}"
+                                        class="btn btn-sm btn-outline-warning" title="Editar">
+                                        <i class="fas fa-edit"></i>
+                                    </a>
+                                    {% if profesor.activo %}
+                                    <button type="button" class="btn btn-sm btn-outline-danger" data-action="desactivar"
+                                        data-id="{{ profesor.id_profesor }}"
+                                        data-nombre="{{ profesor.nombre_completo }}" title="Desactivar">
+                                        <i class="fas fa-ban"></i>
+                                    </button>
+                                    {% endif %}
+                                </div>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+            {% else %}
+            <div class="text-center py-5">
+                <i class="fas fa-chalkboard-teacher fa-3x text-muted mb-3"></i>
+                <h5 class="text-muted">No se encontraron profesores</h5>
+                <p class="text-muted">
+                    {% if request.args.get('busqueda') or request.args.get('asignatura_id') %}
+                    No hay profesores que coincidan con los filtros aplicados.
+                    <br>
+                    <a href="{{ url_for('profesor.gestionar_profesores') }}" class="btn btn-outline-primary mt-2">
+                        <i class="fas fa-times"></i> Limpiar filtros
+                    </a>
+                    {% else %}
+                    Comience agregando un nuevo profesor al sistema.
+                    <br>
+                    <a href="{{ url_for('profesor.agregar_profesor') }}" class="btn btn-primary mt-2">
+                        <i class="fas fa-plus"></i> Agregar Profesor
+                    </a>
+                    {% endif %}
+                </p>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+
+    <!-- Modal de confirmación de eliminación -->
+    <div class="modal fade" id="eliminarModal" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">
+                        <i class="fas fa-exclamation-triangle text-warning"></i> Confirmar Desactivación
+                    </h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <p>¿Está seguro que desea desactivar al profesor <strong id="nombreProfesor"></strong>?</p>
+                    <p class="text-muted">Esta acción se puede revertir más tarde.</p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                    <form id="eliminarForm" method="POST" style="display: inline;">
+                        <button type="submit" class="btn btn-danger">
+                            <i class="fas fa-ban"></i> Desactivar
+                        </button>
+                    </form>
+                </div>
             </div>
         </div>
     </div>

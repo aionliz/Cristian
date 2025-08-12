@@ -3,106 +3,110 @@
 {% block title %}Agregar Asignación{% endblock %}
 
 {% block content %}
-<div class="page-header">
-    <div class="header-content">
-        <h1><i class="fas fa-plus"></i> Nueva Asignación</h1>
-        <p class="page-description">Asigna un profesor a una asignatura en un curso específico</p>
+<div class="container mt-4">
+    <div class="page-header">
+        <div class="header-content">
+            <h1><i class="fas fa-plus"></i> Nueva Asignación</h1>
+            <p class="page-description">Asigna un profesor a una asignatura en un curso específico</p>
+        </div>
+        <div class="header-actions">
+            <a href="{{ url_for('asignatura.gestionar_asignaciones') }}" class="btn btn-outline-secondary">
+                <i class="fas fa-arrow-left"></i> Volver
+            </a>
+        </div>
     </div>
-    <div class="header-actions">
-        <a href="{{ url_for('asignatura.gestionar_asignaciones') }}" class="btn btn-outline-secondary">
-            <i class="fas fa-arrow-left"></i> Volver
-        </a>
-    </div>
-</div>
 
-<div class="row justify-content-center">
-    <div class="col-lg-8">
-        <div class="card">
-            <div class="card-header">
-                <h5 class="card-title mb-0">
-                    <i class="fas fa-sitemap"></i> Datos de la Asignación
-                </h5>
-            </div>
-            <div class="card-body">
-                <!-- Instrucciones -->
-                <div class="alert alert-info mb-4">
-                    <i class="fas fa-info-circle"></i>
-                    <strong>Instrucciones:</strong>
-                    Una asignación conecta un profesor con una asignatura en un curso específico.
-                    Por ejemplo: un profesor enseña una materia en un curso determinado.
+    <div class="row justify-content-center">
+        <div class="col-lg-8">
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="card-title mb-0">
+                        <i class="fas fa-sitemap"></i> Datos de la Asignación
+                    </h5>
                 </div>
-
-                <form method="POST" action="{{ url_for('asignatura.agregar_asignacion') }}">
-                    <div class="row">
-                        <div class="col-md-6">
-                            <div class="mb-3">
-                                <label for="id_asignatura_fk" class="form-label">
-                                    <i class="fas fa-book"></i> <strong>1. Seleccione la Asignatura</strong>
-                                </label>
-                                <select class="form-select" id="id_asignatura_fk" name="id_asignatura_fk" required>
-                                    <option value="">-- Seleccione una asignatura --</option>
-                                    {% for asignatura in asignaturas %}
-                                    <option value="{{ asignatura.id_asignatura }}">{{ asignatura.nombre }}</option>
-                                    {% endfor %}
-                                </select>
-                                <div class="form-text">¿Qué materia se va a enseñar?</div>
-                            </div>
-                        </div>
-                        <div class="col-md-6">
-                            <div class="mb-3">
-                                <label for="id_curso_fk" class="form-label">
-                                    <i class="fas fa-users"></i> <strong>2. Seleccione el Curso</strong>
-                                </label>
-                                <select class="form-select" id="id_curso_fk" name="id_curso_fk" required>
-                                    <option value="">-- Seleccione un curso --</option>
-                                    {% for curso in cursos %}
-                                    <option value="{{ curso.id_curso }}">{{ curso.nivel_texto }} {{ curso.letra }}
-                                    </option>
-                                    {% endfor %}
-                                </select>
-                                <div class="form-text">¿A qué grupo de estudiantes?</div>
-                            </div>
-                        </div>
+                <div class="card-body">
+                    <!-- Instrucciones -->
+                    <div class="alert alert-info mb-4">
+                        <i class="fas fa-info-circle"></i>
+                        <strong>Instrucciones:</strong>
+                        Una asignación conecta un profesor con una asignatura en un curso específico.
+                        Por ejemplo: un profesor enseña una materia en un curso determinado.
                     </div>
 
-                    <div class="row">
-                        <div class="col-md-8">
-                            <div class="mb-3">
-                                <label for="id_profesor_fk" class="form-label">
-                                    <i class="fas fa-chalkboard-teacher"></i> <strong>3. Seleccione el Profesor</strong>
-                                </label>
-                                <select class="form-select" id="id_profesor_fk" name="id_profesor_fk" required>
-                                    <option value="">-- Seleccione un profesor --</option>
-                                    {% for profesor in profesores %}
-                                    <option value="{{ profesor.id_profesor }}">
-                                        {{ profesor.nombre }} {{ profesor.apellido }}
-                                        {% if profesor.especialidad %} - ({{ profesor.especialidad }}){% endif %}
-                                    </option>
-                                    {% endfor %}
-                                </select>
-                                <div class="form-text">¿Quién será el profesor responsable?</div>
+                    <form method="POST" action="{{ url_for('asignatura.agregar_asignacion') }}">
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label for="id_asignatura_fk" class="form-label">
+                                        <i class="fas fa-book"></i> <strong>1. Seleccione la Asignatura</strong>
+                                    </label>
+                                    <select class="form-select" id="id_asignatura_fk" name="id_asignatura_fk" required>
+                                        <option value="">-- Seleccione una asignatura --</option>
+                                        {% for asignatura in asignaturas %}
+                                        <option value="{{ asignatura.id_asignatura }}">{{ asignatura.nombre }}</option>
+                                        {% endfor %}
+                                    </select>
+                                    <div class="form-text">¿Qué materia se va a enseñar?</div>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label for="id_curso_fk" class="form-label">
+                                        <i class="fas fa-users"></i> <strong>2. Seleccione el Curso</strong>
+                                    </label>
+                                    <select class="form-select" id="id_curso_fk" name="id_curso_fk" required>
+                                        <option value="">-- Seleccione un curso --</option>
+                                        {% for curso in cursos %}
+                                        <option value="{{ curso.id_curso }}">{{ curso.nivel_texto }} {{ curso.letra }}
+                                        </option>
+                                        {% endfor %}
+                                    </select>
+                                    <div class="form-text">¿A qué grupo de estudiantes?</div>
+                                </div>
                             </div>
                         </div>
-                        <div class="col-md-4">
-                            <div class="mb-3">
-                                <label for="activo" class="form-label"><i class="fas fa-toggle-on"></i> Estado:</label>
-                                <select class="form-select" id="activo" name="activo">
-                                    <option value="1">Activa</option>
-                                    <option value="0">Inactiva</option>
-                                </select>
-                            </div>
-                        </div>
-                    </div>
 
-                    <div class="d-flex justify-content-between">
-                        <a href="{{ url_for('asignatura.gestionar_asignaciones') }}" class="btn btn-secondary">
-                            <i class="fas fa-arrow-left"></i> Volver
-                        </a>
-                        <button type="submit" class="btn btn-primary">
-                            <i class="fas fa-save"></i> Guardar Asignación
-                        </button>
-                    </div>
-                </form>
+                        <div class="row">
+                            <div class="col-md-8">
+                                <div class="mb-3">
+                                    <label for="id_profesor_fk" class="form-label">
+                                        <i class="fas fa-chalkboard-teacher"></i> <strong>3. Seleccione el
+                                            Profesor</strong>
+                                    </label>
+                                    <select class="form-select" id="id_profesor_fk" name="id_profesor_fk" required>
+                                        <option value="">-- Seleccione un profesor --</option>
+                                        {% for profesor in profesores %}
+                                        <option value="{{ profesor.id_profesor }}">
+                                            {{ profesor.nombre }} {{ profesor.apellido }}
+                                            {% if profesor.especialidad %} - ({{ profesor.especialidad }}){% endif %}
+                                        </option>
+                                        {% endfor %}
+                                    </select>
+                                    <div class="form-text">¿Quién será el profesor responsable?</div>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="mb-3">
+                                    <label for="activo" class="form-label"><i class="fas fa-toggle-on"></i>
+                                        Estado:</label>
+                                    <select class="form-select" id="activo" name="activo">
+                                        <option value="1">Activa</option>
+                                        <option value="0">Inactiva</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="d-flex justify-content-between">
+                            <a href="{{ url_for('asignatura.gestionar_asignaciones') }}" class="btn btn-secondary">
+                                <i class="fas fa-arrow-left"></i> Volver
+                            </a>
+                            <button type="submit" class="btn btn-primary">
+                                <i class="fas fa-save"></i> Guardar Asignación
+                            </button>
+                        </div>
+                    </form>
+                </div>
             </div>
         </div>
     </div>
