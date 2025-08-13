@@ -295,7 +295,16 @@ def editar_asistencia(id_asistencia):
 
             if result:
                 flash('Asistencia actualizada correctamente.', 'success')
-                return redirect(url_for('asistencia.detalle_alumno', id_alumno=asistencia.id_alumno))
+                # Obtener información del alumno para la redirección
+                alumno = AlumnoModel.get_by_id(asistencia.id_alumno)
+                if alumno and alumno.id_curso_fk:
+                    # Redirigir a la página del curso con la fecha
+                    return redirect(url_for('asistencia.por_curso',
+                                            curso=alumno.id_curso_fk,
+                                            fecha=asistencia.fecha.strftime('%Y-%m-%d')))
+                else:
+                    # Si no tiene curso, redirigir al detalle del alumno
+                    return redirect(url_for('asistencia.detalle_alumno', id_alumno=asistencia.id_alumno))
             else:
                 flash(
                     'Error al actualizar la asistencia: No se pudo completar la operación.', 'error')
