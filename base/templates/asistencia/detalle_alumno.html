@@ -163,20 +163,21 @@
                                     </td>
                                     <td>
                                         {% if registro.estado == 'presente' %}
-                                        <span class="badge bg-success">
-                                            <i class="fas fa-check"></i> Presente
+                                        <span style="color: #00cc00 !important; font-weight: bold !important;">
+                                            <i class="fas fa-check" style="color: #00cc00 !important;"></i> Presente
                                         </span>
                                         {% elif registro.estado == 'ausente' %}
-                                        <span class="badge bg-danger">
-                                            <i class="fas fa-times"></i> Ausente
+                                        <span style="color: #ff3333 !important; font-weight: bold !important;">
+                                            <i class="fas fa-times" style="color: #ff3333 !important;"></i> Ausente
                                         </span>
                                         {% elif registro.estado == 'tardanza' %}
-                                        <span class="badge bg-warning">
-                                            <i class="fas fa-clock"></i> Tardanza
+                                        <span style="color: #ff9900 !important; font-weight: bold !important;">
+                                            <i class="fas fa-clock" style="color: #ff9900 !important;"></i> Tardanza
                                         </span>
                                         {% elif registro.estado == 'justificado' %}
-                                        <span class="badge bg-info">
-                                            <i class="fas fa-file-alt"></i> Justificado
+                                        <span style="color: #3399ff !important; font-weight: bold !important;">
+                                            <i class="fas fa-file-alt" style="color: #3399ff !important;"></i>
+                                            Justificado
                                         </span>
                                         {% endif %}
                                     </td>

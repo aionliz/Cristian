@@ -52,14 +52,12 @@ class ProfesorModel:
         query = """
         SELECT 
             p.*,
-            asig.nombre as asignatura_nombre,
             COUNT(asignaciones.id_asignacion) as total_asignaciones,
             CONCAT(p.nombre, ' ', p.apellido) as nombre_completo
         FROM profesores p
-        LEFT JOIN asignaturas asig ON p.id_asignatura_fk = asig.id_asignatura
         LEFT JOIN asignaciones ON p.id_profesor = asignaciones.id_profesor_fk AND asignaciones.activo = 1
         WHERE p.activo = 1
-        GROUP BY p.id_profesor, p.nombre, p.apellido, p.email, p.especialidad, p.id_asignatura_fk, p.activo, p.created_at, p.updated_at, asig.nombre
+        GROUP BY p.id_profesor, p.nombre, p.apellido, p.email, p.especialidad, p.activo, p.created_at, p.updated_at
         ORDER BY p.apellido, p.nombre
         """
         results = connectToMySQL(cls.db).query_db(query)

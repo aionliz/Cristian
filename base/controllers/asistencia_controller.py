@@ -8,6 +8,7 @@ from base.models.curso_model import CursoModel
 from datetime import datetime, date
 import json
 import logging
+import urllib.parse
 
 # Configurar logging
 logger = logging.getLogger(__name__)
@@ -90,6 +91,7 @@ def marcar_asistencia():
                 if request.is_json:
                     return jsonify({'success': True, 'message': message})
 
+                # Para formularios HTML, usar flash message
                 flash(message, 'success')
                 return redirect(url_for('asistencia.marcar_asistencia'))
             else:
@@ -712,4 +714,42 @@ def controlar_luces_lector():
         return jsonify({
             'success': False,
             'error': f'Error controlando luces: {str(e)}'
+        }), 500
+
+
+def estadisticas_hoy():
+    """
+    Endpoint para obtener estadísticas de asistencia del día actual.
+    Retorna un JSON con el conteo de presentes y ausentes.
+    """
+    if 'user_id' not in session:
+        return jsonify({'error': 'No autorizado'}), 401
+
+    try:
+        # Obtener la fecha actual
+        fecha_actual = date.today().strftime('%Y-%m-%d')
+
+        # Obtener estadísticas del modelo
+        estadisticas = AsistenciaModel.get_estadisticas_del_dia(fecha_actual)
+
+        return jsonify({
+            'success': True,
+            'presentes': estadisticas.get('presentes', 0),
+            'ausentes': estadisticas.get('ausentes', 0),
+            'tardanzas': estadisticas.get('tardanzas', 0),
+            'justificados': estadisticas.get('justificados', 0),
+            'total_alumnos': estadisticas.get('total_alumnos', 0),
+            'fecha': fecha_actual
+        })
+
+    except Exception as e:
+        logger.error(f"Error obteniendo estadísticas del día: {str(e)}")
+        return jsonify({
+            'success': False,
+            'error': 'Error interno del servidor',
+            'presentes': 0,
+            'ausentes': 0,
+            'tardanzas': 0,
+            'justificados': 0,
+            'total_alumnos': 0
         }), 500

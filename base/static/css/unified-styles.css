@@ -1752,6 +1752,7 @@ main {
 }
 
 .modal-backdrop {
+    display: none !important;
     z-index: 1040 !important;
 }
 

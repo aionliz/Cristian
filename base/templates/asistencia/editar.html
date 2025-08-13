@@ -111,20 +111,20 @@
                         <div class="col-md-3">
                             <strong>Estado Actual:</strong>
                             {% if asistencia.estado == 'presente' %}
-                            <span class="badge bg-success ms-2">
-                                <i class="fas fa-check"></i> Presente
+                            <span style="color: #00cc00 !important; font-weight: bold !important;">
+                                <i class="fas fa-check" style="color: #00cc00 !important;"></i> Presente
                             </span>
                             {% elif asistencia.estado == 'ausente' %}
-                            <span class="badge bg-danger ms-2">
-                                <i class="fas fa-times"></i> Ausente
+                            <span style="color: #ff3333 !important; font-weight: bold !important;">
+                                <i class="fas fa-times" style="color: #ff3333 !important;"></i> Ausente
                             </span>
                             {% elif asistencia.estado == 'tardanza' %}
-                            <span class="badge bg-warning ms-2">
-                                <i class="fas fa-clock"></i> Tardanza
+                            <span style="color: #ff9900 !important; font-weight: bold !important;">
+                                <i class="fas fa-clock" style="color: #ff9900 !important;"></i> Tardanza
                             </span>
                             {% elif asistencia.estado == 'justificado' %}
-                            <span class="badge bg-info ms-2">
-                                <i class="fas fa-file-alt"></i> Justificado
+                            <span style="color: #3399ff !important; font-weight: bold !important;">
+                                <i class="fas fa-file-alt" style="color: #3399ff !important;"></i> Justificado
                             </span>
                             {% endif %}
                         </div>

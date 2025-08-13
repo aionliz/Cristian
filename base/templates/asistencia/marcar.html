@@ -4,6 +4,22 @@
 
 {% block content %}
 <div class="container mt-4">
+    <!-- Área para mostrar mensajes de flash -->
+    {% with messages = get_flashed_messages(with_categories=true) %}
+    {% if messages %}
+    <div id="flash-messages">
+        {% for category, message in messages %}
+        <div class="alert alert-{{ 'success' if category == 'success' else 'danger' }} alert-dismissible fade show"
+            role="alert">
+            <i class="fas fa-{{ 'check-circle' if category == 'success' else 'exclamation-circle' }}"></i>
+            {{ message }}
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+        {% endfor %}
+    </div>
+    {% endif %}
+    {% endwith %}
+
     <div class="row">
         <div class="col-12">
             <div class="d-flex justify-content-between align-items-center mb-4">
@@ -91,7 +107,8 @@
                             <button type="button" class="btn btn-outline-secondary me-md-2" id="btn-limpiar-formulario">
                                 <i class="fas fa-undo"></i> Limpiar
                             </button>
-                            <button type="submit" class="btn btn-success">
+                            <button type="submit" class="btn btn-success" id="btn-marcar-asistencia"
+                                onclick="return showRegistrationAlert();">
                                 <i class="fas fa-save"></i> Marcar Asistencia
                             </button>
                         </div>
@@ -166,4 +183,29 @@
         </div>
     </div>
 </div>
+
+<!-- Script directo para alertas inmediatas -->
+<script>
+    function showRegistrationAlert() {
+        console.log("=== BOTÓN MARCAR ASISTENCIA PRESIONADO ===");
+
+        // Obtener datos del formulario
+        const alumnoSearch = document.getElementById('alumno-search');
+        const estado = document.getElementById('estado');
+
+        let message = "Registrando asistencia...";
+
+        if (alumnoSearch && alumnoSearch.value && estado && estado.value) {
+            const studentName = alumnoSearch.value;
+            const statusText = estado.options[estado.selectedIndex].text;
+            message = `Registrando: ${studentName}\nEstado: ${statusText}`;
+        }
+
+        // Mostrar alerta inmediata
+        alert("✅ ASISTENCIA REGISTRADA\n\n" + message + "\n\nPor favor espere un momento...");
+
+        console.log("Alerta mostrada:", message);
+        return true; // Permitir que el formulario se envíe
+    }
+</script>
 {% endblock %}

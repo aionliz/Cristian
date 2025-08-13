@@ -482,3 +482,74 @@ class AsistenciaModel:
         except Exception as e:
             print(f"Error generando reporte mensual: {str(e)}")
             raise e
+
+    @classmethod
+    def get_estadisticas_del_dia(cls, fecha):
+        """
+        Obtener estadísticas de asistencia para una fecha específica.
+
+        Args:
+            fecha (str): Fecha en formato 'YYYY-MM-DD'
+
+        Returns:
+            dict: Diccionario con estadísticas del día
+        """
+        try:
+            query = """
+                SELECT 
+                    COUNT(CASE WHEN estado = 'presente' THEN 1 END) as presentes,
+                    COUNT(CASE WHEN estado = 'ausente' THEN 1 END) as ausentes,
+                    COUNT(CASE WHEN estado = 'tardanza' THEN 1 END) as tardanzas,
+                    COUNT(CASE WHEN estado = 'justificado' THEN 1 END) as justificados,
+                    COUNT(*) as total_registros
+                FROM asistencias 
+                WHERE DATE(fecha) = %s
+            """
+
+            result = connectToMySQL(cls.db).query_db(query, (fecha,))
+
+            if result:
+                stats = result[0]
+
+                # Obtener total de alumnos activos
+                query_total = "SELECT COUNT(*) as total_alumnos FROM alumnos WHERE activo = 1"
+                total_result = connectToMySQL(cls.db).query_db(query_total)
+                total_alumnos = total_result[0]['total_alumnos'] if total_result else 0
+
+                return {
+                    'presentes': stats['presentes'] or 0,
+                    'ausentes': stats['ausentes'] or 0,
+                    'tardanzas': stats['tardanzas'] or 0,
+                    'justificados': stats['justificados'] or 0,
+                    'total_registros': stats['total_registros'] or 0,
+                    'total_alumnos': total_alumnos,
+                    'fecha': fecha
+                }
+            else:
+                # Si no hay registros, devolver ceros
+                query_total = "SELECT COUNT(*) as total_alumnos FROM alumnos WHERE activo = 1"
+                total_result = connectToMySQL(cls.db).query_db(query_total)
+                total_alumnos = total_result[0]['total_alumnos'] if total_result else 0
+
+                return {
+                    'presentes': 0,
+                    'ausentes': 0,
+                    'tardanzas': 0,
+                    'justificados': 0,
+                    'total_registros': 0,
+                    'total_alumnos': total_alumnos,
+                    'fecha': fecha
+                }
+
+        except Exception as e:
+            print(f"Error obteniendo estadísticas del día {fecha}: {str(e)}")
+            # En caso de error, devolver datos por defecto
+            return {
+                'presentes': 0,
+                'ausentes': 0,
+                'tardanzas': 0,
+                'justificados': 0,
+                'total_registros': 0,
+                'total_alumnos': 0,
+                'fecha': fecha
+            }

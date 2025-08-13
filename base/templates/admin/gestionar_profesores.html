@@ -3,15 +3,15 @@
 
 {% block content %}
 <div class="container mt-4">
-    <div class="page-header">
-        <div class="header-content">
-            <h1><i class="fas fa-chalkboard-teacher"></i> Gestión de Profesores</h1>
-            <p class="page-description">Administra los profesores del sistema</p>
-        </div>
+    <div class="page-header" style="justify-content: flex-start !important; gap: 20px;">
         <div class="header-actions">
             <a href="{{ url_for('profesor.agregar_profesor') }}" class="btn btn-primary">
                 <i class="fas fa-plus"></i> Nuevo Profesor
             </a>
+        </div>
+        <div class="header-content">
+            <h1><i class="fas fa-chalkboard-teacher"></i> Gestión de Profesores</h1>
+            <p class="page-description">Administra los profesores del sistema</p>
         </div>
     </div>
 
@@ -164,20 +164,16 @@
                                 {% endif %}
                             </td>
                             <td>
-                                {% if profesor.asignatura_nombre %}
-                                {{ profesor.asignatura_nombre }}
-                                {% else %}
-                                <span class="text-muted">Sin asignatura</span>
-                                {% endif %}
+                                <span class="text-muted">-</span>
                             </td>
                             <td>
-                                {{ profesor.total_asignaciones }}
+                                {{ profesor.total_asignaciones or 0 }}
                             </td>
                             <td>
                                 {% if profesor.activo %}
-                                Activo
+                                <span style="color: #00cc00 !important; font-weight: bold !important;">Activo</span>
                                 {% else %}
-                                Inactivo
+                                <span style="color: #888888 !important; font-weight: bold !important;">Inactivo</span>
                                 {% endif %}
                             </td>
                             <td>

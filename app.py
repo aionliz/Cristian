@@ -37,13 +37,13 @@ def login():
 
         # Simulación de autenticación
         if email == 'admin@colegio-aml.cl' and password == 'admin123':
-            session['user_id'] = 46
+            session['user_id'] = 1
             session['user_email'] = email
             session['user_role'] = 'admin'
             flash('Inicio de sesión exitoso', 'success')
             return redirect(url_for('asistencia.index'))
         elif email == 'juan.perez@colegio-aml.cl' and password == 'profesor123':
-            session['user_id'] = 47
+            session['user_id'] = 2
             session['user_email'] = email
             session['user_role'] = 'profesor'
             flash('Inicio de sesión exitoso', 'success')
@@ -111,6 +111,8 @@ asistencia_bp.add_url_rule(
     '/debug-sesion', 'debug_sesion', asistencia_controller.debug_sesion)
 asistencia_bp.add_url_rule('/controlar-luces', 'controlar_luces_lector',
                            asistencia_controller.controlar_luces_lector)
+asistencia_bp.add_url_rule('/estadisticas_hoy', 'estadisticas_hoy',
+                           asistencia_controller.estadisticas_hoy)
 
 # Blueprint para huellas dactilares (legacy)
 huellas_bp = Blueprint('huellas', __name__, url_prefix='/huellas')
@@ -276,5 +278,5 @@ def format_time_filter(value):
 if __name__ == "__main__":
     print("🏫 Sistema de Asistencia - Colegio AML")
     print("🌐 Iniciando servidor Flask...")
-    print("📍 URL: http://127.0.0.1:5003")
-    app.run(debug=True, port=5003)
+    print("📍 URL: http://127.0.0.1:5010")
+    app.run(debug=True, port=5010)

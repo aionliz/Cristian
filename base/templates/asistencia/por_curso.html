@@ -3,6 +3,7 @@
 {% block title %}Asistencia por Curso - Colegio AML{% endblock %}
 
 {% block content %}
+
 <div class="container mt-4">
     <div class="row">
         <div class="col-12">
@@ -24,7 +25,7 @@
             <div class="card border-0 shadow-sm">
                 <div class="card-body">
                     <form method="GET" class="row g-3">
-                        <div class="col-md-4">
+                        <div class="col-md-3">
                             <label for="curso" class="form-label">
                                 <i class="fas fa-school"></i> Curso
                             </label>
@@ -38,41 +39,30 @@
                                 {% endfor %}
                             </select>
                         </div>
-                        <div class="col-md-4">
+                        <div class="col-md-3">
                             <label for="fecha" class="form-label">
                                 <i class="fas fa-calendar"></i> Fecha
                             </label>
                             <input type="date" class="form-control auto-submit" id="fecha" name="fecha"
                                 value="{{ fecha }}">
                         </div>
-                        <div class="col-md-4 d-flex align-items-end">
+                        <div class="col-md-6 d-flex align-items-end">
                             <button type="submit" class="btn btn-primary me-2">
                                 <i class="fas fa-search"></i> Buscar
                             </button>
                             {% if id_curso %}
                             <!-- Botones de marcación -->
                             <div class="btn-group me-2" role="group">
-                                <button type="button" class="btn btn-success btn-marcar-todos">
-                                    <i class="fas fa-check-double"></i> Marcar Todos
+                                <button type="button" class="btn btn-success btn-sm btn-marcar-todos"
+                                    data-estado="presente">
+                                    <i class="fas fa-check"></i> <small>Presentes</small>
                                 </button>
-                                <button type="button" class="btn btn-outline-success dropdown-toggle"
-                                    data-bs-toggle="dropdown">
-                                    <span class="sr-only">Toggle Dropdown</span>
-                                </button>
-                                <ul class="dropdown-menu">
-                                    <li><a class="dropdown-item btn-marcar-todos" href="#" data-estado="presente">
-                                            <i class="fas fa-check text-success"></i> Marcar Presentes
-                                        </a></li>
-                                    <li><a class="dropdown-item btn-marcar-todos" href="#" data-estado="ausente">
-                                            <i class="fas fa-times text-danger"></i> Marcar Ausentes
-                                        </a></li>
-                                </ul>
                             </div>
 
                             <!-- Botón de marcación biométrica -->
-                            <button type="button" class="btn btn-info btn-activar-biometrico"
+                            <button type="button" class="btn btn-info btn-sm btn-activar-biometrico"
                                 title="Activar sistema biométrico">
-                                <i class="fas fa-fingerprint"></i> Biométrico
+                                <i class="fas fa-fingerprint"></i> <small>Biométrico</small>
                             </button>
                             {% endif %}
                         </div>
@@ -108,7 +98,7 @@
                 <div class="card-body">
                     <h3 class="text-warning">{{ asistencias|selectattr("estado", "equalto", "tardanza")|list|length }}
                     </h3>
-                    <p class="mb-0 text-muted">Tardanzas</p>
+                    <p class="mb-0 text-muted">Atrasados</p>
                 </div>
             </div>
         </div>
@@ -154,20 +144,21 @@
                                     </td>
                                     <td>
                                         {% if asistencia.estado == 'presente' %}
-                                        <span class="badge bg-success">
-                                            <i class="fas fa-check"></i> Presente
+                                        <span style="color: #00cc00 !important; font-weight: bold !important;">
+                                            <i class="fas fa-check" style="color: #00cc00 !important;"></i> Presente
                                         </span>
                                         {% elif asistencia.estado == 'ausente' %}
-                                        <span class="badge bg-danger">
-                                            <i class="fas fa-times"></i> Ausente
+                                        <span style="color: #ff3333 !important; font-weight: bold !important;">
+                                            <i class="fas fa-times" style="color: #ff3333 !important;"></i> Ausente
                                         </span>
                                         {% elif asistencia.estado == 'tardanza' %}
-                                        <span class="badge bg-warning">
-                                            <i class="fas fa-clock"></i> Tardanza
+                                        <span style="color: #ff9900 !important; font-weight: bold !important;">
+                                            <i class="fas fa-clock" style="color: #ff9900 !important;"></i> Atrasado
                                         </span>
                                         {% elif asistencia.estado == 'justificado' %}
-                                        <span class="badge bg-info">
-                                            <i class="fas fa-file-alt"></i> Justificado
+                                        <span style="color: #3399ff !important; font-weight: bold !important;">
+                                            <i class="fas fa-file-alt" style="color: #3399ff !important;"></i>
+                                            Justificado
                                         </span>
                                         {% endif %}
                                     </td>
@@ -521,8 +512,9 @@
         }
     }
 
-    /* Backdrop */
+    /* Backdrop - Deshabilitado para permitir funcionamiento de JS */
     .modal-backdrop {
+        display: none !important;
         position: fixed;
         top: 0;
         left: 0;
@@ -533,6 +525,7 @@
     }
 
     .modal-backdrop.show {
+        display: none !important;
         opacity: 1;
     }
 </style>
@@ -634,6 +627,71 @@
                 });
         }
 
+        // Función para marcación masiva
+        function marcarTodosMasivo(estado) {
+            console.log('📊 Marcación masiva:', estado);
+
+            if (!confirm(`¿Estás seguro de marcar a TODOS los alumnos como ${estado}?`)) {
+                return;
+            }
+
+            // Obtener todos los alumnos sin registro
+            const alumnosSinRegistro = document.querySelectorAll('[data-action="marcar-asistencia"]');
+
+            if (alumnosSinRegistro.length === 0) {
+                alert('No hay alumnos sin registro para marcar');
+                return;
+            }
+
+            let procesados = 0;
+            let errores = 0;
+
+            const procesarAlumno = async (button) => {
+                const alumnoId = button.getAttribute('data-alumno-id');
+                const fecha = document.getElementById('rapid_fecha') ? document.getElementById('rapid_fecha').value : '{{ fecha }}';
+
+                const formData = new FormData();
+                formData.append('id_alumno', alumnoId);
+                formData.append('fecha', fecha);
+                formData.append('estado', estado);
+
+                // Hora actual para presentes y atrasados
+                if (estado === 'presente' || estado === 'tardanza') {
+                    const now = new Date();
+                    const time = now.getHours().toString().padStart(2, '0') + ':' +
+                        now.getMinutes().toString().padStart(2, '0');
+                    formData.append('hora_llegada', time);
+                }
+
+                try {
+                    const response = await fetch('/asistencia/marcar', {
+                        method: 'POST',
+                        body: formData
+                    });
+
+                    if (response.ok || response.status === 302) {
+                        procesados++;
+                    } else {
+                        errores++;
+                    }
+                } catch (error) {
+                    console.error('Error procesando alumno:', error);
+                    errores++;
+                }
+            };
+
+            // Procesar todos los alumnos
+            Promise.all(Array.from(alumnosSinRegistro).map(procesarAlumno))
+                .then(() => {
+                    alert(`✅ Proceso completado: ${procesados} marcados, ${errores} errores`);
+                    window.location.reload();
+                })
+                .catch(error => {
+                    console.error('Error en marcación masiva:', error);
+                    alert('❌ Error en la marcación masiva');
+                });
+        }
+
         // Event listeners
         document.addEventListener('click', function (e) {
             // Botón marcar manual
@@ -644,6 +702,16 @@
                 const name = markBtn.getAttribute('data-alumno-nombre');
                 console.log('🖱️ Click marcar:', name, id);
                 showModal(id, name);
+                return;
+            }
+
+            // Botones de marcación masiva
+            const masiveBtn = e.target.closest('.btn-marcar-todos');
+            if (masiveBtn) {
+                e.preventDefault();
+                const estado = masiveBtn.getAttribute('data-estado');
+                console.log('🖱️ Click marcación masiva:', estado);
+                marcarTodosMasivo(estado);
                 return;
             }
 

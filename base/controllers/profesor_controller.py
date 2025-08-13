@@ -44,11 +44,47 @@ def gestionar_profesores():
         return redirect(url_for('asistencia.index'))
 
     try:
+        print("🎓 DEBUG - Iniciando gestionar_profesores")
+
+        # Obtener profesores con detalles
         profesores = ProfesorModel.get_all_with_details()
-        return render_template('admin/gestionar_profesores.html', profesores=profesores)
+        print(
+            f"🎓 DEBUG - Profesores obtenidos: {len(profesores) if profesores else 0}")
+
+        if profesores:
+            for i, prof in enumerate(profesores):
+                print(f"  Profesor {i+1}: {prof}")
+
+        # Calcular estadísticas simples
+        total_profesores = len(profesores) if profesores else 0
+        total_activos = total_profesores  # Ya que get_all_with_details solo trae activos
+        total_con_asignaciones = 0
+
+        if profesores:
+            total_con_asignaciones = sum(
+                1 for prof in profesores if prof.get('total_asignaciones', 0) > 0)
+
+        total_sin_asignaciones = total_profesores - total_con_asignaciones
+
+        print(
+            f"🎓 DEBUG - Estadísticas: Total={total_profesores}, Activos={total_activos}, Con asignaciones={total_con_asignaciones}")
+
+        return render_template('admin/gestionar_profesores.html',
+                               profesores=profesores,
+                               total_profesores=total_profesores,
+                               total_activos=total_activos,
+                               total_con_asignaciones=total_con_asignaciones,
+                               total_sin_asignaciones=total_sin_asignaciones)
+
     except Exception as e:
+        print(f"❌ ERROR en gestionar_profesores: {str(e)}")
         flash(f'Error al cargar los profesores: {str(e)}', 'error')
-        return render_template('admin/gestionar_profesores.html', profesores=[])
+        return render_template('admin/gestionar_profesores.html',
+                               profesores=[],
+                               total_profesores=0,
+                               total_activos=0,
+                               total_con_asignaciones=0,
+                               total_sin_asignaciones=0)
 
 
 @profesor_bp.route('/profesores/agregar', methods=['GET', 'POST'])
