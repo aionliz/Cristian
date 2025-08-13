@@ -299,7 +299,7 @@ def editar_asistencia(id_asistencia):
                 alumno = AlumnoModel.get_by_id(asistencia.id_alumno)
                 if alumno and alumno.id_curso_fk:
                     # Redirigir a la página del curso con la fecha
-                    return redirect(url_for('asistencia.por_curso',
+                    return redirect(url_for('asistencia.listar_por_curso',
                                             curso=alumno.id_curso_fk,
                                             fecha=asistencia.fecha.strftime('%Y-%m-%d')))
                 else:

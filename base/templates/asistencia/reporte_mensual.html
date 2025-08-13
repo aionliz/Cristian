@@ -46,11 +46,12 @@
                             <label for="curso" class="form-label">Curso</label>
                             <select class="form-select" id="curso" name="curso">
                                 <option value="">Todos los cursos</option>
-                                <option value="1" {{ 'selected' if id_curso=='1' else '' }}>1° Básico A</option>
-                                <option value="2" {{ 'selected' if id_curso=='2' else '' }}>1° Básico B</option>
-                                <option value="3" {{ 'selected' if id_curso=='3' else '' }}>2° Básico A</option>
-                                <option value="4" {{ 'selected' if id_curso=='4' else '' }}>2° Básico B</option>
-                                <option value="5" {{ 'selected' if id_curso=='5' else '' }}>3° Básico A</option>
+                                {% for curso in cursos %}
+                                <option value="{{ curso.id_curso }}" {{ 'selected' if id_curso==curso.id_curso|string
+                                    else '' }}>
+                                    {{ curso.nombre_completo }}
+                                </option>
+                                {% endfor %}
                             </select>
                         </div>
                         <div class="col-md-3">
