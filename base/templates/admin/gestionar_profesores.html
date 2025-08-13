@@ -3,15 +3,17 @@
 
 {% block content %}
 <div class="container mt-4">
-    <div class="page-header" style="justify-content: flex-start !important; gap: 20px;">
+    <div class="page-header"
+        style="display: flex !important; justify-content: space-between !important; align-items: center !important;">
+        <div class="header-content">
+            <h1 style="margin-bottom: 0 !important;"><i class="fas fa-chalkboard-teacher"></i> Gestión de Profesores
+            </h1>
+            <p class="page-description" style="margin-bottom: 0 !important;">Administra los profesores del sistema</p>
+        </div>
         <div class="header-actions">
             <a href="{{ url_for('profesor.agregar_profesor') }}" class="btn btn-primary">
                 <i class="fas fa-plus"></i> Nuevo Profesor
             </a>
-        </div>
-        <div class="header-content">
-            <h1><i class="fas fa-chalkboard-teacher"></i> Gestión de Profesores</h1>
-            <p class="page-description">Administra los profesores del sistema</p>
         </div>
     </div>
 
