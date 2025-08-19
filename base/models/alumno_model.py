@@ -151,12 +151,18 @@ class AlumnoModel:
         if result:
             alumno = cls(result[0])
             # Agregar información del curso como atributos adicionales
+            nombre_curso = result[0].get('nombre_curso')
             nivel_texto = result[0].get('nivel_texto', '')
             letra = result[0].get('letra', '')
-            if nivel_texto and letra:
+
+            # Usar el nombre del curso si existe, sino usar nivel + letra
+            if nombre_curso:
+                alumno.nombre_curso = nombre_curso
+            elif nivel_texto and letra:
                 alumno.nombre_curso = f"{nivel_texto} {letra}"
             else:
-                alumno.nombre_curso = result[0].get('nombre_curso')
+                alumno.nombre_curso = "Sin curso asignado"
+
             alumno.nivel = result[0].get('nivel')
             alumno.letra = result[0].get('letra')
             return alumno

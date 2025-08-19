@@ -366,6 +366,7 @@ class AsistenciaModel:
                     al.apellido_materno,
                     c.nivel,
                     c.letra,
+                    c.nombre as nombre_curso,
                     COUNT(CASE WHEN a.estado = 'presente' THEN 1 END) as dias_presente,
                     COUNT(CASE WHEN a.estado = 'ausente' THEN 1 END) as dias_ausente,
                     COUNT(CASE WHEN a.estado = 'tardanza' THEN 1 END) as dias_tarde,
@@ -384,7 +385,7 @@ class AsistenciaModel:
                 params_detalle.append(id_curso)
 
             query_detalle += """
-                GROUP BY al.id_alumno, al.nombre, al.apellido_paterno, al.apellido_materno, c.nivel, c.letra
+                GROUP BY al.id_alumno, al.nombre, al.apellido_paterno, al.apellido_materno, c.nivel, c.letra, c.nombre
                 ORDER BY c.nivel, c.letra, al.apellido_paterno, al.nombre
             """
 
@@ -413,7 +414,7 @@ class AsistenciaModel:
                     datos_alumnos.append({
                         'id_alumno': alumno['id_alumno'],
                         'nombre_completo': f"{alumno['nombre']} {alumno['apellido_paterno']} {alumno['apellido_materno']}",
-                        'curso': f"{alumno['nivel']}° {alumno['letra']}",
+                        'curso': f"Cuarto Medio {alumno['letra']}",
                         'dias_presente': alumno['dias_presente'],
                         'dias_ausente': alumno['dias_ausente'],
                         'dias_tarde': alumno['dias_tarde'],

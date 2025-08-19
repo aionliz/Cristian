@@ -423,6 +423,12 @@ def reporte_mensual():
 
     # Obtener todos los cursos para el selector
     cursos = CursoModel.get_all()
+    logger.info(
+        f"Cursos encontrados para reportes: {len(cursos) if cursos else 0}")
+    if cursos:
+        for i, curso in enumerate(cursos):
+            logger.info(
+                f"Curso {i+1}: ID={curso.id_curso}, Nombre={curso.nombre_completo}")
 
     return render_template('asistencia/reporte_mensual.html',
                            mes=mes,

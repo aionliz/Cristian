@@ -46,13 +46,19 @@
                             <label for="curso" class="form-label">Curso</label>
                             <select class="form-select" id="curso" name="curso">
                                 <option value="">Todos los cursos</option>
+                                {% if cursos %}
                                 {% for curso in cursos %}
                                 <option value="{{ curso.id_curso }}" {{ 'selected' if id_curso==curso.id_curso|string
                                     else '' }}>
                                     {{ curso.nombre_completo }}
                                 </option>
                                 {% endfor %}
+                                {% else %}
+                                <option value="" disabled>No hay cursos disponibles</option>
+                                {% endif %}
                             </select>
+                            <!-- Debug info -->
+                            <small class="text-muted">Cursos disponibles: {{ cursos|length if cursos else 0 }}</small>
                         </div>
                         <div class="col-md-3">
                             <label for="tipo-reporte" class="form-label">Tipo de Reporte</label>
@@ -168,6 +174,7 @@
                                     <th>Días Presente</th>
                                     <th>Días Ausente</th>
                                     <th>Atrasos</th>
+                                    <th>Justificados</th>
                                     <th>% Asistencia</th>
                                     <th>Estado</th>
                                 </tr>
@@ -239,5 +246,105 @@
         background-color: #17a2b8 !important;
     }
 </style>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        // Función para cargar datos del reporte
+        function cargarReporte() {
+            const mes = document.getElementById('mes').value;
+            const curso = document.getElementById('curso').value;
+            const tipo = document.getElementById('tipo-reporte').value;
+
+            if (!mes) {
+                console.log('No se ha seleccionado un mes');
+                return;
+            }
+
+            // Construir URL con parámetros
+            const params = new URLSearchParams({
+                mes: mes,
+                tipo: tipo,
+                formato: 'json'
+            });
+
+            if (curso) {
+                params.append('curso', curso);
+            }
+
+            // Realizar petición AJAX
+            fetch(`{{ url_for('asistencia.reporte_mensual') }}?${params.toString()}`, {
+                headers: {
+                    'Accept': 'application/json'
+                }
+            })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        actualizarEstadisticas(data.data);
+                        actualizarTabla(data.data.alumnos || []);
+                    } else {
+                        console.error('Error en la respuesta:', data.message);
+                        alert('Error al cargar el reporte: ' + data.message);
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    alert('Error al cargar el reporte');
+                });
+        }
+
+        // Función para actualizar estadísticas
+        function actualizarEstadisticas(data) {
+            console.log('Datos recibidos:', data);
+            document.getElementById('total-presente').textContent = data.resumen.total_presente || 0;
+            document.getElementById('total-ausente').textContent = data.resumen.total_ausente || 0;
+            document.getElementById('total-tarde').textContent = data.resumen.total_tarde || 0;
+            document.getElementById('porcentaje-asistencia').textContent = (data.resumen.porcentaje_asistencia || 0) + '%';
+        }
+
+        // Función para actualizar tabla
+        function actualizarTabla(alumnos) {
+            const tbody = document.querySelector('#tbody-asistencia');
+            tbody.innerHTML = '';
+
+            if (alumnos.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="8" class="text-center">No hay datos para mostrar</td></tr>';
+                return;
+            }
+
+            alumnos.forEach(alumno => {
+                const fila = document.createElement('tr');
+                fila.innerHTML = `
+                <td>${alumno.nombre_completo}</td>
+                <td>${alumno.curso}</td>
+                <td class="text-center">${alumno.dias_presente || 0}</td>
+                <td class="text-center">${alumno.dias_ausente || 0}</td>
+                <td class="text-center">${alumno.dias_tarde || 0}</td>
+                <td class="text-center">${alumno.dias_justificado || 0}</td>
+                <td class="text-center">${(alumno.porcentaje_asistencia || 0)}%</td>
+                <td class="text-center">
+                    ${alumno.porcentaje_asistencia >= 85 ?
+                        '<span style="color: #198754 !important; background: none !important; border: none !important; padding: 0 !important;">Excelente</span>' :
+                        alumno.porcentaje_asistencia >= 75 ?
+                            '<span style="color: #ffc107 !important; background: none !important; border: none !important; padding: 0 !important;">Regular</span>' :
+                            '<span style="color: #dc3545 !important; background: none !important; border: none !important; padding: 0 !important;">Crítico</span>'}
+                </td>
+            `;
+                tbody.appendChild(fila);
+            });
+        }
+
+        // Event listeners
+        document.getElementById('filtros-form').addEventListener('submit', function (e) {
+            e.preventDefault();
+            cargarReporte();
+        });
+
+        // Cargar reporte inicial si hay mes seleccionado
+        if (document.getElementById('mes').value) {
+            cargarReporte();
+        }
+    });
+</script>
 
 {% endblock %}
