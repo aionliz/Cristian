@@ -73,7 +73,10 @@ class AsignaturaModel:
             WHERE id_asignatura = %(id_asignatura)s;
         """
         data['id_asignatura'] = id_asignatura
+        print(
+            f"[DEBUG] Actualizando asignatura: id={id_asignatura}, nombre={data.get('nombre')}, descripcion={data.get('descripcion')}")
         result = connectToMySQL(cls.db).query_db(query, data)
+        print(f"[DEBUG] Resultado de la consulta: {result}")
         return result
 
     @classmethod
